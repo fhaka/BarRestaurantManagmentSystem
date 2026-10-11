@@ -1,0 +1,49 @@
+{
+  "roles": {
+    "owner": "Titolare",
+    "manager": "Responsabile",
+    "waiter": "Cameriere",
+    "cashier": "Cassiere",
+    "kitchen": "Cucina / Bar"
+  },
+  "nav": {
+    "groups": {
+      "service": "Servizio",
+      "management": "Gestione",
+      "business": "Attività"
+    },
+    "dashboard": "Cruscotto",
+    "floor": "Sala",
+    "orders": "Ordini",
+    "kds": "Schermo cucina",
+    "cashier": "Cassa",
+    "reservations": "Prenotazioni",
+    "menu": "Menu",
+    "inventory": "Magazzino",
+    "staff": "Personale",
+    "reports": "Report",
+    "audit": "Registro attività",
+    "locations": "Locali",
+    "settings": "Impostazioni",
+    "openMenu": "Apri il menu",
+    "location": "Locale"
+  },
+  "userMenu": {
+    "label": "Menu utente",
+    "switchUser": "Cambia utente",
+    "signOut": "Esci da questo dispositivo",
+    "theme": "Tema",
+    "language": "Lingua"
+  },
+  "placeholder": {
+    "title": "{{screen}} arriva presto",
+    "description": "Questa schermata viene realizzata nella fase {{phase}} del progetto. Navigazione e permessi sono pronti."
+  },
+  "noAccess": {
+    "title": "Non hai accesso a questa pagina",
+    "description": "Il tuo ruolo in questo locale non consente questa schermata. Chiedi a un responsabile se ti serve.",
+    "back": "Torna all'inizio"
+  },
+  "loading": "Caricamento…",
+  "unreachable": "Impossibile raggiungere il server. La sessione resta attiva; nuovo tentativo…"
+}

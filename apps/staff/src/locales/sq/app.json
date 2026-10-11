@@ -1,0 +1,49 @@
+{
+  "roles": {
+    "owner": "Pronar",
+    "manager": "Menaxher",
+    "waiter": "Kamarier",
+    "cashier": "Arkëtar",
+    "kitchen": "Kuzhinë / Bar"
+  },
+  "nav": {
+    "groups": {
+      "service": "Shërbimi",
+      "management": "Menaxhimi",
+      "business": "Biznesi"
+    },
+    "dashboard": "Paneli",
+    "floor": "Salla",
+    "orders": "Porositë",
+    "kds": "Ekrani i kuzhinës",
+    "cashier": "Arka",
+    "reservations": "Rezervimet",
+    "menu": "Menuja",
+    "inventory": "Magazina",
+    "staff": "Stafi",
+    "reports": "Raportet",
+    "audit": "Regjistri i veprimeve",
+    "locations": "Lokalet",
+    "settings": "Cilësimet",
+    "openMenu": "Hap menunë",
+    "location": "Lokali"
+  },
+  "userMenu": {
+    "label": "Menuja e përdoruesit",
+    "switchUser": "Ndërro përdoruesin",
+    "signOut": "Dil nga pajisja",
+    "theme": "Tema",
+    "language": "Gjuha"
+  },
+  "placeholder": {
+    "title": "{{screen}} vjen së shpejti",
+    "description": "Ky ekran ndërtohet në fazën {{phase}} të projektit. Navigimi dhe lejet janë gati."
+  },
+  "noAccess": {
+    "title": "Nuk keni akses këtu",
+    "description": "Roli juaj në këtë lokal nuk e lejon këtë ekran. Kërkojini menaxherit nëse ju duhet.",
+    "back": "Kthehu në fillim"
+  },
+  "loading": "Duke ngarkuar…",
+  "unreachable": "Nuk po lidhemi dot me serverin. Seanca juaj ruhet; po provojmë përsëri…"
+}

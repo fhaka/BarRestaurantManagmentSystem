@@ -1,0 +1,27 @@
+{
+  "appName": "Tavolina",
+  "tagline": "Sistemi i menaxhimit për restorante dhe kafene",
+  "actions": {
+    "close": "Mbyll",
+    "cancel": "Anulo",
+    "save": "Ruaj",
+    "retry": "Provo përsëri"
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "E çelët",
+    "dark": "E errët",
+    "system": "Sipas sistemit"
+  },
+  "language": {
+    "label": "Gjuha",
+    "sq": "Shqip",
+    "en": "English",
+    "it": "Italiano"
+  },
+  "notFound": {
+    "title": "Faqja nuk u gjet",
+    "description": "Adresa që hapët nuk ekziston. Kthehuni në faqen kryesore.",
+    "back": "Kthehu në fillim"
+  }
+}

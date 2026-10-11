@@ -1,0 +1,49 @@
+{
+  "roles": {
+    "owner": "Owner",
+    "manager": "Manager",
+    "waiter": "Waiter",
+    "cashier": "Cashier",
+    "kitchen": "Kitchen / Bar"
+  },
+  "nav": {
+    "groups": {
+      "service": "Service",
+      "management": "Management",
+      "business": "Business"
+    },
+    "dashboard": "Dashboard",
+    "floor": "Floor",
+    "orders": "Orders",
+    "kds": "Kitchen display",
+    "cashier": "Cashier",
+    "reservations": "Reservations",
+    "menu": "Menu",
+    "inventory": "Inventory",
+    "staff": "Staff",
+    "reports": "Reports",
+    "audit": "Audit log",
+    "locations": "Locations",
+    "settings": "Settings",
+    "openMenu": "Open menu",
+    "location": "Location"
+  },
+  "userMenu": {
+    "label": "User menu",
+    "switchUser": "Switch user",
+    "signOut": "Sign out of this device",
+    "theme": "Theme",
+    "language": "Language"
+  },
+  "placeholder": {
+    "title": "{{screen}} is coming soon",
+    "description": "This screen is built in phase {{phase}} of the project. Navigation and permissions are ready."
+  },
+  "noAccess": {
+    "title": "You don't have access here",
+    "description": "Your role at this location doesn't allow this screen. Ask a manager if you need it.",
+    "back": "Back to start"
+  },
+  "loading": "Loading…",
+  "unreachable": "Can't reach the server. Your session is kept; trying again…"
+}

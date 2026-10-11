@@ -1,0 +1,124 @@
+{
+  "title": "Catalogo dei componenti",
+  "subtitle": "Componenti di base del design system Tavolina, in tema chiaro e scuro.",
+  "sections": {
+    "colors": "Colori",
+    "typography": "Tipografia",
+    "buttons": "Pulsanti",
+    "inputs": "Campi del modulo",
+    "select": "Selezione",
+    "overlays": "Finestre e pannelli",
+    "table": "Tabella",
+    "badges": "Etichette",
+    "cards": "Schede",
+    "toasts": "Notifiche",
+    "skeleton": "Scheletri di caricamento",
+    "empty": "Stato vuoto"
+  },
+  "typography": {
+    "display": "Tavolo 7 · 4 ospiti",
+    "body": "Bar Restaurant Las Vegas apre alle 07:00. Gli ordini della colazione vanno direttamente al bar.",
+    "small": "Il testo secondario si usa per dettagli e indicazioni.",
+    "numbers": "Prezzi e timer usano cifre tabellari"
+  },
+  "buttons": {
+    "send": "Invia in cucina",
+    "draft": "Salva come bozza",
+    "split": "Dividi il conto",
+    "cancel": "Annulla",
+    "bill": "Chiedi il conto",
+    "void": "Storna articolo",
+    "sending": "Invio in corso…",
+    "small": "Piccolo",
+    "medium": "Medio",
+    "large": "Grande",
+    "add": "Aggiungi articolo",
+    "more": "Altre azioni"
+  },
+  "inputs": {
+    "name": "Nome del cliente",
+    "namePlaceholder": "es. Arta",
+    "nameHint": "Compare sullo scontrino e sulla comanda della cucina.",
+    "phone": "Telefono",
+    "phoneError": "Inserisci un numero valido, es. 069 123 4567.",
+    "notes": "Note per la cucina",
+    "notesPlaceholder": "senza sale, senza ghiaccio, ben cotto…",
+    "disabled": "Campo disattivato",
+    "disabledValue": "Sola lettura",
+    "search": "Cerca nel menu"
+  },
+  "select": {
+    "area": "Zona",
+    "areaPlaceholder": "Scegli una zona",
+    "course": "Portata",
+    "courses": {
+      "starter": "Antipasto",
+      "main": "Piatto principale",
+      "dessert": "Dolce"
+    }
+  },
+  "overlays": {
+    "openDialog": "Apri la finestra di storno",
+    "dialogTitle": "Stornare l'articolo?",
+    "dialogDescription": "Tavë kosi è già stato inviato in cucina. Inserisci il motivo; l'azione viene registrata nel registro di controllo.",
+    "reason": "Motivo",
+    "reasonPlaceholder": "es. il cliente ha cambiato idea",
+    "confirmVoid": "Storna articolo",
+    "openSheet": "Apri il pannello laterale",
+    "sheetTitle": "Tavolo 7",
+    "sheetDescription": "Salla · 4 ospiti · aperto da 42 min",
+    "openBottomSheet": "Apri il pannello dal basso",
+    "bottomSheetTitle": "Kapuçino",
+    "bottomSheetDescription": "Scegli latte e zucchero."
+  },
+  "table": {
+    "item": "Articolo",
+    "category": "Categoria",
+    "sold": "Venduti",
+    "revenue": "Ricavi",
+    "caption": "Articoli più venduti oggi"
+  },
+  "badges": {
+    "statuses": "Stati dei tavoli (colore + icona + etichetta)",
+    "free": "Libero",
+    "occupied": "Occupato",
+    "ordered": "Ordinato",
+    "foodReady": "Piatti pronti",
+    "billRequested": "Conto richiesto",
+    "needsCleaning": "Da pulire",
+    "reserved": "Prenotato",
+    "tags": "Etichette del menu",
+    "vegan": "Vegano",
+    "spicy": "Piccante",
+    "popular": "Popolare",
+    "new": "Nuovo"
+  },
+  "cards": {
+    "revenue": "Ricavi di oggi",
+    "revenueDelta": "+12% rispetto a sabato scorso",
+    "openTables": "Tavoli aperti",
+    "openTablesDetail": "su 20 in totale",
+    "averageTicket": "Scontrino medio",
+    "averageTicketDetail": "84 conti finora",
+    "viewReport": "Vedi il report"
+  },
+  "toasts": {
+    "success": "Successo",
+    "error": "Errore",
+    "info": "Info",
+    "warning": "Avviso",
+    "successTitle": "Ordine inviato",
+    "successBody": "3 articoli inviati a Kuzhina, 1 al Bar.",
+    "errorTitle": "Pagamento non registrato",
+    "errorBody": "La connessione al server si è interrotta. Riprova tra qualche secondo.",
+    "infoTitle": "Il tavolo 4 chiama un cameriere",
+    "warningTitle": "Il latte sta finendo",
+    "warningBody": "Restano 2 l, il minimo è 5 l.",
+    "undo": "Annulla"
+  },
+  "empty": {
+    "title": "Ancora nessun ordine",
+    "description": "Apri un tavolo dalla pianta della sala per iniziare il primo ordine della giornata.",
+    "action": "Apri la pianta della sala"
+  }
+}

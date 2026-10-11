@@ -1,0 +1,13 @@
+{
+  "appName": "Tavolina",
+  "language": "Gjuha",
+  "welcome": {
+    "title": "Mirë se erdhët",
+    "body": "Skanoni kodin QR në tavolinën tuaj për të parë menunë dhe për të porositur.",
+    "steps": {
+      "scan": "Skanoni kodin QR në tavolinë",
+      "browse": "Shfletoni menunë me foto",
+      "order": "Porositni direkt nga telefoni"
+    }
+  }
+}

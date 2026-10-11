@@ -1,0 +1,124 @@
+{
+  "title": "Component showcase",
+  "subtitle": "Base components of the Tavolina design system, in light and dark themes.",
+  "sections": {
+    "colors": "Colours",
+    "typography": "Typography",
+    "buttons": "Buttons",
+    "inputs": "Form fields",
+    "select": "Select",
+    "overlays": "Dialogs and sheets",
+    "table": "Table",
+    "badges": "Badges",
+    "cards": "Cards",
+    "toasts": "Toasts",
+    "skeleton": "Loading skeletons",
+    "empty": "Empty state"
+  },
+  "typography": {
+    "display": "Table 7 · 4 guests",
+    "body": "Bar Restaurant Las Vegas opens at 07:00. Breakfast orders go straight to the bar.",
+    "small": "Secondary text is used for details and guidance.",
+    "numbers": "Prices and timers use tabular figures"
+  },
+  "buttons": {
+    "send": "Send to kitchen",
+    "draft": "Save as draft",
+    "split": "Split bill",
+    "cancel": "Cancel",
+    "bill": "Request bill",
+    "void": "Void item",
+    "sending": "Sending…",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "add": "Add item",
+    "more": "More actions"
+  },
+  "inputs": {
+    "name": "Customer name",
+    "namePlaceholder": "e.g. Arta",
+    "nameHint": "Shown on the receipt and the kitchen ticket.",
+    "phone": "Phone",
+    "phoneError": "Enter a valid number, e.g. 069 123 4567.",
+    "notes": "Notes for the kitchen",
+    "notesPlaceholder": "no salt, no ice, well done…",
+    "disabled": "Disabled field",
+    "disabledValue": "Read only",
+    "search": "Search the menu"
+  },
+  "select": {
+    "area": "Area",
+    "areaPlaceholder": "Choose an area",
+    "course": "Course",
+    "courses": {
+      "starter": "Starter",
+      "main": "Main",
+      "dessert": "Dessert"
+    }
+  },
+  "overlays": {
+    "openDialog": "Open void dialog",
+    "dialogTitle": "Void this item?",
+    "dialogDescription": "Tavë kosi has already been sent to the kitchen. Enter a reason; the action is recorded in the audit log.",
+    "reason": "Reason",
+    "reasonPlaceholder": "e.g. guest changed their mind",
+    "confirmVoid": "Void item",
+    "openSheet": "Open side sheet",
+    "sheetTitle": "Table 7",
+    "sheetDescription": "Salla · 4 guests · open 42 min",
+    "openBottomSheet": "Open bottom sheet",
+    "bottomSheetTitle": "Kapuçino",
+    "bottomSheetDescription": "Choose milk and sugar."
+  },
+  "table": {
+    "item": "Item",
+    "category": "Category",
+    "sold": "Sold",
+    "revenue": "Revenue",
+    "caption": "Top-selling items today"
+  },
+  "badges": {
+    "statuses": "Table statuses (colour + icon + label)",
+    "free": "Free",
+    "occupied": "Occupied",
+    "ordered": "Ordered",
+    "foodReady": "Food ready",
+    "billRequested": "Bill requested",
+    "needsCleaning": "Needs cleaning",
+    "reserved": "Reserved",
+    "tags": "Menu tags",
+    "vegan": "Vegan",
+    "spicy": "Spicy",
+    "popular": "Popular",
+    "new": "New"
+  },
+  "cards": {
+    "revenue": "Revenue today",
+    "revenueDelta": "+12% vs last Saturday",
+    "openTables": "Open tables",
+    "openTablesDetail": "of 20 in total",
+    "averageTicket": "Average ticket",
+    "averageTicketDetail": "84 bills so far",
+    "viewReport": "View report"
+  },
+  "toasts": {
+    "success": "Success",
+    "error": "Error",
+    "info": "Info",
+    "warning": "Warning",
+    "successTitle": "Order sent",
+    "successBody": "3 items went to Kuzhina, 1 to Bar.",
+    "errorTitle": "Payment was not recorded",
+    "errorBody": "The connection to the server dropped. Try again in a few seconds.",
+    "infoTitle": "Table 4 is calling a waiter",
+    "warningTitle": "Milk is running low",
+    "warningBody": "2 l left, the minimum is 5 l.",
+    "undo": "Undo"
+  },
+  "empty": {
+    "title": "No orders yet",
+    "description": "Open a table from the floor plan to start the first order of the day.",
+    "action": "Open floor plan"
+  }
+}

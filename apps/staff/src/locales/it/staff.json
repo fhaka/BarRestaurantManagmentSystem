@@ -1,0 +1,67 @@
+{
+  "title": "Personale",
+  "subtitle": "Le persone che lavorano a {{location}}, i loro ruoli e come accedono.",
+  "add": "Aggiungi persona",
+  "search": "Cerca per nome o email",
+  "allRoles": "Tutti i ruoli",
+  "filterRole": "Filtra per ruolo",
+  "count_one": "{{count}} persona",
+  "count_other": "{{count}} persone",
+  "columns": {
+    "name": "Nome",
+    "role": "Ruolo",
+    "signIn": "Accesso",
+    "lastLogin": "Ultimo accesso",
+    "status": "Stato"
+  },
+  "status": {
+    "active": "Attivo",
+    "inactive": "Non attivo",
+    "pinLocked": "PIN bloccato"
+  },
+  "signIn": {
+    "pin": "PIN",
+    "password": "Password",
+    "none": "Nessun accesso"
+  },
+  "never": "Mai",
+  "empty": {
+    "title": "Ancora nessun membro del personale",
+    "description": "Aggiungi camerieri, cassieri e cucina perché accedano con il proprio PIN.",
+    "noMatch": "Nessuno corrisponde alla ricerca",
+    "noMatchDescription": "Prova un altro nome o rimuovi il filtro del ruolo."
+  },
+  "form": {
+    "createTitle": "Aggiungi una persona al personale",
+    "editTitle": "Modifica {{name}}",
+    "createDescription": "Ai camerieri di solito basta il PIN. Email e password servono solo per collegare i dispositivi.",
+    "name": "Nome completo",
+    "namePlaceholder": "es. Arta Krasniqi",
+    "email": "Email",
+    "emailHint": "Facoltativa. Serve per accedere con password.",
+    "phone": "Telefono",
+    "role": "Ruolo",
+    "roleHint": "Il ruolo decide cosa vede e cosa può fare la persona in questo locale.",
+    "lang": "Lingua dell'interfaccia",
+    "password": "Password",
+    "passwordHint": "Facoltativa, almeno 8 caratteri.",
+    "pin": "PIN (4 cifre)",
+    "pinHint": "Per il cambio rapido sui dispositivi del locale.",
+    "active": "Attivo",
+    "activeDescription": "Le persone non attive non possono accedere e vengono disconnesse subito da ogni dispositivo.",
+    "create": "Aggiungi persona",
+    "save": "Salva le modifiche",
+    "created": "{{name}} è stato aggiunto al personale",
+    "saved": "Modifiche salvate",
+    "credentials": "Password e PIN",
+    "credentialsButton": "Cambia PIN o password"
+  },
+  "credentials": {
+    "title": "Accesso per {{name}}",
+    "description": "Lascia vuoto ciò che non vuoi cambiare. Un nuovo PIN sblocca un PIN bloccato.",
+    "newPassword": "Nuova password",
+    "newPin": "Nuovo PIN",
+    "save": "Salva",
+    "saved": "Accesso per {{name}} aggiornato"
+  }
+}

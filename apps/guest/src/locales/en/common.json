@@ -1,0 +1,13 @@
+{
+  "appName": "Tavolina",
+  "language": "Language",
+  "welcome": {
+    "title": "Welcome",
+    "body": "Scan the QR code on your table to see the menu and order.",
+    "steps": {
+      "scan": "Scan the QR code on your table",
+      "browse": "Browse the menu with photos",
+      "order": "Order straight from your phone"
+    }
+  }
+}

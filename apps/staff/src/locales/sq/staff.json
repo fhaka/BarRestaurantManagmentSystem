@@ -1,0 +1,67 @@
+{
+  "title": "Stafi",
+  "subtitle": "Njerëzit që punojnë në {{location}}, rolet dhe mënyrat e hyrjes.",
+  "add": "Shto person",
+  "search": "Kërko me emër ose email",
+  "allRoles": "Të gjitha rolet",
+  "filterRole": "Filtro sipas rolit",
+  "count_one": "{{count}} person",
+  "count_other": "{{count}} persona",
+  "columns": {
+    "name": "Emri",
+    "role": "Roli",
+    "signIn": "Hyrja",
+    "lastLogin": "Hyrja e fundit",
+    "status": "Gjendja"
+  },
+  "status": {
+    "active": "Aktiv",
+    "inactive": "Joaktiv",
+    "pinLocked": "PIN i bllokuar"
+  },
+  "signIn": {
+    "pin": "PIN",
+    "password": "Fjalëkalim",
+    "none": "Pa hyrje"
+  },
+  "never": "Asnjëherë",
+  "empty": {
+    "title": "Ende nuk ka staf",
+    "description": "Shtoni kamarierët, arkëtarët dhe kuzhinën që të hyjnë me PIN-in e tyre.",
+    "noMatch": "Askush nuk përputhet me kërkimin",
+    "noMatchDescription": "Provoni një emër tjetër ose hiqni filtrin e rolit."
+  },
+  "form": {
+    "createTitle": "Shto një person në staf",
+    "editTitle": "Ndrysho {{name}}",
+    "createDescription": "Kamarierët zakonisht kanë vetëm PIN. Email-i dhe fjalëkalimi duhen vetëm për të lidhur pajisjet.",
+    "name": "Emri i plotë",
+    "namePlaceholder": "p.sh. Arta Krasniqi",
+    "email": "Email",
+    "emailHint": "Opsional. Nevojitet për të hyrë me fjalëkalim.",
+    "phone": "Telefoni",
+    "role": "Roli",
+    "roleHint": "Roli vendos çfarë sheh dhe çfarë mund të bëjë personi në këtë lokal.",
+    "lang": "Gjuha e ndërfaqes",
+    "password": "Fjalëkalimi",
+    "passwordHint": "Opsional, të paktën 8 karaktere.",
+    "pin": "PIN (4 shifra)",
+    "pinHint": "Për ndërrimin e shpejtë në pajisjet e lokalit.",
+    "active": "Aktiv",
+    "activeDescription": "Personat joaktivë nuk mund të hyjnë dhe dalin menjëherë nga të gjitha pajisjet.",
+    "create": "Shto personin",
+    "save": "Ruaj ndryshimet",
+    "created": "{{name}} u shtua në staf",
+    "saved": "Ndryshimet u ruajtën",
+    "credentials": "Fjalëkalimi dhe PIN-i",
+    "credentialsButton": "Ndrysho PIN-in ose fjalëkalimin"
+  },
+  "credentials": {
+    "title": "Hyrja për {{name}}",
+    "description": "Lëreni bosh atë që nuk doni ta ndryshoni. PIN-i i ri zhbllokon PIN-in e bllokuar.",
+    "newPassword": "Fjalëkalim i ri",
+    "newPin": "PIN i ri",
+    "save": "Ruaj",
+    "saved": "Hyrja për {{name}} u përditësua"
+  }
+}

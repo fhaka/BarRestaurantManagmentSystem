@@ -1,0 +1,27 @@
+{
+  "appName": "Tavolina",
+  "tagline": "Management system for restaurants and cafés",
+  "actions": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "retry": "Try again"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "label": "Language",
+    "sq": "Shqip",
+    "en": "English",
+    "it": "Italiano"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The address you opened does not exist. Go back to the start page.",
+    "back": "Back to start"
+  }
+}

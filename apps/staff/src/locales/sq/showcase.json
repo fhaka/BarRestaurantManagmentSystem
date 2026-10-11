@@ -1,0 +1,124 @@
+{
+  "title": "Katalogu i komponentëve",
+  "subtitle": "Komponentët bazë të sistemit të dizajnit Tavolina, në temë të çelët dhe të errët.",
+  "sections": {
+    "colors": "Ngjyrat",
+    "typography": "Tipografia",
+    "buttons": "Butonat",
+    "inputs": "Fushat e formularit",
+    "select": "Përzgjedhja",
+    "overlays": "Dritaret dhe fletët",
+    "table": "Tabela",
+    "badges": "Etiketat",
+    "cards": "Kartat",
+    "toasts": "Njoftimet",
+    "skeleton": "Skeletet e ngarkimit",
+    "empty": "Gjendja bosh"
+  },
+  "typography": {
+    "display": "Tavolina 7 · 4 mysafirë",
+    "body": "Bar Restaurant Las Vegas hap në 07:00. Porositë e mëngjesit shkojnë direkt në bar.",
+    "small": "Teksti dytësor përdoret për detaje dhe udhëzime.",
+    "numbers": "Çmimet dhe kohëmatësit përdorin shifra tabelare"
+  },
+  "buttons": {
+    "send": "Dërgo në kuzhinë",
+    "draft": "Ruaj si draft",
+    "split": "Ndaj faturën",
+    "cancel": "Anulo",
+    "bill": "Kërko faturën",
+    "void": "Anulo artikullin",
+    "sending": "Duke dërguar…",
+    "small": "I vogël",
+    "medium": "Mesatar",
+    "large": "I madh",
+    "add": "Shto artikull",
+    "more": "Më shumë veprime"
+  },
+  "inputs": {
+    "name": "Emri i klientit",
+    "namePlaceholder": "p.sh. Arta",
+    "nameHint": "Shfaqet në faturë dhe në biletën e kuzhinës.",
+    "phone": "Telefoni",
+    "phoneError": "Shkruani një numër të vlefshëm, p.sh. 069 123 4567.",
+    "notes": "Shënime për kuzhinën",
+    "notesPlaceholder": "pa kripë, pa akull, well done…",
+    "disabled": "Fushë e çaktivizuar",
+    "disabledValue": "Vetëm për lexim",
+    "search": "Kërko në menu"
+  },
+  "select": {
+    "area": "Zona",
+    "areaPlaceholder": "Zgjidhni zonën",
+    "course": "Kursi",
+    "courses": {
+      "starter": "Antipastë",
+      "main": "Pjata kryesore",
+      "dessert": "Ëmbëlsirë"
+    }
+  },
+  "overlays": {
+    "openDialog": "Hap dritaren e anulimit",
+    "dialogTitle": "Të anulohet artikulli?",
+    "dialogDescription": "Tavë kosi është dërguar tashmë në kuzhinë. Shkruani arsyen e anulimit; veprimi regjistrohet në auditim.",
+    "reason": "Arsyeja",
+    "reasonPlaceholder": "p.sh. klienti ndryshoi mendje",
+    "confirmVoid": "Anulo artikullin",
+    "openSheet": "Hap fletën anësore",
+    "sheetTitle": "Tavolina 7",
+    "sheetDescription": "Salla · 4 mysafirë · hapur 42 min",
+    "openBottomSheet": "Hap fletën nga poshtë",
+    "bottomSheetTitle": "Kapuçino",
+    "bottomSheetDescription": "Zgjidhni qumështin dhe sheqerin."
+  },
+  "table": {
+    "item": "Artikulli",
+    "category": "Kategoria",
+    "sold": "Shitur",
+    "revenue": "Të ardhurat",
+    "caption": "Artikujt më të shitur sot"
+  },
+  "badges": {
+    "statuses": "Statuset e tavolinave (ngjyrë + ikonë + emër)",
+    "free": "E lirë",
+    "occupied": "E zënë",
+    "ordered": "Porositur",
+    "foodReady": "Ushqimi gati",
+    "billRequested": "Kërkohet fatura",
+    "needsCleaning": "Duhet pastruar",
+    "reserved": "E rezervuar",
+    "tags": "Etiketa të menusë",
+    "vegan": "Vegane",
+    "spicy": "Pikante",
+    "popular": "E preferuar",
+    "new": "E re"
+  },
+  "cards": {
+    "revenue": "Të ardhurat sot",
+    "revenueDelta": "+12% krahasuar me të shtunën e kaluar",
+    "openTables": "Tavolina të hapura",
+    "openTablesDetail": "nga 20 gjithsej",
+    "averageTicket": "Fatura mesatare",
+    "averageTicketDetail": "84 fatura deri tani",
+    "viewReport": "Shiko raportin"
+  },
+  "toasts": {
+    "success": "Sukses",
+    "error": "Gabim",
+    "info": "Informacion",
+    "warning": "Paralajmërim",
+    "successTitle": "Porosia u dërgua",
+    "successBody": "3 artikuj shkuan në Kuzhinë, 1 në Bar.",
+    "errorTitle": "Pagesa nuk u regjistrua",
+    "errorBody": "Lidhja me serverin ra. Provoni përsëri pas pak sekondash.",
+    "infoTitle": "Tavolina 4 kërkon kamarierin",
+    "warningTitle": "Qumështi po mbaron",
+    "warningBody": "Kanë mbetur 2 l, minimumi është 5 l.",
+    "undo": "Zhbëj"
+  },
+  "empty": {
+    "title": "Ende nuk ka porosi",
+    "description": "Hapni një tavolinë nga plani i sallës për të filluar porosinë e parë të ditës.",
+    "action": "Hap planin e sallës"
+  }
+}

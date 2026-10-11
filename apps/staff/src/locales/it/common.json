@@ -1,0 +1,27 @@
+{
+  "appName": "Tavolina",
+  "tagline": "Sistema di gestione per ristoranti e caffè",
+  "actions": {
+    "close": "Chiudi",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "retry": "Riprova"
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Sistema"
+  },
+  "language": {
+    "label": "Lingua",
+    "sq": "Shqip",
+    "en": "English",
+    "it": "Italiano"
+  },
+  "notFound": {
+    "title": "Pagina non trovata",
+    "description": "L'indirizzo aperto non esiste. Torna alla pagina iniziale.",
+    "back": "Torna all'inizio"
+  }
+}

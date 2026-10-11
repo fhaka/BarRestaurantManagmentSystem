@@ -1,0 +1,67 @@
+{
+  "title": "Staff",
+  "subtitle": "People who work at {{location}}, their roles and how they sign in.",
+  "add": "Add person",
+  "search": "Search by name or email",
+  "allRoles": "All roles",
+  "filterRole": "Filter by role",
+  "count_one": "{{count}} person",
+  "count_other": "{{count}} people",
+  "columns": {
+    "name": "Name",
+    "role": "Role",
+    "signIn": "Sign-in",
+    "lastLogin": "Last sign-in",
+    "status": "Status"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pinLocked": "PIN locked"
+  },
+  "signIn": {
+    "pin": "PIN",
+    "password": "Password",
+    "none": "No sign-in"
+  },
+  "never": "Never",
+  "empty": {
+    "title": "No staff yet",
+    "description": "Add waiters, cashiers and the kitchen so they can sign in with their own PIN.",
+    "noMatch": "Nobody matches your search",
+    "noMatchDescription": "Try another name or clear the role filter."
+  },
+  "form": {
+    "createTitle": "Add someone to the staff",
+    "editTitle": "Edit {{name}}",
+    "createDescription": "Waiters usually only need a PIN. Email and password are only needed to connect devices.",
+    "name": "Full name",
+    "namePlaceholder": "e.g. Arta Krasniqi",
+    "email": "Email",
+    "emailHint": "Optional. Needed to sign in with a password.",
+    "phone": "Phone",
+    "role": "Role",
+    "roleHint": "The role decides what this person sees and can do at this location.",
+    "lang": "Interface language",
+    "password": "Password",
+    "passwordHint": "Optional, at least 8 characters.",
+    "pin": "PIN (4 digits)",
+    "pinHint": "For quick switching on the location's devices.",
+    "active": "Active",
+    "activeDescription": "Inactive people can't sign in and are signed out of every device straight away.",
+    "create": "Add person",
+    "save": "Save changes",
+    "created": "{{name}} was added to the staff",
+    "saved": "Changes saved",
+    "credentials": "Password and PIN",
+    "credentialsButton": "Change PIN or password"
+  },
+  "credentials": {
+    "title": "Sign-in for {{name}}",
+    "description": "Leave empty what you don't want to change. A new PIN unlocks a locked PIN.",
+    "newPassword": "New password",
+    "newPin": "New PIN",
+    "save": "Save",
+    "saved": "Sign-in for {{name}} updated"
+  }
+}

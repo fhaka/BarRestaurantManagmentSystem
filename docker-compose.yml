@@ -1,0 +1,30 @@
+# Development services. Production services (api, web, nginx) are added in Phase 10.
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: tavolina-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-tavolina}
+      MYSQL_USER: ${MYSQL_USER:-tavolina}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-tavolina_dev_password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-tavolina_root_dev_password}
+      MYSQL_TEST_DATABASE: ${MYSQL_TEST_DATABASE:-tavolina_test}
+      TZ: Europe/Tirane
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+00:00
+    ports:
+      - '${MYSQL_PORT:-3310}:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  mysql-data:
