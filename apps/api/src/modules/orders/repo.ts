@@ -279,6 +279,7 @@ export interface SessionOrderStats {
   totalMinor: number;
   hasOrders: boolean;
   hasReadyItems: boolean;
+  pendingGuestItems: number;
 }
 
 /** Per table session: the running total and whether food is ordered / waiting at the pass. */
@@ -298,6 +299,7 @@ export async function sessionOrderStats(
       'o.total_minor',
       db.raw("SUM(i.status IN ('sent', 'preparing', 'ready', 'served')) as billable"),
       db.raw("SUM(i.status = 'ready') as ready"),
+      db.raw("SUM(i.status = 'pending_confirmation') as pending"),
     );
   const out = new Map<number, SessionOrderStats>();
   for (const r of rows) {
@@ -306,6 +308,7 @@ export async function sessionOrderStats(
       totalMinor: (prev?.totalMinor ?? 0) + num(r.total_minor),
       hasOrders: Boolean(prev?.hasOrders) || num(r.billable) > 0,
       hasReadyItems: Boolean(prev?.hasReadyItems) || num(r.ready) > 0,
+      pendingGuestItems: (prev?.pendingGuestItems ?? 0) + num(r.pending),
     });
   }
   return out;

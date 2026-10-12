@@ -6,6 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 const API_PORT = 4110;
 const STAFF_PORT = 5190;
+export const GUEST_PORT = 5191;
 export const E2E_DATABASE = 'tavolina_e2e';
 
 export default defineConfig({
@@ -38,7 +39,7 @@ export default defineConfig({
       env: {
         API_PORT: String(API_PORT),
         MYSQL_DATABASE: E2E_DATABASE,
-        CORS_ORIGINS: `http://localhost:${STAFF_PORT}`,
+        CORS_ORIGINS: `http://localhost:${STAFF_PORT},http://localhost:${GUEST_PORT}`,
         LOG_LEVEL: 'warn',
       },
     },
@@ -49,6 +50,14 @@ export default defineConfig({
       reuseExistingServer: false,
       timeout: 60_000,
       env: { API_PORT: String(API_PORT), STAFF_PORT: String(STAFF_PORT) },
+    },
+    {
+      command: `node ../../node_modules/vite/bin/vite.js --port ${GUEST_PORT} --strictPort`,
+      cwd: 'apps/guest',
+      url: `http://localhost:${GUEST_PORT}`,
+      reuseExistingServer: false,
+      timeout: 60_000,
+      env: { API_PORT: String(API_PORT), GUEST_PORT: String(GUEST_PORT) },
     },
   ],
 });

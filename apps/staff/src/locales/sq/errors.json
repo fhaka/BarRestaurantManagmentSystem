@@ -63,5 +63,9 @@
   "ORDER_CLOSED": "Kjo porosi është mbyllur.",
   "ITEM_UNAVAILABLE": "{{itemName}} nuk është në dispozicion tani.",
   "MODIFIERS_INVALID": "Kontrolloni opsionet për {{itemName}}.",
-  "COMBO_INVALID": "Zgjidhni një pjatë për çdo pjesë të {{comboName}}."
+  "COMBO_INVALID": "Zgjidhni një pjatë për çdo pjesë të {{comboName}}.",
+  "GUEST_ORDERING_DISABLED": "Porosia nga menuja QR është e fikur.",
+  "GUEST_BLOCKED": "Ky telefon është i bllokuar.",
+  "TOO_MANY_ORDERS": "Shumë porosi brenda një minute.",
+  "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} nuk shërbehet në këtë orë."
 }

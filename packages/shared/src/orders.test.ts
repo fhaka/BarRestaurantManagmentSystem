@@ -13,7 +13,7 @@ import {
 describe('order item state machine (every transition)', () => {
   const allowed: Record<OrderItemStatus, OrderItemStatus[]> = {
     draft: ['sent'],
-    pending_confirmation: ['sent'],
+    pending_confirmation: ['sent', 'voided'],
     sent: ['preparing', 'ready', 'voided'],
     preparing: ['ready', 'voided'],
     ready: ['served', 'preparing', 'voided'],

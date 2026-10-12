@@ -158,5 +158,26 @@
     "customerPhone": "Telefoni",
     "deliveryAddress": "Adresa e dërgesës",
     "start": "Hap porosinë"
+  },
+  "guest": {
+    "pendingTitle_one": "{{count}} pjatë e porositur nga telefoni",
+    "pendingTitle_other": "{{count}} pjata të porositura nga telefoni",
+    "pendingHint": "Kontrollojeni me tavolinën, pastaj dërgojeni në kuzhinë.",
+    "reject": "Refuzo",
+    "confirm": "Konfirmo dhe dërgo",
+    "rejected": "Porosia e klientit u refuzua",
+    "confirmed": "Porosia e klientit shkoi në kuzhinë",
+    "phones": "Telefonat në këtë tavolinë",
+    "phone": "Telefoni {{n}}",
+    "phoneItems_one": "{{count}} artikull",
+    "phoneItems_other": "{{count}} artikuj",
+    "block": "Blloko",
+    "isBlocked": "I bllokuar",
+    "blockPhone": "Blloko telefonin {{n}}",
+    "blocked": "Telefoni u bllokua",
+    "unblocked": "Telefoni u lejua përsëri",
+    "fromPhone": "E porositur nga telefoni",
+    "toast_one": "Tavolina {{tables}} porositi {{count}} artikull nga menuja QR",
+    "toast_other": "Tavolina {{tables}} porositi {{count}} artikuj nga menuja QR"
   }
 }

@@ -12,3 +12,4 @@ export * from './pricing.js';
 export * from './floor.js';
 export * from './realtime.js';
 export * from './orders.js';
+export * from './guest.js';

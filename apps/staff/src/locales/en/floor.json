@@ -63,7 +63,8 @@
     "splitOk": "Table {{name}} split off",
     "noFreeTables": "There are no free tables right now.",
     "actions": "Actions",
-    "saved": "Saved"
+    "saved": "Saved",
+    "noWaiter": "No waiter yet"
   },
   "editor": {
     "title": "Floor plan editor",
@@ -120,5 +121,21 @@
     "table": "Table {{name}}",
     "hint": "Cut out the cards and put them on the tables. Each code opens that table's menu.",
     "empty": "This area has no active tables."
+  },
+  "requests": {
+    "call_waiter": "Calling the waiter",
+    "bill_cash": "Bill — cash",
+    "bill_card": "Bill — card",
+    "done": "Done",
+    "toast": {
+      "call_waiter": "Table {{table}} is calling the waiter",
+      "bill_cash": "Table {{table}} wants the bill (cash)",
+      "bill_card": "Table {{table}} wants the bill (card)"
+    }
+  },
+  "guestOrder": {
+    "pending_one": "{{count}} QR order to confirm",
+    "pending_other": "{{count}} QR orders to confirm",
+    "review": "Review"
   }
 }

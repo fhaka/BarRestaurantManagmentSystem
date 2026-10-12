@@ -63,7 +63,8 @@
     "splitOk": "Tavolo {{name}} separato",
     "noFreeTables": "Al momento non ci sono tavoli liberi.",
     "actions": "Azioni",
-    "saved": "Salvato"
+    "saved": "Salvato",
+    "noWaiter": "Ancora senza cameriere"
   },
   "editor": {
     "title": "Editor della pianta",
@@ -120,5 +121,21 @@
     "table": "Tavolo {{name}}",
     "hint": "Ritaglia le schede e mettile sui tavoli. Ogni codice apre il menu di quel tavolo.",
     "empty": "Questa zona non ha tavoli attivi."
+  },
+  "requests": {
+    "call_waiter": "Chiama il cameriere",
+    "bill_cash": "Conto — contanti",
+    "bill_card": "Conto — carta",
+    "done": "Fatto",
+    "toast": {
+      "call_waiter": "Il tavolo {{table}} chiama il cameriere",
+      "bill_cash": "Il tavolo {{table}} chiede il conto (contanti)",
+      "bill_card": "Il tavolo {{table}} chiede il conto (carta)"
+    }
+  },
+  "guestOrder": {
+    "pending_one": "{{count}} ordine QR da confermare",
+    "pending_other": "{{count}} ordini QR da confermare",
+    "review": "Vedi"
   }
 }

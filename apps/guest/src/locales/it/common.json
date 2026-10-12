@@ -9,5 +9,137 @@
       "browse": "Sfoglia il menu con le foto",
       "order": "Ordina direttamente dal telefono"
     }
+  },
+  "close": "Chiudi",
+  "table": "Tavolo {{name}}",
+  "offline": "Connessione persa — lo stato dell'ordine potrebbe non essere aggiornato.",
+  "blocked": "Gli ordini da questo telefono sono stati bloccati. Chiedi al personale.",
+  "browseOnly": "Sfoglia il menù qui; l'ordine lo prende il cameriere.",
+  "invalid": {
+    "title": "Questo codice QR non funziona più",
+    "body": "Chiedine uno nuovo al personale o ordina al cameriere."
+  },
+  "requests": {
+    "call": "Chiama il cameriere",
+    "coming": "Il cameriere arriva",
+    "bill": "Chiedi il conto",
+    "billComing": "Il conto arriva",
+    "billTitle": "Come pagherai?",
+    "billBody": "Il cameriere porta il conto al tavolo.",
+    "cash": "Contanti",
+    "card": "Carta",
+    "called": "Il cameriere è stato chiamato",
+    "billAsked": "Il cameriere porta il conto"
+  },
+  "menu": {
+    "search": "Cerca nel menù",
+    "categories": "Categorie",
+    "popular": "I più amati",
+    "new": "Novità",
+    "from": "da {{price}}",
+    "noMatch": "Nessun risultato. Prova un’altra parola o togli il filtro.",
+    "servedBetween": "Servito {{from}}–{{to}}",
+    "notNow": "Non servito ora"
+  },
+  "filter": {
+    "title": "Allergie",
+    "body": "Nascondi i piatti che contengono:",
+    "disclaimer": "Le ricette possono cambiare. In caso di allergia grave, avvisa il cameriere.",
+    "done": "Mostra il menù"
+  },
+  "status": {
+    "button": "Il tuo ordine",
+    "ready_one": "{{count}} pronto",
+    "ready_other": "{{count}} pronti",
+    "title": "Stato dell'ordine",
+    "live": "Si aggiorna mentre la cucina lavora.",
+    "empty": "Ancora niente ordinato.",
+    "mine": "Da questo telefono",
+    "table": "Resto del tavolo",
+    "myTotal": "I tuoi articoli",
+    "tableTotal": "Totale del tavolo",
+    "yours": "Ordinato da te",
+    "byStaff": "Ordinato al cameriere",
+    "otherPhone": "Ordinato da un altro telefono",
+    "pending_confirmation": "In attesa del cameriere",
+    "sent": "Ricevuto in cucina",
+    "preparing": "In preparazione",
+    "ready": "Pronto — in arrivo",
+    "served": "Servito",
+    "voided": "Annullato"
+  },
+  "cart": {
+    "title": "Il tuo ordine",
+    "empty": "Il tuo ordine è vuoto.",
+    "soldOut": "Non più disponibile — rimuovilo",
+    "remove": "Rimuovi {{name}}",
+    "less": "Un {{name}} in meno",
+    "more": "Un {{name}} in più",
+    "total": "Totale",
+    "order": "Ordina",
+    "removeSoldOut": "Rimuovi i piatti non disponibili per continuare.",
+    "confirmNote": "Il cameriere conferma l'ordine prima di mandarlo in cucina.",
+    "directNote": "L'ordine va direttamente in cucina.",
+    "view_one": "Vedi l'ordine ({{count}})",
+    "view_other": "Vedi l'ordine ({{count}})",
+    "added": "{{name}} aggiunto"
+  },
+  "ordered": {
+    "waiting": "Ordine inviato — il cameriere lo confermerà a breve",
+    "sent": "Ordine inviato in cucina"
+  },
+  "item": {
+    "size": "Formato",
+    "required": "obbligatorio",
+    "optional": "facoltativo",
+    "upTo_one": "fino a {{count}}",
+    "upTo_other": "fino a {{count}}",
+    "chooseOne": "scegline uno",
+    "prep_one": "Circa {{count}} minuto",
+    "prep_other": "Circa {{count}} minuti",
+    "notes": "Qualcosa da sapere?",
+    "notesPlaceholder": "es. senza cipolla, salsa a parte",
+    "less": "Uno in meno",
+    "more": "Uno in più",
+    "update": "Aggiorna",
+    "add": "Aggiungi all'ordine",
+    "incomplete": "Scegli le opzioni obbligatorie."
+  },
+  "errors": {
+    "generic": "Qualcosa è andato storto. Riprova.",
+    "NETWORK": "Nessuna connessione. Controlla internet e riprova.",
+    "GUEST_ORDERING_DISABLED": "Qui non si può ordinare dal telefono. Chiedi al cameriere.",
+    "GUEST_BLOCKED": "Gli ordini da questo telefono sono stati bloccati. Chiedi al personale.",
+    "TOO_MANY_ORDERS": "Troppi ordini in poco tempo. Attendi un minuto.",
+    "ITEM_UNAVAILABLE": "{{itemName}} non è più disponibile.",
+    "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} non è servito a quest’ora.",
+    "MODIFIERS_INVALID": "Controlla le opzioni di {{itemName}}.",
+    "COMBO_INVALID": "Scegli un piatto per ogni parte di {{comboName}}.",
+    "SESSION_STATE": "Non è possibile ora al tuo tavolo. Chiedi al cameriere.",
+    "RATE_LIMITED": "Troppe richieste. Attendi un momento.",
+    "NOT_FOUND": "Questo codice QR non funziona più. Chiedi al personale."
+  },
+  "allergens": {
+    "contains": "Contiene:",
+    "gluten": "Glutine",
+    "crustaceans": "Crostacei",
+    "eggs": "Uova",
+    "fish": "Pesce",
+    "peanuts": "Arachidi",
+    "soybeans": "Soia",
+    "milk": "Latte",
+    "nuts": "Frutta a guscio",
+    "celery": "Sedano",
+    "mustard": "Senape",
+    "sesame": "Sesamo",
+    "sulphites": "Solfiti",
+    "lupin": "Lupini",
+    "molluscs": "Molluschi"
+  },
+  "tags": {
+    "vegan": "Vegano",
+    "vegetarian": "Vegetariano",
+    "gluten_free": "Senza glutine",
+    "spicy": "Piccante"
   }
 }

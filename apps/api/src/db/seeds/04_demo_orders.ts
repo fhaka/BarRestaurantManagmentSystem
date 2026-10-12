@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { Knex } from 'knex';
 import { businessDate, type OrderItemStatus } from '@tavolina/shared';
+import { randomToken, sha256 } from '../../lib/crypto.js';
 import { nextNumber, recalcTotals } from '../../modules/orders/repo.js';
 import { ticketStatusFor } from '../../modules/orders/tickets.js';
 
@@ -229,6 +230,8 @@ export async function seed(knex: Knex): Promise<void> {
     });
     await recalcTotals(knex, orderId!);
   }
+
+  await seedGuestActivity(knex, locationId, item);
 }
 
 /** Weekday lunch menu: a main, a drink and a coffee for 900 L. */
@@ -310,4 +313,69 @@ async function seedLunchCombo(
       })),
     );
   }
+}
+
+/**
+ * QR menu activity: a phone at Salla 2 ordered two lemonades that wait for the waiter, and the
+ * free terrace table T6 is calling a waiter.
+ */
+async function seedGuestActivity(
+  knex: Knex,
+  locationId: number,
+  item: (name: string) => {
+    id: number;
+    name: string;
+    price_minor: number;
+    station_id: number | null;
+  },
+) {
+  const table = async (area: string, name: string) =>
+    (await knex('tables as t')
+      .join('areas as a', 'a.id', 't.area_id')
+      .where({ 'a.name': area, 't.name': name, 't.location_id': locationId })
+      .first<{ id: number }>('t.id'))!.id;
+  const salla2 = await table('Salla', '2');
+  const link = await knex('table_session_tables')
+    .where({ table_id: salla2 })
+    .first<{ session_id: number }>('session_id');
+  const order = await knex('orders')
+    .where({ table_session_id: link!.session_id })
+    .first<{ id: number }>('id');
+  const [guestId] = await knex('guest_sessions').insert({
+    location_id: locationId,
+    table_id: salla2,
+    table_session_id: link!.session_id,
+    token_hash: sha256(randomToken(24)),
+    lang: 'en',
+  });
+  const lemonade = item('Limonadë shtëpie');
+  await knex('order_items').insert({
+    uuid: randomUUID(),
+    order_id: order!.id,
+    menu_item_id: lemonade.id,
+    name_snapshot: lemonade.name,
+    unit_price_minor: lemonade.price_minor,
+    qty: 2,
+    status: 'pending_confirmation',
+    station_id: lemonade.station_id,
+    source: 'guest',
+    guest_session_id: guestId,
+    added_at: new Date(Date.now() - 2 * 60_000),
+  });
+  await recalcTotals(knex, order!.id);
+
+  const t6 = await table('Tarraca', 'T6');
+  const [phone] = await knex('guest_sessions').insert({
+    location_id: locationId,
+    table_id: t6,
+    token_hash: sha256(randomToken(24)),
+    lang: 'it',
+  });
+  await knex('service_requests').insert({
+    location_id: locationId,
+    table_id: t6,
+    guest_session_id: phone,
+    type: 'call_waiter',
+    created_at: new Date(Date.now() - 60_000),
+  });
 }

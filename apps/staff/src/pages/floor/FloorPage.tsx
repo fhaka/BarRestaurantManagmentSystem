@@ -1,7 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutGrid, List, PencilRuler, Users, WifiOff } from 'lucide-react';
+import {
+  BellRing,
+  LayoutGrid,
+  List,
+  PencilRuler,
+  Receipt,
+  Smartphone,
+  Users,
+  WifiOff,
+} from 'lucide-react';
+import type { TFunction } from 'i18next';
 import { TABLE_STATUSES, formatMoney, type FloorTable } from '@tavolina/shared';
 import {
   Badge,
@@ -212,6 +222,42 @@ function Legend() {
   );
 }
 
+/** Guests waiting for something: a call, the bill, or a QR order to confirm. */
+function attentionLabel(table: FloorTable, t: TFunction<'floor'>): string {
+  const parts = [
+    ...table.requests.map((r) => t(`requests.${r.type}`)),
+    table.session?.pendingGuestItems
+      ? t('guestOrder.pending', { count: table.session.pendingGuestItems })
+      : null,
+  ].filter(Boolean);
+  return parts.length ? `, ${parts.join(', ')}` : '';
+}
+
+function Attention({ table, className }: { table: FloorTable; className?: string }) {
+  const pending = table.session?.pendingGuestItems ?? 0;
+  if (!table.requests.length && !pending) return null;
+  const bill = table.requests.some((r) => r.type !== 'call_waiter');
+  const call = table.requests.some((r) => r.type === 'call_waiter');
+  return (
+    <span
+      className={cn(
+        'z-10 flex items-center gap-0.5 rounded-full bg-danger px-1.5 py-0.5 text-[11px] font-bold text-danger-fg shadow-raised motion-safe:animate-pulse',
+        className,
+      )}
+      aria-hidden
+    >
+      {call ? <BellRing className="size-3.5" /> : null}
+      {bill ? <Receipt className="size-3.5" /> : null}
+      {pending ? (
+        <>
+          <Smartphone className="size-3.5" />
+          {pending}
+        </>
+      ) : null}
+    </span>
+  );
+}
+
 function TableLabel({ table, compact, now }: { table: FloorTable; compact: boolean; now: number }) {
   const { t } = useTranslation('floor');
   const elapsed = useElapsed();
@@ -231,7 +277,7 @@ function TableLabel({ table, compact, now }: { table: FloorTable; compact: boole
           {s ? (
             <span className="flex items-center gap-1 text-[11px] opacity-80">
               <Users className="size-3" aria-hidden />
-              {s.guestCount} · {s.waiterName.split(' ')[0]}
+              {s.guestCount} · {s.waiterName?.split(' ')[0] ?? t('table.noWaiter')}
             </span>
           ) : null}
         </>
@@ -257,9 +303,9 @@ function PlanView({ tables, onSelect }: { tables: FloorTable[]; onSelect: (id: n
               onClick={() => onSelect(table.id)}
               aria-label={`${t('table.title', { name: table.name })}: ${t(`status.${table.status}`)}${
                 table.session
-                  ? `, ${t('guests', { count: table.session.guestCount })}, ${table.session.waiterName}`
+                  ? `, ${t('guests', { count: table.session.guestCount })}, ${table.session.waiterName ?? t('table.noWaiter')}`
                   : ''
-              }`}
+              }${attentionLabel(table, t)}`}
               className={cn(
                 'absolute transition-transform hover:z-10 hover:scale-[1.03] focus-visible:z-10',
                 style.tile
@@ -281,6 +327,7 @@ function PlanView({ tables, onSelect }: { tables: FloorTable[]; onSelect: (id: n
                 className={cn(style.tile, 'shadow-raised')}
               />
               <TableLabel table={table} compact={compact} now={now} />
+              <Attention table={table} className="absolute -left-2 -top-2" />
               {table.session && table.session.tableIds.length > 1 ? (
                 <span
                   className="absolute -right-1 -top-1 size-3 rounded-full border-2 border-surface bg-info"
@@ -320,7 +367,10 @@ function ListView({ tables, onSelect }: { tables: FloorTable[]; onSelect: (id: n
             >
               <span className="flex items-center justify-between gap-2">
                 <span className="text-xl font-extrabold">{table.name}</span>
-                <style.icon className="size-5" aria-hidden />
+                <span className="flex items-center gap-1.5">
+                  <Attention table={table} />
+                  <style.icon className="size-5" aria-hidden />
+                </span>
               </span>
               <span className="text-xs font-semibold">{t(`status.${table.status}`)}</span>
               {s ? (
@@ -328,7 +378,7 @@ function ListView({ tables, onSelect }: { tables: FloorTable[]; onSelect: (id: n
                   <span className="font-mono tabular-nums">
                     {elapsed(s.openedAt, now)} · {t('guests', { count: s.guestCount })}
                   </span>
-                  <span className="truncate opacity-80">{s.waiterName}</span>
+                  <span className="truncate opacity-80">{s.waiterName ?? t('table.noWaiter')}</span>
                   {s.totalMinor > 0 ? (
                     <span className="font-mono font-semibold">{formatMoney(s.totalMinor)}</span>
                   ) : null}

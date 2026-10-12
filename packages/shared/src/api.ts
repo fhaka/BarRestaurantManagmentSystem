@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const API_BASE_PATH = '/api/v1';
+export { API_BASE_PATH } from './constants.js';
 
 /** Machine-readable error codes. Extend as modules are added. */
 export const ERROR_CODES = [
@@ -45,6 +45,10 @@ export const ERROR_CODES = [
   'ITEM_UNAVAILABLE',
   'MODIFIERS_INVALID',
   'COMBO_INVALID',
+  'GUEST_ORDERING_DISABLED',
+  'GUEST_BLOCKED',
+  'TOO_MANY_ORDERS',
+  'ITEM_NOT_AVAILABLE_NOW',
   // Idempotency
   'IDEMPOTENCY_KEY_REUSED',
   'IDEMPOTENCY_IN_PROGRESS',

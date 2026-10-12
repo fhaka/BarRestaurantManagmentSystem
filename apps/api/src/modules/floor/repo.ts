@@ -25,8 +25,9 @@ export interface SessionRow {
   uuid: string;
   locationId: number;
   tableId: number;
-  waiterId: number;
-  waiterName: string;
+  /** Null while a guest-opened table has no waiter. */
+  waiterId: number | null;
+  waiterName: string | null;
   guestCount: number;
   status: SessionStatus;
   openedAt: Date;
@@ -93,7 +94,7 @@ export async function listActiveSessions(
   db: Tx = defaultDb,
 ): Promise<SessionRow[]> {
   const rows = await db('table_sessions as s')
-    .join('users as u', 'u.id', 's.waiter_id')
+    .leftJoin('users as u', 'u.id', 's.waiter_id')
     .where('s.location_id', locationId)
     .whereNot('s.status', 'closed')
     .select('s.*', 'u.name as waiter_name');
@@ -107,8 +108,8 @@ export async function listActiveSessions(
     uuid: r.uuid,
     locationId: Number(r.location_id),
     tableId: Number(r.table_id),
-    waiterId: Number(r.waiter_id),
-    waiterName: r.waiter_name,
+    waiterId: r.waiter_id === null ? null : Number(r.waiter_id),
+    waiterName: r.waiter_name ?? null,
     guestCount: Number(r.guest_count),
     status: r.status as SessionStatus,
     openedAt: r.opened_at as Date,

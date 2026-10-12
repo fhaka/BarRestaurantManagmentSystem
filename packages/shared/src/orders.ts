@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { roundToLek } from './money.js';
 import { localParts } from './time.js';
 
 // ---- Order item state machine (plan §6) --------------------------------------------------------
@@ -8,7 +7,8 @@ import { localParts } from './time.js';
  * draft ──send──▶ sent ──start──▶ preparing ──done──▶ ready ──serve──▶ served
  *   │               │                 │                  │
  *   └─remove        └─────void────────┴──────void────────┘
- * A guest item starts as pending_confirmation and becomes sent when a waiter confirms it.
+ * A guest item starts as pending_confirmation and becomes sent when a waiter confirms it, or
+ * voided when the waiter rejects it.
  * The KDS may mark a sent item ready directly, and "recall" puts ready items back to preparing.
  */
 export const ORDER_ITEM_STATUSES = [
@@ -24,7 +24,7 @@ export type OrderItemStatus = (typeof ORDER_ITEM_STATUSES)[number];
 
 const ITEM_TRANSITIONS: Record<OrderItemStatus, readonly OrderItemStatus[]> = {
   draft: ['sent'],
-  pending_confirmation: ['sent'],
+  pending_confirmation: ['sent', 'voided'],
   sent: ['preparing', 'ready', 'voided'],
   preparing: ['ready', 'voided'],
   ready: ['served', 'preparing', 'voided'],
@@ -56,20 +56,8 @@ export type Course = (typeof COURSES)[number];
 export const KDS_TICKET_STATUSES = ['new', 'in_progress', 'ready', 'done'] as const;
 export type KdsTicketStatus = (typeof KDS_TICKET_STATUSES)[number];
 
-// ---- Money ---------------------------------------------------------------------------------------
-
-/**
- * Business rule 2 (first step): line = (unit price + modifier deltas) × qty, rounded per line to
- * whole lek. Discounts, service and tax are applied on top in Phase 6.
- */
-export function lineTotal(
-  unitPriceMinor: number,
-  modifierDeltasMinor: readonly number[],
-  qty: number,
-): number {
-  const unit = unitPriceMinor + modifierDeltasMinor.reduce((sum, d) => sum + d, 0);
-  return roundToLek(unit * qty);
-}
+// Zod-free pieces live in order-math.ts so phone bundles can use them without the schemas.
+export * from './order-math.js';
 
 // ---- Business day --------------------------------------------------------------------------------
 
@@ -79,42 +67,6 @@ export const BUSINESS_DAY_START_HOUR = 4;
 export function businessDate(at: Date, timeZone: string): string {
   const shifted = new Date(at.getTime() - BUSINESS_DAY_START_HOUR * 3_600_000);
   return localParts(shifted, timeZone).date;
-}
-
-// ---- Modifier choices ----------------------------------------------------------------------------
-
-export interface ModifierGroupRule {
-  id: number;
-  name: string;
-  minSelect: number;
-  maxSelect: number;
-  required: boolean;
-  modifierIds: number[];
-}
-
-export type ModifierProblem =
-  | { code: 'unknownModifier'; modifierId: number }
-  | { code: 'tooFew'; groupId: number; groupName: string; min: number }
-  | { code: 'tooMany'; groupId: number; groupName: string; max: number };
-
-/** Checks a selection against the item's modifier groups (min/max/required, known ids). */
-export function checkModifierSelection(
-  groups: readonly ModifierGroupRule[],
-  selected: readonly number[],
-): ModifierProblem[] {
-  const problems: ModifierProblem[] = [];
-  const allowed = new Map<number, number>();
-  for (const g of groups) for (const id of g.modifierIds) allowed.set(id, g.id);
-  for (const id of selected)
-    if (!allowed.has(id)) problems.push({ code: 'unknownModifier', modifierId: id });
-  for (const g of groups) {
-    const count = selected.filter((id) => allowed.get(id) === g.id).length;
-    const min = g.required ? Math.max(1, g.minSelect) : g.minSelect;
-    if (count < min) problems.push({ code: 'tooFew', groupId: g.id, groupName: g.name, min });
-    if (count > g.maxSelect)
-      problems.push({ code: 'tooMany', groupId: g.id, groupName: g.name, max: g.maxSelect });
-  }
-  return problems;
 }
 
 // ---- Schemas -------------------------------------------------------------------------------------
@@ -199,6 +151,12 @@ export const voidItemSchema = z.object({
 export const serveItemsSchema = z.object({
   /** Item refs to serve; every ready item of the order when omitted. */
   itemRefs: z.array(refSchema).max(200).optional(),
+});
+
+/** Staff turn down lines guests ordered from the QR menu. */
+export const rejectGuestItemsSchema = z.object({
+  itemRefs: z.array(refSchema).max(200).optional(),
+  reason: z.string().trim().max(200).nullish(),
 });
 
 export const itemStatusSchema = z.object({ status: z.enum(['preparing', 'ready']) });

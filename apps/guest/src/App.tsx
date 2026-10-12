@@ -1,14 +1,21 @@
 import { useTranslation } from 'react-i18next';
 import { BookOpen, QrCode, Smartphone } from 'lucide-react';
-import { LANGS } from '@tavolina/shared';
-import { cn, useTheme } from '@tavolina/ui';
-import { changeLanguage } from './i18n';
+import { useTheme } from '@tavolina/ui';
+import { LanguageSwitch } from './components/LanguageSwitch';
+import { TablePage } from './pages/TablePage';
 
-/** Phase 0 placeholder. The real menu lives at /t/:tableToken from Phase 5. */
+/** The QR code points to /t/<tableToken>; anything else shows how to start. */
+const TABLE_PATH = /^\/t\/([A-Za-z0-9_-]{10,64})\/?$/;
+
 export function App() {
-  const { t, i18n } = useTranslation();
   // Guest app always follows the system theme.
   useTheme({ initial: 'system', persist: false });
+  const match = TABLE_PATH.exec(window.location.pathname);
+  return match ? <TablePage tableToken={match[1]!} /> : <Welcome />;
+}
+
+function Welcome() {
+  const { t } = useTranslation();
 
   const steps = [
     { key: 'scan', icon: QrCode },
@@ -20,28 +27,7 @@ export function App() {
     <div className="mx-auto flex min-h-dvh max-w-md flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-6">
       <header className="flex items-center justify-between">
         <span className="text-lg font-extrabold tracking-tight">{t('appName')}</span>
-        <div
-          role="group"
-          aria-label={t('language')}
-          className="flex rounded-full border border-border-strong p-0.5"
-        >
-          {LANGS.map((lang) => (
-            <button
-              key={lang}
-              type="button"
-              aria-pressed={i18n.language === lang}
-              onClick={() => void changeLanguage(lang)}
-              className={cn(
-                'h-9 min-w-11 rounded-full px-3 text-sm font-semibold uppercase transition-colors',
-                i18n.language === lang
-                  ? 'bg-primary text-primary-fg'
-                  : 'text-foreground-muted hover:text-foreground',
-              )}
-            >
-              {lang}
-            </button>
-          ))}
-        </div>
+        <LanguageSwitch />
       </header>
 
       <main className="flex flex-1 flex-col justify-center gap-8 py-10">

@@ -14,6 +14,8 @@ ordersRouter.post('/orders/:ref/send', ...send, c.sendItems);
 ordersRouter.post('/orders/:ref/fire', ...send, c.fireCourse);
 ordersRouter.post('/orders/:ref/serve', ...create, c.serveItems);
 ordersRouter.post('/orders/:ref/repeat', ...send, c.repeatItems);
+ordersRouter.post('/orders/:ref/guest-items/confirm', ...send, c.confirmGuestItems);
+ordersRouter.post('/orders/:ref/guest-items/reject', ...send, c.rejectGuestItems);
 
 ordersRouter.get('/table-sessions/:ref/order', ...create, c.getSessionOrder);
 ordersRouter.post('/table-sessions/:ref/items', ...create, c.addSessionItems);

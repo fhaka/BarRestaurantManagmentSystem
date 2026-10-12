@@ -1,6 +1,8 @@
 import type { Server as HttpServer } from 'node:http';
 import { Server, type Socket } from 'socket.io';
 import {
+  GUEST_NAMESPACE,
+  guestSocketAuthSchema,
   roomFor,
   socketAuthSchema,
   stationJoinSchema,
@@ -12,6 +14,7 @@ import { db } from '../db/knex.js';
 import { verifyAccessToken } from '../lib/jwt.js';
 import { logger } from '../lib/logger.js';
 import * as accessRepo from '../modules/auth/access-repo.js';
+import * as floorRepo from '../modules/floor/repo.js';
 
 export interface SocketData {
   userId: number;
@@ -68,7 +71,34 @@ export function attachRealtime(httpServer: HttpServer): Server {
         });
     });
   });
+  attachGuestNamespace(io);
   return io;
+}
+
+/**
+ * Guests' phones connect to `/guest` with their table's QR token and join `table:<id>`. They only
+ * receive `guest.updated` ("something changed at your table") and refetch their state.
+ */
+function attachGuestNamespace(server: Server) {
+  const guests = server.of(GUEST_NAMESPACE);
+  guests.use((socket, next) => {
+    const parsed = guestSocketAuthSchema.safeParse(socket.handshake.auth);
+    if (!parsed.success) return next(new Error('unauthorized'));
+    floorRepo
+      .findTableByToken(parsed.data.tableToken)
+      .then((table) => {
+        if (!table || !table.active) return next(new Error('unauthorized'));
+        socket.data = { tableId: table.id };
+        next();
+      })
+      .catch((err: unknown) => {
+        logger.warn({ err }, 'Guest socket authentication failed');
+        next(new Error('unauthorized'));
+      });
+  });
+  guests.on('connection', (socket) => {
+    void socket.join(roomFor.table((socket.data as { tableId: number }).tableId));
+  });
 }
 
 async function joinStation(socket: Socket, payload: unknown): Promise<boolean> {
@@ -103,5 +133,12 @@ export function emit<T extends Record<string, unknown>>(
 }
 
 export function emitTableUpdated(locationId: number, tableIds: number[], layout = false): void {
-  emit('table.updated', locationId, { tableIds: [...new Set(tableIds)], layout });
+  const unique = [...new Set(tableIds)];
+  emit('table.updated', locationId, { tableIds: unique, layout });
+  // Guests at these tables refetch their order and status (layout edits don't concern them).
+  if (io && !layout && unique.length) {
+    io.of(GUEST_NAMESPACE)
+      .to(unique.map(roomFor.table))
+      .emit('guest.updated', { tableIds: unique });
+  }
 }

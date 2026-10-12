@@ -12,6 +12,7 @@ import {
   Plus,
   Repeat,
   Send,
+  Smartphone,
   Trash2,
 } from 'lucide-react';
 import { formatMoney, type AdminMenu, type Order, type OrderItem } from '@tavolina/shared';
@@ -29,6 +30,7 @@ import { api } from '../../lib/api';
 import { useErrorMessages } from '../../lib/errors';
 import { useMyOutbox } from '../../lib/outbox';
 import { useSession } from '../../lib/session';
+import { GuestPhones } from './GuestPhones';
 import { VoidDialog } from './VoidDialog';
 import { ITEM_STATUS_STYLE, describeLine, type CartLine, type OrderTarget } from './order-utils';
 
@@ -89,6 +91,7 @@ export function OrderPanel({
   const lines = items.filter((i) => i.parentItemId === null);
   const childrenOf = (id: number) => items.filter((i) => i.parentItemId === id);
   const readyCount = items.filter((i) => i.status === 'ready' && i.comboId === null).length;
+  const pendingCount = lines.filter((i) => i.status === 'pending_confirmation').length;
   const cartView = cart.map((line) => ({ line, view: describeLine(menu, line, timeZone) }));
   const cartTotal = cartView.reduce((sum, x) => sum + x.view.totalMinor, 0);
   const setQty = (uuid: string, qty: number) =>
@@ -199,6 +202,50 @@ export function OrderPanel({
         ) : null}
 
         {/* What the kitchen already has. */}
+        {pendingCount && order && !readOnly && can('order.send') ? (
+          <section
+            aria-labelledby="guest-title"
+            className="m-3 flex flex-col gap-2 rounded-card border-2 border-warning bg-warning-soft p-3 text-warning-soft-fg"
+          >
+            <h2 id="guest-title" className="flex items-center gap-2 font-bold">
+              <Smartphone className="size-4" aria-hidden />
+              {t('guest.pendingTitle', { count: pendingCount })}
+            </h2>
+            <p className="text-sm">{t('guest.pendingHint')}</p>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                loading={busy === 'guest-reject'}
+                onClick={() =>
+                  void run(
+                    'guest-reject',
+                    () =>
+                      api<Order>('POST', `/orders/${order.id}/guest-items/reject`, { body: {} }),
+                    t('guest.rejected'),
+                  )
+                }
+              >
+                <Ban />
+                {t('guest.reject')}
+              </Button>
+              <Button
+                loading={busy === 'guest-confirm'}
+                onClick={() =>
+                  void run(
+                    'guest-confirm',
+                    () =>
+                      api<Order>('POST', `/orders/${order.id}/guest-items/confirm`, { body: {} }),
+                    t('guest.confirmed'),
+                  )
+                }
+              >
+                <Send />
+                {t('guest.confirm')}
+              </Button>
+            </div>
+          </section>
+        ) : null}
+
         <section aria-labelledby="sent-title" className="p-3">
           <div className="mb-2 flex items-center justify-between gap-2">
             <h2
@@ -282,6 +329,7 @@ export function OrderPanel({
             </ul>
           )}
         </section>
+        {target.kind === 'session' ? <GuestPhones sessionId={target.sessionId} /> : null}
       </div>
 
       <footer className="flex flex-col gap-2 border-t border-border bg-surface p-3">
@@ -380,6 +428,12 @@ function SentLine({
             {item.variantName ? (
               <span className="font-normal text-foreground-muted"> · {item.variantName}</span>
             ) : null}
+            {item.source === 'guest' ? (
+              <Smartphone
+                className="ml-1 inline size-3.5 text-foreground-muted"
+                aria-label={t('guest.fromPhone')}
+              />
+            ) : null}
           </span>
           <LineMeta
             details={item.modifiers.map((m) => m.name)}
@@ -399,7 +453,9 @@ function SentLine({
             {t(`status.${status}`)}
           </Badge>
         </div>
-        {!readOnly && (voidable || item.status !== 'voided') ? (
+        {!readOnly &&
+        item.status !== 'pending_confirmation' &&
+        (voidable || item.status !== 'voided') ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

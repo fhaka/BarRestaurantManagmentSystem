@@ -7,6 +7,7 @@ import {
   rectsOverlap,
   tableInputSchema,
   tableUpdateSchema,
+  type FloorRequest,
   type FloorState,
   type FloorTable,
   type Permission,
@@ -39,6 +40,21 @@ export async function canActOnAllTables(actor: FloorActor): Promise<boolean> {
 
 // ---- Live floor ------------------------------------------------------------------------------
 
+/** Open "call waiter" / "bill" requests, by table. */
+async function listOpenRequestsByTable(locationId: number): Promise<Map<number, FloorRequest[]>> {
+  const rows = await db('service_requests')
+    .where({ location_id: locationId, status: 'open' })
+    .orderBy('created_at')
+    .select('id', 'table_id', 'type', 'created_at');
+  const out = new Map<number, FloorRequest[]>();
+  for (const r of rows) {
+    const list = out.get(Number(r.table_id)) ?? [];
+    list.push({ id: Number(r.id), type: r.type, createdAt: (r.created_at as Date).toISOString() });
+    out.set(Number(r.table_id), list);
+  }
+  return out;
+}
+
 export async function getFloor(actor: FloorActor): Promise<FloorState> {
   const [areas, tables, sessions, waiters, actOnAll] = await Promise.all([
     repo.listAreas(actor.locationId),
@@ -48,6 +64,7 @@ export async function getFloor(actor: FloorActor): Promise<FloorState> {
     canActOnAllTables(actor),
   ]);
   const stats = await orderRepo.sessionOrderStats(db, actor.locationId);
+  const requests = await listOpenRequestsByTable(actor.locationId);
   const sessionByTable = new Map<number, (typeof sessions)[number]>();
   for (const s of sessions) for (const tableId of s.tableIds) sessionByTable.set(tableId, s);
 
@@ -61,11 +78,12 @@ export async function getFloor(actor: FloorActor): Promise<FloorState> {
           guestCount: s.guestCount,
           waiterId: s.waiterId,
           waiterName: s.waiterName,
-          mine: actOnAll || s.waiterId === actor.userId,
+          mine: actOnAll || s.waiterId === actor.userId || s.waiterId === null,
           openedAt: s.openedAt.toISOString(),
           tableIds: s.tableIds,
           primaryTableId: s.tableId,
           totalMinor: stats.get(s.id)?.totalMinor ?? 0,
+          pendingGuestItems: stats.get(s.id)?.pendingGuestItems ?? 0,
         }
       : null;
     return {
@@ -86,6 +104,7 @@ export async function getFloor(actor: FloorActor): Promise<FloorState> {
         session: session && { status: session.status, ...stats.get(session.id) },
       }),
       session,
+      requests: requests.get(t.id) ?? [],
     };
   });
 

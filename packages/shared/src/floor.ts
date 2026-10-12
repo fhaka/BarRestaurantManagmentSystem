@@ -193,16 +193,26 @@ export interface FloorSession {
   uuid: string;
   status: SessionStatus;
   guestCount: number;
-  waiterId: number;
-  waiterName: string;
+  /** Null when guests opened the table by ordering from the QR menu (nobody has taken it yet). */
+  waiterId: number | null;
+  waiterName: string | null;
   /** The current user's own table (or they may act on all tables). */
   mine: boolean;
   openedAt: string;
   /** Every table in the session; more than one when tables are merged. */
   tableIds: number[];
   primaryTableId: number;
-  /** Order total so far (orders arrive in Phase 4). */
+  /** Order total so far. */
   totalMinor: number;
+  /** Guest-ordered lines waiting for a waiter to confirm them. */
+  pendingGuestItems: number;
+}
+
+/** An open "call waiter" / "bill please" request from the QR menu. */
+export interface FloorRequest {
+  id: number;
+  type: 'call_waiter' | 'bill_cash' | 'bill_card';
+  createdAt: string;
 }
 
 export interface FloorTable {
@@ -220,6 +230,7 @@ export interface FloorTable {
   needsCleaning: boolean;
   status: TableStatus;
   session: FloorSession | null;
+  requests: FloorRequest[];
 }
 
 export interface FloorState {

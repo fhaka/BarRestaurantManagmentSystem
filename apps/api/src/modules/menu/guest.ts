@@ -5,6 +5,7 @@ import {
   pickLang,
   resolveMenuLang,
   weekdayInMask,
+  type GuestCombo,
   type GuestMenu,
   type GuestMenuCategory,
   type GuestMenuItem,
@@ -124,8 +125,34 @@ export async function buildGuestMenu(
     ]);
   }
 
+  // Set menus: only the dishes guests can see are offered; a part with no dish hides the menu.
+  const visibleItemIds = new Set([...itemsByCategory.values()].flat().map((i) => i.id));
+  const combosByCategory = new Map<number, GuestCombo[]>();
+  for (const combo of menu.combos) {
+    if (!combo.active || !combo.guestVisible) continue;
+    const slots = combo.slots.map((slot) => ({
+      id: slot.id,
+      name: translate(slot.translations, lang, 'name', slot.name),
+      options: slot.items
+        .filter((i) => visibleItemIds.has(i.menuItemId))
+        .map((i) => ({ itemId: i.menuItemId, priceDeltaMinor: i.priceDeltaMinor })),
+    }));
+    if (slots.some((slot) => slot.options.length === 0)) continue;
+    combosByCategory.set(combo.categoryId, [
+      ...(combosByCategory.get(combo.categoryId) ?? []),
+      {
+        id: combo.id,
+        name: translate(combo.translations, lang, 'name', combo.name),
+        description: translate(combo.translations, lang, 'description', combo.description),
+        priceMinor: combo.priceMinor,
+        slots,
+      },
+    ]);
+  }
+
   const hasContent = (c: MenuCategory): boolean =>
     (itemsByCategory.get(c.id)?.length ?? 0) > 0 ||
+    (combosByCategory.get(c.id)?.length ?? 0) > 0 ||
     menu.categories.some(
       (child) => child.parentId === c.id && visibleCategory(child) && hasContent(child),
     );
@@ -145,6 +172,7 @@ export async function buildGuestMenu(
       availableFrom: c.availableFrom,
       availableTo: c.availableTo,
       items: itemsByCategory.get(c.id) ?? [],
+      combos: combosByCategory.get(c.id) ?? [],
     }));
 
   return {

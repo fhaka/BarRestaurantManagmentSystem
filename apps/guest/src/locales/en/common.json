@@ -9,5 +9,137 @@
       "browse": "Browse the menu with photos",
       "order": "Order straight from your phone"
     }
+  },
+  "close": "Close",
+  "table": "Table {{name}}",
+  "offline": "Connection lost — your order status may be out of date.",
+  "blocked": "Ordering from this phone was stopped. Please ask the staff.",
+  "browseOnly": "Browse the menu here; the waiter will take your order.",
+  "invalid": {
+    "title": "This QR code no longer works",
+    "body": "Ask the staff for a new one, or order from the waiter."
+  },
+  "requests": {
+    "call": "Call waiter",
+    "coming": "Waiter is coming",
+    "bill": "Ask for the bill",
+    "billComing": "Bill is coming",
+    "billTitle": "How will you pay?",
+    "billBody": "The waiter brings the bill to your table.",
+    "cash": "Cash",
+    "card": "Card",
+    "called": "The waiter has been called",
+    "billAsked": "The waiter is bringing the bill"
+  },
+  "menu": {
+    "search": "Search the menu",
+    "categories": "Categories",
+    "popular": "Popular",
+    "new": "New",
+    "from": "from {{price}}",
+    "noMatch": "Nothing matches. Try another word or clear the filter.",
+    "servedBetween": "Served {{from}}–{{to}}",
+    "notNow": "Not served right now"
+  },
+  "filter": {
+    "title": "Allergies",
+    "body": "Hide dishes that contain:",
+    "disclaimer": "Recipes can change. If you have a serious allergy, please tell the waiter.",
+    "done": "Show the menu"
+  },
+  "status": {
+    "button": "Your order",
+    "ready_one": "{{count}} ready",
+    "ready_other": "{{count}} ready",
+    "title": "Order status",
+    "live": "Updates live as the kitchen works.",
+    "empty": "Nothing ordered yet.",
+    "mine": "From this phone",
+    "table": "Rest of the table",
+    "myTotal": "Your items",
+    "tableTotal": "Table total",
+    "yours": "Ordered by you",
+    "byStaff": "Ordered with the waiter",
+    "otherPhone": "Ordered from another phone",
+    "pending_confirmation": "Waiting for the waiter",
+    "sent": "Received in the kitchen",
+    "preparing": "Being prepared",
+    "ready": "Ready — on its way",
+    "served": "Served",
+    "voided": "Cancelled"
+  },
+  "cart": {
+    "title": "Your order",
+    "empty": "Your order is empty.",
+    "soldOut": "No longer available — please remove it",
+    "remove": "Remove {{name}}",
+    "less": "One less {{name}}",
+    "more": "One more {{name}}",
+    "total": "Total",
+    "order": "Place order",
+    "removeSoldOut": "Remove the unavailable dishes to continue.",
+    "confirmNote": "The waiter confirms your order before it goes to the kitchen.",
+    "directNote": "Your order goes straight to the kitchen.",
+    "view_one": "View order ({{count}})",
+    "view_other": "View order ({{count}})",
+    "added": "{{name}} added"
+  },
+  "ordered": {
+    "waiting": "Order placed — the waiter will confirm it shortly",
+    "sent": "Order sent to the kitchen"
+  },
+  "item": {
+    "size": "Size",
+    "required": "required",
+    "optional": "optional",
+    "upTo_one": "up to {{count}}",
+    "upTo_other": "up to {{count}}",
+    "chooseOne": "choose one",
+    "prep_one": "About {{count}} minute",
+    "prep_other": "About {{count}} minutes",
+    "notes": "Anything we should know?",
+    "notesPlaceholder": "e.g. no onion, sauce on the side",
+    "less": "One less",
+    "more": "One more",
+    "update": "Update",
+    "add": "Add to order",
+    "incomplete": "Please choose the required options."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "NETWORK": "No connection. Check your internet and try again.",
+    "GUEST_ORDERING_DISABLED": "Ordering from the phone is not available here. Please ask the waiter.",
+    "GUEST_BLOCKED": "Ordering from this phone was stopped. Please ask the staff.",
+    "TOO_MANY_ORDERS": "Too many orders in a short time. Please wait a minute.",
+    "ITEM_UNAVAILABLE": "{{itemName}} is no longer available.",
+    "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} is not served at this time.",
+    "MODIFIERS_INVALID": "Please check the options for {{itemName}}.",
+    "COMBO_INVALID": "Please choose a dish for every part of {{comboName}}.",
+    "SESSION_STATE": "This is not possible at your table right now. Please ask the waiter.",
+    "RATE_LIMITED": "Too many requests. Please wait a moment.",
+    "NOT_FOUND": "This QR code no longer works. Please ask the staff."
+  },
+  "allergens": {
+    "contains": "Contains:",
+    "gluten": "Gluten",
+    "crustaceans": "Crustaceans",
+    "eggs": "Eggs",
+    "fish": "Fish",
+    "peanuts": "Peanuts",
+    "soybeans": "Soy",
+    "milk": "Milk",
+    "nuts": "Tree nuts",
+    "celery": "Celery",
+    "mustard": "Mustard",
+    "sesame": "Sesame",
+    "sulphites": "Sulphites",
+    "lupin": "Lupin",
+    "molluscs": "Molluscs"
+  },
+  "tags": {
+    "vegan": "Vegan",
+    "vegetarian": "Vegetarian",
+    "gluten_free": "Gluten-free",
+    "spicy": "Spicy"
   }
 }

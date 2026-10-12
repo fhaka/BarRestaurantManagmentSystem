@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { DEFAULT_LANG, LANGS, isLang, pickLang, type Lang } from '@tavolina/shared';
+import { DEFAULT_LANG, LANGS, isLang, pickLang } from '@tavolina/shared/client';
+import type { Lang } from '@tavolina/shared';
 
 import sq from './locales/sq/common.json';
 import en from './locales/en/common.json';

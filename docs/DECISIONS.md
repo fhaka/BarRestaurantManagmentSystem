@@ -388,3 +388,78 @@ Playwright runs against its own database `tavolina_e2e` (created with the MySQL 
 app on 5190, so it never touches the dev database or a running `npm run dev`. The database is
 prepared inside the API web-server command because Playwright starts web servers before its
 `globalSetup`.
+
+## D-050 — Guest sessions (Phase 5)
+
+A guest is identified by the table's QR token plus a random token in an httpOnly cookie (`tav_gs`,
+path `/api/v1/guest`, 12 h); only its SHA-256 hash is stored in `guest_sessions`. One guest session
+per phone per table visit. A cookie from another table, or from the previous party at this table
+(bound to a session that has since closed), is ignored and the phone starts a new visit, so the last
+party's phone can never order onto the next party's bill. The session starts when the phone first
+loads the table's state, not only on the first order: found while testing, a live update made the
+phone refetch before its first order's response (and cookie) had arrived, so it showed its own
+lines as "from another phone".
+
+## D-051 — Guests may open a free table; the first waiter to confirm takes it (Phase 5)
+
+Plan §5.5 allows ordering at an "open or openable" table. A guest order on a free table opens a
+table session with **no waiter** (`table_sessions.waiter_id` and `orders.opened_by` became
+nullable). While nobody has taken it, every waiter may act on the table and all of them are alerted;
+the waiter who confirms the first guest order becomes the table's waiter. Phones join the party's
+session; when tables are merged the phones and their requests follow.
+
+## D-052 — Waiter confirmation (Phase 5)
+
+With `guestOrdersRequireConfirmation` on (the default), guest lines are created as
+`pending_confirmation`: they show on the floor (badge), in the order screen and to the guest, but
+not in the kitchen and not in the total. The waiter confirms (lines go to the stations like any
+sent line) or rejects them. A rejection is `pending_confirmation → voided` (transition added to the
+state machine) so the guest sees "cancelled" rather than lines silently disappearing. With the
+setting off, guest lines are sent straight away. `guestOrderingEnabled` off leaves the QR menu
+browse-only.
+
+## D-053 — What guests may order (Phase 5)
+
+Only what the guest menu shows: items and set menus marked visible to guests, in stock, and in
+their category's serving hours (`409 ITEM_NOT_AVAILABLE_NOW`; staff may still order outside hours,
+D-043). Seats and courses sent by a phone are ignored; they are the waiter's business. Prices are
+taken on the server at the moment of ordering, like staff orders.
+
+## D-054 — Anti-abuse (Phase 5)
+
+- Business rule 8: at most 5 orders per minute per guest session (`429 TOO_MANY_ORDERS`), counted
+  in `guest_order_submissions`; other phones at the table are unaffected.
+- Staff can block one phone (`POST /guest-sessions/:id/block`, audited); blocked phones can still
+  read the menu but cannot order or send requests (`403 GUEST_BLOCKED`).
+- All guest endpoints share the per-IP guest rate limit (120/min) and the global API limit.
+- Repeated "call waiter" / "bill" taps reuse the open request instead of creating new ones.
+
+## D-055 — Call waiter and bill requests (Phase 5)
+
+Requests are stored in `service_requests` (`call_waiter`, `bill_cash`, `bill_card`). Calling a
+waiter works even at a free table; asking for the bill needs a table session and also moves an open
+session to `bill_requested`. Requests show as a pulsing badge on the floor and in the table sheet
+with a "Done" button; they are settled automatically when the table closes. The table's waiter gets
+a toast and vibration; a table with no waiter alerts everyone who can take tables.
+
+## D-056 — Live updates for phones (Phase 5)
+
+Phones connect to the Socket.IO namespace `/guest` with their QR token and join `table:<id>`. They
+only ever receive `guest.updated` ("something changed at your table", sent whenever the table's
+floor state changes) and refetch their state over REST, so no staff data reaches a guest socket.
+Phones also poll every 20 s. Staff events gained `service_request.created` and
+`guest_order.pending`.
+
+## D-057 — Guest bundle size (Phase 5)
+
+The guest app imports runtime helpers from `@tavolina/shared/client`, a zod-free entry (money,
+order maths, allergens, constants, languages), and only types from the main entry. Zod had crept in
+through the shared barrel (160 KB → 133 KB gzipped JS after the split, about 0.2 s on 4G). Guest
+order lines carry the dish, size and option ids so the phone shows names in its own language from
+the translated menu (lines store the main-language name, business rule 1).
+
+## D-058 — Deferred from §5.5 (Phase 5)
+
+"Leave a review after payment" needs payments and arrives with Phase 6. When a table session is
+moved to another table, phones keep pointing at the old table's QR code and see the table as free
+until they scan the new one; acceptable for now.

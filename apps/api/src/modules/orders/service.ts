@@ -10,6 +10,7 @@ import {
   itemStatusSchema,
   isUnsent,
   repeatItemsSchema,
+  rejectGuestItemsSchema,
   sendItemsSchema,
   serveItemsSchema,
   updateDraftItemSchema,
@@ -41,7 +42,13 @@ export interface OrderActor extends ActorContext {
 }
 
 type Tx = Knex | Knex.Transaction;
-type ParsedItem = z.output<typeof addItemsSchema>['items'][number];
+export type ParsedItem = z.output<typeof addItemsSchema>['items'][number];
+
+/** Who added a line: a staff member, or a guest's phone (QR menu). */
+export interface LineOrigin {
+  userId: number | null;
+  guestSessionId: number | null;
+}
 
 const now3 = (trx: Tx) => trx.fn.now(3);
 
@@ -147,7 +154,7 @@ export function listOpenOrders(actor: OrderActor) {
 
 // ---- Adding items --------------------------------------------------------------------------------
 
-interface PreparedLine {
+export interface PreparedLine {
   input: ParsedItem;
   parent: InsertRow;
   children: InsertRow[];
@@ -265,7 +272,12 @@ function prepareItem(
   };
 }
 
-function prepareLine(menu: AdminMenu, timeZone: string, at: Date, input: ParsedItem): PreparedLine {
+export function prepareLine(
+  menu: AdminMenu,
+  timeZone: string,
+  at: Date,
+  input: ParsedItem,
+): PreparedLine {
   if (input.menuItemId !== undefined) {
     const prepared = prepareItem(
       menu,
@@ -341,7 +353,7 @@ async function insertRow(
   orderId: number,
   row: InsertRow,
   line: ParsedItem,
-  actor: OrderActor,
+  origin: LineOrigin,
   status: OrderItemStatus,
   parentId: number | null,
 ): Promise<number> {
@@ -362,8 +374,9 @@ async function insertRow(
     notes: line.notes ?? null,
     status,
     station_id: row.stationId,
-    source: 'staff',
-    added_by: actor.userId,
+    source: origin.guestSessionId === null ? 'staff' : 'guest',
+    added_by: origin.userId,
+    guest_session_id: origin.guestSessionId,
   });
   if (row.modifiers.length) {
     await trx('order_item_modifiers').insert(
@@ -378,6 +391,44 @@ async function insertRow(
   return Number(id);
 }
 
+/**
+ * Inserts prepared lines (and combo dishes) into an order. Lines whose uuid already exists are
+ * replays (offline queue, double tap) and are skipped. Returns the new item ids.
+ */
+export async function insertLinesTx(
+  trx: Tx,
+  orderId: number,
+  lines: PreparedLine[],
+  origin: LineOrigin,
+  status: OrderItemStatus,
+): Promise<number[]> {
+  const known = new Map(
+    (
+      await trx('order_items')
+        .whereIn(
+          'uuid',
+          lines.map((l) => l.parent.uuid),
+        )
+        .select('uuid', 'order_id')
+    ).map((r) => [r.uuid as string, Number(r.order_id)]),
+  );
+  const newIds: number[] = [];
+  for (const line of lines) {
+    const seenIn = known.get(line.parent.uuid);
+    if (seenIn !== undefined) {
+      if (seenIn !== orderId)
+        throw AppError.conflict('CONFLICT', 'This item id belongs to another order.');
+      continue;
+    }
+    const parentId = await insertRow(trx, orderId, line.parent, line.input, origin, status, null);
+    newIds.push(parentId);
+    for (const child of line.children) {
+      newIds.push(await insertRow(trx, orderId, child, line.input, origin, status, parentId));
+    }
+  }
+  return newIds;
+}
+
 async function addItemsToOrder(actor: OrderActor, orderId: number, raw: unknown): Promise<Order> {
   const input = addItemsSchema.parse(raw);
   const location = await locationRepo.findLocation(actor.locationId);
@@ -388,33 +439,17 @@ async function addItemsToOrder(actor: OrderActor, orderId: number, raw: unknown)
   const sent = await transactionWithRetry(async (trx) => {
     const order = await repo.findOrderRow(trx, actor.locationId, orderId, true);
     assertOpen(order!);
-    const known = new Map(
-      (
-        await trx('order_items')
-          .whereIn(
-            'uuid',
-            input.items.map((i) => i.uuid),
-          )
-          .select('uuid', 'order_id')
-      ).map((r) => [r.uuid as string, Number(r.order_id)]),
+    const newIds = await insertLinesTx(
+      trx,
+      orderId,
+      lines,
+      { userId: actor.userId, guestSessionId: null },
+      'draft',
     );
-    const newIds: number[] = [];
-    for (const line of lines) {
-      const seenIn = known.get(line.parent.uuid);
-      if (seenIn !== undefined) {
-        // A replay of an item we already have (offline queue, double tap): ignore it.
-        if (seenIn !== orderId)
-          throw AppError.conflict('CONFLICT', 'This item id belongs to another order.');
-        continue;
-      }
-      const parentId = await insertRow(trx, orderId, line.parent, line.input, actor, 'draft', null);
-      newIds.push(parentId);
-      for (const child of line.children) {
-        newIds.push(await insertRow(trx, orderId, child, line.input, actor, 'draft', parentId));
-      }
-    }
     const result =
-      input.send && newIds.length ? await sendItemsTx(trx, actor, orderId, newIds) : null;
+      input.send && newIds.length
+        ? await sendItemsTx(trx, actor.locationId, orderId, newIds)
+        : null;
     await repo.recalcTotals(trx, orderId);
     return result;
   });
@@ -472,9 +507,9 @@ export interface SentResult {
  * KDS ticket is created per station. Items without a station (e.g. bottled drinks the waiter takes
  * from the fridge) are ready at once.
  */
-async function sendItemsTx(
+export async function sendItemsTx(
   trx: Tx,
-  actor: OrderActor,
+  locationId: number,
   orderId: number,
   itemIds: number[],
 ): Promise<SentResult> {
@@ -513,10 +548,10 @@ async function sendItemsTx(
   const ticketIds: number[] = [];
   for (const [stationId, ids] of byStation) {
     const [ticketId] = await trx('kds_tickets').insert({
-      location_id: actor.locationId,
+      location_id: locationId,
       order_id: orderId,
       station_id: stationId,
-      number: await repo.nextNumber(trx, actor.locationId, date, 'ticket'),
+      number: await repo.nextNumber(trx, locationId, date, 'ticket'),
       business_date: date,
       status: 'new',
     });
@@ -557,7 +592,9 @@ export async function sendItems(
           Number(r.id),
         )
       : [];
-    const sent = await sendItemsTx(trx, actor, order.id, [...new Set([...ids, ...children])]);
+    const sent = await sendItemsTx(trx, actor.locationId, order.id, [
+      ...new Set([...ids, ...children]),
+    ]);
     await repo.recalcTotals(trx, order.id);
     return sent;
   });
@@ -912,4 +949,100 @@ export async function repeatItems(
 export async function orderOfItem(actor: OrderActor, ref: string | number) {
   const item = await itemForActor(actor, ref);
   return { orderId: Number(item.order_id), itemId: Number(item.id) };
+}
+
+// ---- Guest orders (QR menu) ----------------------------------------------------------------------
+
+/** Pending guest lines of an order (all, or the named ones), with their combo dishes. */
+async function pendingGuestIds(trx: Tx, orderId: number, refs?: (string | number)[]) {
+  const rows = await trx('order_items')
+    .where({ order_id: orderId, status: 'pending_confirmation' })
+    .select('id', 'uuid', 'parent_item_id');
+  if (!refs) return rows.map((r) => Number(r.id));
+  const wanted = new Set(refs.map(String));
+  const parents = new Set(
+    rows
+      .filter((r) => wanted.has(String(r.id)) || wanted.has(String(r.uuid)))
+      .map((r) => Number(r.id)),
+  );
+  return rows
+    .filter((r) => parents.has(Number(r.id)) || parents.has(Number(r.parent_item_id)))
+    .map((r) => Number(r.id));
+}
+
+/**
+ * A waiter confirms what guests ordered from their phones: the lines go to the kitchen. A table
+ * that guests opened themselves becomes this waiter's table.
+ */
+export async function confirmGuestItems(
+  actor: OrderActor,
+  orderRef: string | number,
+  raw: unknown,
+): Promise<Order> {
+  const input = sendItemsSchema.parse(raw ?? {});
+  const order = await orderForActor(actor, orderRef);
+  assertOpen(order);
+  const sent = await transactionWithRetry(async (trx) => {
+    const ids = await pendingGuestIds(trx, order.id, input.itemRefs);
+    if (!ids.length) throw AppError.conflict('ORDER_ITEM_STATE', 'No guest order is waiting.');
+    if (order.tableSessionId) {
+      await trx('table_sessions')
+        .where({ id: order.tableSessionId })
+        .whereNull('waiter_id')
+        .update({ waiter_id: actor.userId });
+    }
+    const result = await sendItemsTx(trx, actor.locationId, order.id, ids);
+    await repo.recalcTotals(trx, order.id);
+    await writeAudit(
+      actor,
+      {
+        action: 'order.guest_items_confirmed',
+        entityType: 'order',
+        entityId: order.id,
+        after: { itemIds: ids },
+      },
+      trx,
+    );
+    return result;
+  });
+  emitItemsSent(actor.locationId, order.id, sent);
+  if (order.tableSessionId)
+    emitTableUpdated(actor.locationId, await tableIdsOf(order.tableSessionId));
+  return repo.loadOrder(db, order.id);
+}
+
+/** A waiter turns down guest lines (e.g. a prank or a dish the table did not want). */
+export async function rejectGuestItems(
+  actor: OrderActor,
+  orderRef: string | number,
+  raw: unknown,
+): Promise<Order> {
+  const input = rejectGuestItemsSchema.parse(raw ?? {});
+  const order = await orderForActor(actor, orderRef);
+  assertOpen(order);
+  await db.transaction(async (trx) => {
+    const ids = await pendingGuestIds(trx, order.id, input.itemRefs);
+    if (!ids.length) throw AppError.conflict('ORDER_ITEM_STATE', 'No guest order is waiting.');
+    await trx('order_items')
+      .whereIn('id', ids)
+      .update({
+        status: 'voided',
+        voided_at: now3(trx),
+        void_reason: input.reason ?? null,
+        voided_by: actor.userId,
+      });
+    await writeAudit(
+      actor,
+      {
+        action: 'order.guest_items_rejected',
+        entityType: 'order',
+        entityId: order.id,
+        after: { itemIds: ids, reason: input.reason ?? null },
+      },
+      trx,
+    );
+  });
+  if (order.tableSessionId)
+    emitTableUpdated(actor.locationId, await tableIdsOf(order.tableSessionId));
+  return repo.loadOrder(db, order.id);
 }

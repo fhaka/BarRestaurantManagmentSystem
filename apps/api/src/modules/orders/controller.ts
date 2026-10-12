@@ -84,3 +84,9 @@ export const listApprovers = async (req: Request, res: Response) => {
 export const kdsStations = async (req: Request, res: Response) => {
   res.json(await kds.listStations(orderActor(req)));
 };
+export const confirmGuestItems = async (req: Request, res: Response) => {
+  res.json(await service.confirmGuestItems(orderActor(req), ref(req), req.body));
+};
+export const rejectGuestItems = async (req: Request, res: Response) => {
+  res.json(await service.rejectGuestItems(orderActor(req), ref(req), req.body));
+};

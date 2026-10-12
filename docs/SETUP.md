@@ -111,6 +111,12 @@ sign in as `kuzhina@lasvegas.test` (or `bar@…`) to get the kitchen screen at `
 one browser share the sign-in cookie, so use a private window or another browser for the second
 person. `npm run db:seed` resets everything to this state.
 
+Phase 5 adds the guest QR app. Each table's QR code (Floor → print QR sheet) points to
+`http://localhost:5181/t/<token>`; open one on a phone or in a narrow browser window. The demo has a
+phone at Salla 2 with two lemonades waiting for the waiter's confirmation, and terrace table T6
+calling a waiter. Guest orders wait for a waiter by default (location setting). Orders from a free
+table open it without a waiter; the first waiter to confirm takes it.
+
 The first `npm run test:e2e` needs Chromium for Playwright: `npx playwright install chromium`.
 
 `.test` addresses can never receive email. Five wrong PINs lock that person for 5 minutes; a manager

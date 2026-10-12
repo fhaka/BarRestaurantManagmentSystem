@@ -158,5 +158,26 @@
     "customerPhone": "Telefono",
     "deliveryAddress": "Indirizzo di consegna",
     "start": "Apri l'ordine"
+  },
+  "guest": {
+    "pendingTitle_one": "{{count}} piatto ordinato da telefono",
+    "pendingTitle_other": "{{count}} piatti ordinati da telefono",
+    "pendingHint": "Controlla l'ordine con il tavolo, poi mandalo in cucina.",
+    "reject": "Rifiuta",
+    "confirm": "Conferma e invia",
+    "rejected": "Ordine dell'ospite rifiutato",
+    "confirmed": "Ordine dell'ospite inviato in cucina",
+    "phones": "Telefoni a questo tavolo",
+    "phone": "Telefono {{n}}",
+    "phoneItems_one": "{{count}} articolo",
+    "phoneItems_other": "{{count}} articoli",
+    "block": "Blocca",
+    "isBlocked": "Bloccato",
+    "blockPhone": "Blocca il telefono {{n}}",
+    "blocked": "Telefono bloccato",
+    "unblocked": "Telefono di nuovo consentito",
+    "fromPhone": "Ordinato da telefono",
+    "toast_one": "Il tavolo {{tables}} ha ordinato {{count}} articolo dal menù QR",
+    "toast_other": "Il tavolo {{tables}} ha ordinato {{count}} articoli dal menù QR"
   }
 }

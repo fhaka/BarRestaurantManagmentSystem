@@ -9,5 +9,137 @@
       "browse": "Shfletoni menunë me foto",
       "order": "Porositni direkt nga telefoni"
     }
+  },
+  "close": "Mbyll",
+  "table": "Tavolina {{name}}",
+  "offline": "Lidhja ra — gjendja e porosisë mund të mos jetë e përditësuar.",
+  "blocked": "Porositë nga ky telefon u ndalën. Ju lutemi pyesni stafin.",
+  "browseOnly": "Shikoni menunë këtu; porosinë e merr kamarieri.",
+  "invalid": {
+    "title": "Ky kod QR nuk funksionon më",
+    "body": "Kërkojini stafit një të ri ose porosisni te kamarieri."
+  },
+  "requests": {
+    "call": "Thirr kamarierin",
+    "coming": "Kamarieri po vjen",
+    "bill": "Kërko faturën",
+    "billComing": "Fatura po vjen",
+    "billTitle": "Si do të paguani?",
+    "billBody": "Kamarieri jua sjell faturën në tavolinë.",
+    "cash": "Kesh",
+    "card": "Kartë",
+    "called": "Kamarieri u thirr",
+    "billAsked": "Kamarieri po ju sjell faturën"
+  },
+  "menu": {
+    "search": "Kërko në menu",
+    "categories": "Kategoritë",
+    "popular": "Më të preferuarat",
+    "new": "E re",
+    "from": "nga {{price}}",
+    "noMatch": "Asgjë nuk përputhet. Provoni një fjalë tjetër ose hiqni filtrin.",
+    "servedBetween": "Shërbehet {{from}}–{{to}}",
+    "notNow": "Nuk shërbehet tani"
+  },
+  "filter": {
+    "title": "Alergjitë",
+    "body": "Fshih pjatat që përmbajnë:",
+    "disclaimer": "Recetat mund të ndryshojnë. Nëse keni alergji të rëndë, tregojini kamarierit.",
+    "done": "Shfaq menunë"
+  },
+  "status": {
+    "button": "Porosia juaj",
+    "ready_one": "{{count}} gati",
+    "ready_other": "{{count}} gati",
+    "title": "Gjendja e porosisë",
+    "live": "Përditësohet ndërsa kuzhina punon.",
+    "empty": "Ende asgjë e porositur.",
+    "mine": "Nga ky telefon",
+    "table": "Pjesa tjetër e tavolinës",
+    "myTotal": "Artikujt tuaj",
+    "tableTotal": "Totali i tavolinës",
+    "yours": "E porositur nga ju",
+    "byStaff": "E porositur te kamarieri",
+    "otherPhone": "E porositur nga një telefon tjetër",
+    "pending_confirmation": "Në pritje të kamarierit",
+    "sent": "U mor në kuzhinë",
+    "preparing": "Po përgatitet",
+    "ready": "Gati — po vjen",
+    "served": "U shërbye",
+    "voided": "Anuluar"
+  },
+  "cart": {
+    "title": "Porosia juaj",
+    "empty": "Porosia juaj është bosh.",
+    "soldOut": "Nuk ka më — ju lutemi hiqeni",
+    "remove": "Hiq {{name}}",
+    "less": "Një {{name}} më pak",
+    "more": "Një {{name}} më shumë",
+    "total": "Totali",
+    "order": "Porosit",
+    "removeSoldOut": "Hiqni pjatat që nuk ka më për të vazhduar.",
+    "confirmNote": "Kamarieri e konfirmon porosinë para se të shkojë në kuzhinë.",
+    "directNote": "Porosia shkon drejt e në kuzhinë.",
+    "view_one": "Shiko porosinë ({{count}})",
+    "view_other": "Shiko porosinë ({{count}})",
+    "added": "{{name}} u shtua"
+  },
+  "ordered": {
+    "waiting": "Porosia u dërgua — kamarieri do ta konfirmojë së shpejti",
+    "sent": "Porosia shkoi në kuzhinë"
+  },
+  "item": {
+    "size": "Masa",
+    "required": "e detyrueshme",
+    "optional": "opsionale",
+    "upTo_one": "deri në {{count}}",
+    "upTo_other": "deri në {{count}}",
+    "chooseOne": "zgjidhni një",
+    "prep_one": "Rreth {{count}} minutë",
+    "prep_other": "Rreth {{count}} minuta",
+    "notes": "Diçka që duhet të dimë?",
+    "notesPlaceholder": "p.sh. pa qepë, salca veçmas",
+    "less": "Një më pak",
+    "more": "Një më shumë",
+    "update": "Përditëso",
+    "add": "Shto në porosi",
+    "incomplete": "Ju lutemi zgjidhni opsionet e detyrueshme."
+  },
+  "errors": {
+    "generic": "Diçka shkoi keq. Provoni përsëri.",
+    "NETWORK": "Nuk ka lidhje. Kontrolloni internetin dhe provoni përsëri.",
+    "GUEST_ORDERING_DISABLED": "Porosia nga telefoni nuk ofrohet këtu. Ju lutemi pyesni kamarierin.",
+    "GUEST_BLOCKED": "Porositë nga ky telefon u ndalën. Ju lutemi pyesni stafin.",
+    "TOO_MANY_ORDERS": "Shumë porosi në pak kohë. Ju lutemi prisni një minutë.",
+    "ITEM_UNAVAILABLE": "{{itemName}} nuk ka më.",
+    "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} nuk shërbehet në këtë orë.",
+    "MODIFIERS_INVALID": "Kontrolloni opsionet për {{itemName}}.",
+    "COMBO_INVALID": "Zgjidhni një pjatë për çdo pjesë të {{comboName}}.",
+    "SESSION_STATE": "Kjo nuk është e mundur tani në tavolinën tuaj. Ju lutemi pyesni kamarierin.",
+    "RATE_LIMITED": "Shumë kërkesa. Ju lutemi prisni pak.",
+    "NOT_FOUND": "Ky kod QR nuk funksionon më. Ju lutemi pyesni stafin."
+  },
+  "allergens": {
+    "contains": "Përmban:",
+    "gluten": "Gluten",
+    "crustaceans": "Krustace",
+    "eggs": "Vezë",
+    "fish": "Peshk",
+    "peanuts": "Kikirikë",
+    "soybeans": "Soje",
+    "milk": "Qumësht",
+    "nuts": "Arra",
+    "celery": "Selino",
+    "mustard": "Mustardë",
+    "sesame": "Susam",
+    "sulphites": "Sulfite",
+    "lupin": "Lupin",
+    "molluscs": "Molusqe"
+  },
+  "tags": {
+    "vegan": "Vegane",
+    "vegetarian": "Vegjetariane",
+    "gluten_free": "Pa gluten",
+    "spicy": "Pikante"
   }
 }

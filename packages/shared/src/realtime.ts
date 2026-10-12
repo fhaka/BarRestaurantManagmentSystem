@@ -10,6 +10,8 @@ export const REALTIME_EVENTS = [
   'order.items_sent',
   'order_item.status_changed',
   'kds.ticket_bumped',
+  'service_request.created',
+  'guest_order.pending',
 ] as const;
 export type RealtimeEventType = (typeof REALTIME_EVENTS)[number];
 
@@ -58,6 +60,24 @@ export interface TicketBumpedData {
   status: string;
 }
 
+export interface ServiceRequestCreatedData {
+  requestId: number;
+  type: string;
+  tableId: number;
+  tableName: string;
+  tableSessionId: number | null;
+  /** The table's waiter; null when nobody has taken the table yet (tell everyone). */
+  waiterId: number | null;
+}
+
+export interface GuestOrderPendingData {
+  orderId: number;
+  tableSessionId: number;
+  tableNames: string[];
+  waiterId: number | null;
+  itemCount: number;
+}
+
 /** A KDS screen asks to receive one station's tickets. */
 export const stationJoinSchema = z.object({ stationId: z.number().int().positive() });
 
@@ -67,9 +87,17 @@ export const socketAuthSchema = z.object({
   locationId: z.coerce.number().int().positive(),
 });
 
+/**
+ * Guests' phones use their own namespace and only ever hear "something changed at your table"
+ * (`guest.updated`), then refetch their table state.
+ */
+export { GUEST_NAMESPACE } from './constants.js';
+export const guestSocketAuthSchema = z.object({ tableToken: z.string().min(10).max(64) });
+
 export const roomFor = {
   location: (id: number) => `location:${id}`,
   user: (id: number) => `user:${id}`,
   station: (id: number) => `station:${id}`,
   tableSession: (id: number) => `table-session:${id}`,
+  table: (id: number) => `table:${id}`,
 };

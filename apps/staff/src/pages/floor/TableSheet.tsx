@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowRightLeft,
+  BellRing,
+  Check,
   Brush,
   ClipboardList,
   Combine,
@@ -12,6 +15,7 @@ import {
   Plus,
   Receipt,
   RotateCcw,
+  Smartphone,
   Split,
   UserRoundCog,
 } from 'lucide-react';
@@ -97,6 +101,11 @@ function TableActions({
       api<FloorState>('POST', `/table-sessions/${session!.id}/${path}`, { body }),
     { success: (vars) => vars.message, onSuccess: () => setPicker(null) },
   );
+  const queryClient = useQueryClient();
+  const handle = useMutation({
+    mutationFn: (id: number) => api('POST', `/service-requests/${id}/handle`),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['floor'] }),
+  });
   const closeTable = useFloorMutation(
     () => api<FloorState>('POST', `/table-sessions/${session!.id}/close`),
     {
@@ -173,6 +182,46 @@ function TableActions({
         </SheetDescription>
       </SheetHeader>
 
+      {table.requests.length ? (
+        <section className="flex flex-col gap-2 rounded-card border-2 border-danger bg-danger-soft p-3 text-danger-soft-fg">
+          {table.requests.map((r) => (
+            <div key={r.id} className="flex items-center justify-between gap-3">
+              <span className="flex items-center gap-2 font-semibold">
+                {r.type === 'call_waiter' ? (
+                  <BellRing className="size-4" />
+                ) : (
+                  <Receipt className="size-4" />
+                )}
+                {t(`requests.${r.type}`)} · {elapsed(r.createdAt, now)}
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                loading={handle.isPending && handle.variables === r.id}
+                onClick={() => handle.mutate(r.id)}
+              >
+                <Check />
+                {t('requests.done')}
+              </Button>
+            </div>
+          ))}
+        </section>
+      ) : null}
+
+      {session && session.pendingGuestItems > 0 ? (
+        <section className="flex items-center justify-between gap-3 rounded-card border-2 border-warning bg-warning-soft p-3 text-warning-soft-fg">
+          <span className="flex items-center gap-2 font-semibold">
+            <Smartphone className="size-4" />
+            {t('guestOrder.pending', { count: session.pendingGuestItems })}
+          </span>
+          {session.mine && can('order.create') ? (
+            <Button size="sm" asChild>
+              <Link to={`/floor/sessions/${session.id}`}>{t('guestOrder.review')}</Link>
+            </Button>
+          ) : null}
+        </section>
+      ) : null}
+
       {!session ? (
         <div className="flex flex-col gap-5">
           {table.needsCleaning && can('table.open') ? (
@@ -209,8 +258,14 @@ function TableActions({
             <div className="flex flex-col gap-1">
               <dt className="text-foreground-muted">{t('table.waiter')}</dt>
               <dd className="flex items-center gap-2 font-semibold">
-                <Avatar name={session.waiterName} size="sm" />
-                <span className="truncate">{session.waiterName.split(' ')[0]}</span>
+                {session.waiterName ? (
+                  <>
+                    <Avatar name={session.waiterName} size="sm" />
+                    <span className="truncate">{session.waiterName.split(' ')[0]}</span>
+                  </>
+                ) : (
+                  <span className="truncate text-foreground-muted">{t('table.noWaiter')}</span>
+                )}
               </dd>
             </div>
             <div className="flex flex-col gap-1">
@@ -364,7 +419,8 @@ function TableActions({
                     </span>
                     <Select
                       aria-label={t('table.handOver')}
-                      value={String(session.waiterId)}
+                      value={session.waiterId ? String(session.waiterId) : undefined}
+                      placeholder={t('table.noWaiter')}
                       onValueChange={(v) => {
                         const waiter = floor.waiters.find((w) => w.id === Number(v));
                         if (waiter && waiter.id !== session.waiterId) {

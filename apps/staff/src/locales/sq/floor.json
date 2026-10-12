@@ -63,7 +63,8 @@
     "splitOk": "Tavolina {{name}} u nda",
     "noFreeTables": "Nuk ka tavolina të lira në këtë moment.",
     "actions": "Veprime",
-    "saved": "U ruajt"
+    "saved": "U ruajt",
+    "noWaiter": "Pa kamarier ende"
   },
   "editor": {
     "title": "Redaktori i planit",
@@ -120,5 +121,21 @@
     "table": "Tavolina {{name}}",
     "hint": "Prisni kartat dhe vendosini në tavolina. Çdo kod hap menunë e asaj tavoline.",
     "empty": "Kjo zonë nuk ka tavolina aktive."
+  },
+  "requests": {
+    "call_waiter": "Thërret kamarierin",
+    "bill_cash": "Fatura — kesh",
+    "bill_card": "Fatura — kartë",
+    "done": "U krye",
+    "toast": {
+      "call_waiter": "Tavolina {{table}} thërret kamarierin",
+      "bill_cash": "Tavolina {{table}} kërkon faturën (kesh)",
+      "bill_card": "Tavolina {{table}} kërkon faturën (kartë)"
+    }
+  },
+  "guestOrder": {
+    "pending_one": "{{count}} porosi QR për konfirmim",
+    "pending_other": "{{count}} porosi QR për konfirmim",
+    "review": "Shiko"
   }
 }

@@ -1,28 +1,9 @@
 import { z } from 'zod';
 import { langSchema, type Lang } from './i18n.js';
 import { ALL_WEEKDAYS_MASK } from './time.js';
+import { ALLERGENS, DIETARY_TAGS, type Allergen, type DietaryTag } from './allergens.js';
 
-/** The 14 allergens EU Regulation 1169/2011 requires restaurants to declare. */
-export const ALLERGENS = [
-  'gluten',
-  'crustaceans',
-  'eggs',
-  'fish',
-  'peanuts',
-  'soybeans',
-  'milk',
-  'nuts',
-  'celery',
-  'mustard',
-  'sesame',
-  'sulphites',
-  'lupin',
-  'molluscs',
-] as const;
-export type Allergen = (typeof ALLERGENS)[number];
-
-export const DIETARY_TAGS = ['vegan', 'vegetarian', 'gluten_free', 'spicy'] as const;
-export type DietaryTag = (typeof DIETARY_TAGS)[number];
+export * from './allergens.js';
 
 export const STATION_TYPES = ['kitchen', 'bar', 'other'] as const;
 export type StationType = (typeof STATION_TYPES)[number];
@@ -494,6 +475,17 @@ export interface GuestMenuCategory {
   availableFrom: string | null;
   availableTo: string | null;
   items: GuestMenuItem[];
+  /** Set menus listed in this category. */
+  combos: GuestCombo[];
+}
+
+/** A set menu for guests; slot options point at items elsewhere in the guest menu. */
+export interface GuestCombo {
+  id: number;
+  name: string;
+  description: string;
+  priceMinor: number;
+  slots: { id: number; name: string; options: { itemId: number; priceDeltaMinor: number }[] }[];
 }
 
 export interface GuestMenu {

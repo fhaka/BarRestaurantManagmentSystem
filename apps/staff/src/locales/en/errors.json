@@ -63,5 +63,9 @@
   "ORDER_CLOSED": "This order is already closed.",
   "ITEM_UNAVAILABLE": "{{itemName}} is not available right now.",
   "MODIFIERS_INVALID": "Check the options for {{itemName}}.",
-  "COMBO_INVALID": "Choose one dish for every part of {{comboName}}."
+  "COMBO_INVALID": "Choose one dish for every part of {{comboName}}.",
+  "GUEST_ORDERING_DISABLED": "Ordering from the QR menu is turned off.",
+  "GUEST_BLOCKED": "This phone is blocked.",
+  "TOO_MANY_ORDERS": "Too many orders in a minute.",
+  "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} is not served at this time."
 }

@@ -175,4 +175,51 @@ describe('Socket.IO', () => {
     expect(event.data.items[0]!.status).toBe('ready');
     expect((await bumped).data.status).toBe('ready');
   });
+
+  it('guest phones join their table and hear when something changes there', async () => {
+    const api = as(app, manager, fx.locationId);
+    const areaId = (await api.post('/api/v1/areas').send({ name: 'Salla' })).body.id;
+    const tableId = (
+      await api.post('/api/v1/tables').send({ areaId, name: '1', x: 0, y: 0, w: 3, h: 3 })
+    ).body.id;
+    const { db } = await import('../db/knex.js');
+    const { qr_token: tableToken } = await db('tables').where({ id: tableId }).first('qr_token');
+
+    await expect(
+      new Promise((resolve, reject) => {
+        const bad = connect(`${url}/guest`, {
+          path: '/socket.io',
+          auth: { tableToken: 'x'.repeat(22) },
+          transports: ['websocket'],
+          reconnection: false,
+        });
+        sockets.push(bad);
+        bad.once('connect', () => resolve(undefined));
+        bad.once('connect_error', reject);
+      }),
+    ).rejects.toThrow('unauthorized');
+
+    const guest = connect(`${url}/guest`, {
+      path: '/socket.io',
+      auth: { tableToken },
+      transports: ['websocket'],
+      reconnection: false,
+    });
+    sockets.push(guest);
+    await new Promise<void>((resolve) => guest.once('connect', () => resolve()));
+    let staffEvent = false;
+    guest.on('table.updated', () => {
+      staffEvent = true;
+    });
+    const updated = new Promise<{ tableIds: number[] }>((resolve) =>
+      guest.on('guest.updated', resolve),
+    );
+    const waiter = as(app, await login(app, fx.users.waiter.email), fx.locationId);
+    await waiter
+      .post('/api/v1/table-sessions')
+      .send({ uuid: randomUUID(), tableId, guestCount: 2 })
+      .expect(201);
+    expect((await updated).tableIds).toEqual([tableId]);
+    expect(staffEvent).toBe(false);
+  });
 });

@@ -158,5 +158,26 @@
     "customerPhone": "Phone",
     "deliveryAddress": "Delivery address",
     "start": "Start order"
+  },
+  "guest": {
+    "pendingTitle_one": "{{count}} dish ordered from a phone",
+    "pendingTitle_other": "{{count}} dishes ordered from a phone",
+    "pendingHint": "Check the order with the table, then send it to the kitchen.",
+    "reject": "Reject",
+    "confirm": "Confirm and send",
+    "rejected": "Guest order rejected",
+    "confirmed": "Guest order sent to the kitchen",
+    "phones": "Phones at this table",
+    "phone": "Phone {{n}}",
+    "phoneItems_one": "{{count}} item",
+    "phoneItems_other": "{{count}} items",
+    "block": "Block",
+    "isBlocked": "Blocked",
+    "blockPhone": "Block phone {{n}}",
+    "blocked": "Phone blocked",
+    "unblocked": "Phone allowed again",
+    "fromPhone": "Ordered from a phone",
+    "toast_one": "Table {{tables}} ordered {{count}} item from the QR menu",
+    "toast_other": "Table {{tables}} ordered {{count}} items from the QR menu"
   }
 }

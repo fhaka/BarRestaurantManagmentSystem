@@ -4,7 +4,9 @@ import { io, type Socket } from 'socket.io-client';
 import { create } from 'zustand';
 import {
   REALTIME_EVENTS,
+  type GuestOrderPendingData,
   type ItemStatusChangedData,
+  type ServiceRequestCreatedData,
   type RealtimeEnvelope,
 } from '@tavolina/shared';
 import { toast } from '@tavolina/ui';
@@ -25,6 +27,8 @@ const INVALIDATES: Record<(typeof REALTIME_EVENTS)[number], string[]> = {
   'order.items_sent': ['order', 'orders', 'kds'],
   'order_item.status_changed': ['order', 'orders', 'kds'],
   'kds.ticket_bumped': ['kds'],
+  'service_request.created': ['floor'],
+  'guest_order.pending': ['floor', 'order', 'orders'],
 };
 
 // The KDS screen follows one station; remembered so a reconnect joins it again.
@@ -35,6 +39,40 @@ let wantedStation: number | null = null;
 export function followStation(stationId: number | null): void {
   wantedStation = stationId;
   if (stationId && currentSocket?.connected) currentSocket.emit('station:join', { stationId });
+}
+
+/**
+ * Guests at a table want something. Tell that table's waiter; while nobody has taken the table,
+ * tell everyone who can take tables.
+ */
+function forMe(waiterId: number | null): boolean {
+  const session = useSession.getState();
+  return waiterId === null ? session.can('table.open') : waiterId === session.user?.id;
+}
+
+function notifyGuest(type: string, data: Record<string, unknown>) {
+  if (type === 'service_request.created') {
+    const d = data as unknown as ServiceRequestCreatedData;
+    if (!forMe(d.waiterId)) return;
+    toast({
+      tone: 'warning',
+      title: i18n.t(`floor:requests.toast.${d.type as 'call_waiter'}`, { table: d.tableName }),
+      duration: 10_000,
+    });
+  } else if (type === 'guest_order.pending') {
+    const d = data as unknown as GuestOrderPendingData;
+    if (!forMe(d.waiterId)) return;
+    toast({
+      tone: 'info',
+      title: i18n.t('orders:guest.toast', { tables: d.tableNames.join(' + '), count: d.itemCount }),
+      duration: 10_000,
+    });
+  } else return;
+  try {
+    navigator.vibrate?.([200, 80, 200]);
+  } catch {
+    // Vibration is optional.
+  }
 }
 
 /** "Food ready" for the waiter who owns the table (plan §5.5). */
@@ -105,6 +143,7 @@ export function useRealtime(): void {
         if (event.locationId !== locationId) return;
         for (const key of INVALIDATES[type])
           void queryClient.invalidateQueries({ queryKey: [key] });
+        notifyGuest(type, event.data);
         if (type === 'order_item.status_changed') {
           notifyReady(event as unknown as RealtimeEnvelope<ItemStatusChangedData>);
         }

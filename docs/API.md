@@ -227,7 +227,36 @@ timeFrom?, timeTo?, dateFrom?, dateTo?, active? }`. Percent `value` is basis poi
 Weekday masks: bit 0 = Monday … bit 6 = Sunday (127 = every day). Times are `HH:MM` in Europe/Tirane;
 a window may cross midnight.
 
-## Guest (public)
+## Guest QR app (public)
+
+No account. Rate-limited (120/min per IP). A phone is identified by the table's QR token and the
+guest cookie `tav_gs` (D-050). Money in minor units.
+
+| Method & path                         | Notes                                                                                                                                                |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /guest/t/:tableToken`            | `GuestTableInfo`: location, table, `orderingEnabled`, `requiresConfirmation`; 404 if invalid                                                         |
+| `GET /guest/t/:tableToken/menu?lang=` | `GuestMenu` (same rules as the public menu below, plus set menus)                                                                                    |
+| `GET /guest/t/:tableToken/state`      | `GuestTableState`: the table's order lines (`mine`, `byStaff`, status), totals, open requests, `blocked`. Starts the phone's visit (sets the cookie) |
+| `POST /guest/t/:tableToken/orders`    | `{ items: NewOrderItem[] }` (1–30). Opens a free table. `201` with `GuestTableState`                                                                 |
+| `POST /guest/t/:tableToken/requests`  | `{ type: 'call_waiter' \| 'bill_cash' \| 'bill_card' }`                                                                                              |
+
+Errors: `404 NOT_FOUND` (bad token), `403 GUEST_ORDERING_DISABLED`, `403 GUEST_BLOCKED`,
+`429 TOO_MANY_ORDERS` (business rule 8), `409 ITEM_UNAVAILABLE`, `409 ITEM_NOT_AVAILABLE_NOW`,
+`400 MODIFIERS_INVALID`, `400 COMBO_INVALID`, `409 SESSION_STATE` (bill with nothing ordered, or the
+table already paid).
+
+Staff side:
+
+| Method & path                           | Permission     | Notes                                                                                                |
+| --------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------- |
+| `POST /orders/:ref/guest-items/confirm` | `order.send`   | `{ itemRefs? }` — pending guest lines go to the kitchen; an unassigned table becomes the confirmer's |
+| `POST /orders/:ref/guest-items/reject`  | `order.send`   | `{ itemRefs?, reason? }` — pending lines become `voided`                                             |
+| `GET /service-requests`                 | `floor.view`   | Open requests, oldest first                                                                          |
+| `POST /service-requests/:id/handle`     | `floor.view`   | Marks done                                                                                           |
+| `GET /table-sessions/:ref/guests`       | `order.create` | Phones at the table (`GuestSessionSummary[]`)                                                        |
+| `POST /guest-sessions/:id/block`        | `table.open`   | `{ blocked }`, audited                                                                               |
+
+## Public menu
 
 ### `GET /guest/locations/:locationId/menu?lang=`
 
@@ -322,8 +351,13 @@ Same origin, path `/socket.io`. Handshake `auth: { token: <accessToken>, locatio
 | `order.items_sent`          | location + station | `{ orderId, stationIds, ticketIds }`                                               |
 | `order_item.status_changed` | location           | `{ orderId, tableSessionId, waiterId, tableNames, items: [{ id, name, status }] }` |
 | `kds.ticket_bumped`         | location + station | `{ ticketId, stationId, status }`                                                  |
+| `service_request.created`   | location + waiter  | `{ requestId, type, tableId, tableName, tableSessionId, waiterId }`                |
+| `guest_order.pending`       | location + waiter  | `{ orderId, tableSessionId, tableNames, waiterId, itemCount }`                     |
 
 A kitchen screen joins a station room with `socket.emit('station:join', { stationId }, ack)`
 (`ack(true)` when the station belongs to the location); joining another station leaves the old one.
+
+Guests' phones connect to the namespace `/guest` with `auth: { tableToken }`, join `table:<id>` and
+receive only `guest.updated` `{ tableIds }` when something changes at their table (D-056).
 
 Every event is `{ type, locationId, at, data }`. Treat events as hints and refetch from the REST API.

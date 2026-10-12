@@ -30,11 +30,18 @@ function isDuplicate(err: unknown): boolean {
   );
 }
 
-/** Loads an active session the actor may act on (their own, or any if allowed). */
+/**
+ * Loads an active session the actor may act on: their own, any if allowed, or one that guests
+ * opened from the QR menu and no waiter has taken yet.
+ */
 export async function loadSession(actor: FloorActor, id: number, trx: Tx = db) {
   const session = await repo.findSession(actor.locationId, id, trx);
   if (!session) throw AppError.notFound('This table session is closed or does not exist.');
-  if (session.waiterId !== actor.userId && !(await canActOnAllTables(actor))) {
+  if (
+    session.waiterId !== null &&
+    session.waiterId !== actor.userId &&
+    !(await canActOnAllTables(actor))
+  ) {
     throw new AppError(403, 'NOT_YOUR_TABLE', 'This table belongs to another waiter.', {
       waiterName: session.waiterName,
     });
@@ -238,6 +245,13 @@ export async function mergeSession(
         .where({ id })
         .update({ guest_count: Math.min(99, session.guestCount + other.guestCount) });
       await orderRepo.moveSessionOrder(trx, otherId, id);
+      // Guests' phones and their requests follow the merged party.
+      await trx('guest_sessions')
+        .where({ table_session_id: otherId })
+        .update({ table_session_id: id });
+      await trx('service_requests')
+        .where({ table_session_id: otherId })
+        .update({ table_session_id: id });
       await trx('table_sessions')
         .where({ id: otherId })
         .update({
@@ -335,6 +349,10 @@ export async function closeSession(actor: FloorActor, id: number): Promise<Floor
     await trx('table_session_tables').where({ session_id: id }).delete();
     await trx('tables').whereIn('id', session.tableIds).update({ needs_cleaning: true });
     await orderRepo.closeSessionOrders(trx, id);
+    // Requests from the table are settled once the guests leave.
+    await trx('service_requests')
+      .where({ table_session_id: id, status: 'open' })
+      .update({ status: 'handled', handled_by: actor.userId, handled_at: trx.fn.now(3) });
     await writeAudit(
       actor,
       {
