@@ -28,6 +28,13 @@
   "INVALID_REFERENCE": "One of the choices no longer exists. Refresh the page.",
   "IMPORT_INVALID": "Some rows could not be imported. Check the errors.",
   "PAYLOAD_TOO_LARGE": "The file is too large.",
+  "AREA_NOT_EMPTY": "Move or delete the tables in this area first.",
+  "TABLE_OCCUPIED": "This table has guests. Choose a free table.",
+  "TABLE_OVERLAP": "Tables cannot overlap.",
+  "NOT_YOUR_TABLE": "This table belongs to another waiter.",
+  "SESSION_STATE": "The table cannot change to that state now.",
+  "BALANCE_DUE": "Settle the bill before closing the table.",
+  "CONFLICT": "This clashes with another change. Refresh.",
   "fields": {
     "required": "This field is required.",
     "tooShort": "Enter at least {{min}} characters.",
@@ -47,6 +54,14 @@
     "minMax": "The minimum cannot be larger than the maximum.",
     "requiredMin": "A required group needs a minimum of at least 1.",
     "maxOptions": "The maximum cannot exceed the number of options.",
-    "percentMax": "The discount cannot be more than 100%."
-  }
+    "percentMax": "The discount cannot be more than 100%.",
+    "outsideFloor": "The table goes outside the floor plan.",
+    "transferTarget": "Choose a table or a waiter."
+  },
+  "ORDER_ITEM_ALREADY_SENT": "This item was already sent to the kitchen. Void it instead.",
+  "ORDER_ITEM_STATE": "This item cannot change like that any more. The screen has been refreshed.",
+  "ORDER_CLOSED": "This order is already closed.",
+  "ITEM_UNAVAILABLE": "{{itemName}} is not available right now.",
+  "MODIFIERS_INVALID": "Check the options for {{itemName}}.",
+  "COMBO_INVALID": "Choose one dish for every part of {{comboName}}."
 }

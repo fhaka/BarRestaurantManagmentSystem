@@ -1,0 +1,35 @@
+{
+  "chooseStation": "Cili stacion është ky ekran?",
+  "exit": "Dil nga ekrani i kuzhinës",
+  "switchStation": "Ndrysho stacionin",
+  "allDay": "Gjithsej",
+  "soundOn": "Ndiz zërin",
+  "soundOff": "Fik zërin",
+  "history": "Fletët e mbaruara",
+  "close": "Mbyll",
+  "offline": "Lidhja ra — po rilidhet. Mund të mungojnë porosi të reja.",
+  "noHistory": "Ende asnjë fletë e mbaruar.",
+  "columns": {
+    "new": "Të reja",
+    "in_progress": "Në punë",
+    "ready": "Gati"
+  },
+  "table": "Tavolina {{names}}",
+  "takeaway": "Për ta marrë",
+  "delivery": "Dërgesë",
+  "orderNo": "Porosia #{{number}}",
+  "bump": "Shëno fletën {{number}} gati",
+  "seat": "Vendi {{n}}",
+  "course": "Radha {{n}}",
+  "held": "Prit",
+  "itemStatus": {
+    "draft": "Draft",
+    "pending_confirmation": "Për konfirmim",
+    "sent": "E re",
+    "preparing": "Po gatuhet",
+    "ready": "Gati",
+    "served": "Shërbyer",
+    "voided": "Anuluar"
+  },
+  "recall": "Rikthe"
+}

@@ -1,5 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { BookOpen, Eye, FileSpreadsheet, ListPlus, Percent, Settings2 } from 'lucide-react';
+import {
+  BookOpen,
+  Eye,
+  FileSpreadsheet,
+  ListPlus,
+  Percent,
+  Settings2,
+  UtensilsCrossed,
+} from 'lucide-react';
 import {
   Button,
   EmptyState,
@@ -14,6 +22,7 @@ import { useErrorMessages } from '../../lib/errors';
 import { useSession } from '../../lib/session';
 import { ImportExportTab } from './ImportExportTab';
 import { ItemsTab } from './ItemsTab';
+import { CombosTab } from './CombosTab';
 import { ModifiersTab } from './ModifiersTab';
 import { OffersTab } from './OffersTab';
 import { PreviewTab } from './PreviewTab';
@@ -64,6 +73,10 @@ export function MenuPage() {
               <ListPlus aria-hidden />
               {t('tabs.modifiers')}
             </TabsTrigger>
+            <TabsTrigger value="combos">
+              <UtensilsCrossed aria-hidden />
+              {t('tabs.combos')}
+            </TabsTrigger>
             <TabsTrigger value="offers">
               <Percent aria-hidden />
               {t('tabs.offers')}
@@ -86,6 +99,9 @@ export function MenuPage() {
           </TabsContent>
           <TabsContent value="modifiers">
             <ModifiersTab menu={menu.data} />
+          </TabsContent>
+          <TabsContent value="combos">
+            <CombosTab menu={menu.data} />
           </TabsContent>
           <TabsContent value="offers">
             <OffersTab menu={menu.data} />

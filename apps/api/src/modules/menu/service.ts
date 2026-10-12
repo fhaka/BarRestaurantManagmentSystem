@@ -3,6 +3,7 @@ import {
   OUT_OF_STOCK_RESET_TIME,
   TIMEZONE,
   categoryInputSchema,
+  comboInputSchema,
   categoryUpdateSchema,
   itemInputSchema,
   itemUpdateSchema,
@@ -22,6 +23,7 @@ import { db } from '../../db/knex.js';
 import { AppError } from '../../lib/errors.js';
 import { writeAudit, type ActorContext } from '../../lib/audit.js';
 import { removeMenuImage, storeMenuImage } from '../../lib/images.js';
+import { emit } from '../../realtime/server.js';
 import * as repo from './repo.js';
 import { deleteTranslations, saveTranslations } from './translations.js';
 
@@ -493,8 +495,12 @@ export async function setOutOfStock(actor: MenuActor, id: number, raw: unknown, 
       trx,
     );
   });
-  // TODO(phase-3): emit menu.item_availability over Socket.IO once the realtime server exists.
-  return getItem(db, actor.locationId, id);
+  const item = await getItem(db, actor.locationId, id);
+  emit('menu.item_availability', actor.locationId, {
+    itemId: id,
+    outOfStockUntil: item.outOfStockUntil,
+  });
+  return item;
 }
 
 export async function setItemImage(actor: MenuActor, id: number, file: Buffer | undefined) {
@@ -692,4 +698,118 @@ export async function deletePriceRule(actor: MenuActor, id: number) {
     entityType: 'price_rule',
     entityId: id,
   });
+}
+
+// ---- Combos ------------------------------------------------------------------------------------
+
+async function writeCombo(trx: Tx, actor: MenuActor, comboId: number, raw: unknown) {
+  const input = comboInputSchema.parse(raw);
+  await assertOwned(trx, 'menu_categories', [input.categoryId], actor.locationId, 'categoryId');
+  await assertOwned(
+    trx,
+    'menu_items',
+    input.slots.flatMap((s) => s.items.map((i) => i.menuItemId)),
+    actor.locationId,
+    'slots',
+  );
+  await trx('combos').where({ id: comboId }).update({
+    name: input.name,
+    description: input.description,
+    price_minor: input.priceMinor,
+    category_id: input.categoryId,
+    active: input.active,
+    guest_visible: input.guestVisible,
+  });
+  await saveTranslations(trx, 'combo', comboId, input.translations);
+
+  const existing = (await trx('combo_slots').where({ combo_id: comboId }).select('id')).map((r) =>
+    Number(r.id),
+  );
+  const kept: number[] = [];
+  for (const [sort, slot] of input.slots.entries()) {
+    if (slot.id !== undefined && !existing.includes(slot.id)) throw invalidReference('slots');
+    let slotId = slot.id;
+    if (slotId !== undefined) {
+      await trx('combo_slots').where({ id: slotId }).update({ name: slot.name, sort });
+    } else {
+      slotId = Number(
+        (await trx('combo_slots').insert({ combo_id: comboId, name: slot.name, sort }))[0],
+      );
+    }
+    kept.push(slotId);
+    await saveTranslations(trx, 'combo_slot', slotId, slot.translations);
+    await trx('combo_slot_items').where({ slot_id: slotId }).delete();
+    const unique = [...new Map(slot.items.map((i) => [i.menuItemId, i])).values()];
+    await trx('combo_slot_items').insert(
+      unique.map((i, itemSort) => ({
+        slot_id: slotId,
+        menu_item_id: i.menuItemId,
+        price_delta_minor: i.priceDeltaMinor,
+        sort: itemSort,
+      })),
+    );
+  }
+  const removed = existing.filter((id) => !kept.includes(id));
+  if (removed.length) {
+    await trx('combo_slots').whereIn('id', removed).delete();
+    await deleteTranslations(trx, 'combo_slot', removed);
+  }
+  return input;
+}
+
+export async function createCombo(actor: MenuActor, raw: unknown) {
+  const parsed = comboInputSchema.parse(raw);
+  const id = await db.transaction(async (trx) => {
+    const [newId] = await trx('combos').insert({
+      location_id: actor.locationId,
+      category_id: parsed.categoryId,
+      name: parsed.name,
+      price_minor: parsed.priceMinor,
+      sort: await repo.nextSort(trx, 'combos', { location_id: actor.locationId, deleted_at: null }),
+    });
+    await writeCombo(trx, actor, Number(newId), raw);
+    await writeAudit(
+      actor,
+      {
+        action: 'menu.combo_created',
+        entityType: 'combo',
+        entityId: Number(newId),
+        after: { name: parsed.name, priceMinor: parsed.priceMinor },
+      },
+      trx,
+    );
+    return Number(newId);
+  });
+  return (await repo.loadAdminMenu(db, actor.locationId)).combos.find((c) => c.id === id)!;
+}
+
+export async function updateCombo(actor: MenuActor, id: number, raw: unknown) {
+  const before = (await repo.loadAdminMenu(db, actor.locationId)).combos.find((c) => c.id === id);
+  if (!before) throw AppError.notFound('Combo not found');
+  await db.transaction(async (trx) => {
+    const input = await writeCombo(trx, actor, id, raw);
+    if (input.priceMinor !== before.priceMinor) {
+      await writeAudit(
+        actor,
+        {
+          action: 'menu.price_changed',
+          entityType: 'combo',
+          entityId: id,
+          before: { priceMinor: before.priceMinor },
+          after: { priceMinor: input.priceMinor },
+        },
+        trx,
+      );
+    }
+  });
+  return (await repo.loadAdminMenu(db, actor.locationId)).combos.find((c) => c.id === id)!;
+}
+
+export async function deleteCombo(actor: MenuActor, id: number) {
+  const updated = await db('combos')
+    .where({ id, location_id: actor.locationId })
+    .whereNull('deleted_at')
+    .update({ deleted_at: db.fn.now(3) });
+  if (!updated) throw AppError.notFound('Combo not found');
+  await writeAudit(actor, { action: 'menu.combo_deleted', entityType: 'combo', entityId: id });
 }

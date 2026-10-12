@@ -37,6 +37,10 @@ menuRouter.post('/menu/modifier-groups', ...edit, c.createModifierGroup);
 menuRouter.patch('/menu/modifier-groups/:id', ...edit, c.updateModifierGroup);
 menuRouter.delete('/menu/modifier-groups/:id', ...edit, c.deleteModifierGroup);
 
+menuRouter.post('/menu/combos', ...edit, c.createCombo);
+menuRouter.patch('/menu/combos/:id', ...edit, c.updateCombo);
+menuRouter.delete('/menu/combos/:id', ...edit, c.deleteCombo);
+
 menuRouter.post('/menu/price-rules', ...edit, c.createPriceRule);
 menuRouter.patch('/menu/price-rules/:id', ...edit, c.updatePriceRule);
 menuRouter.delete('/menu/price-rules/:id', ...edit, c.deletePriceRule);

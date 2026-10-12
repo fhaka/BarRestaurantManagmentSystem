@@ -1,0 +1,35 @@
+{
+  "chooseStation": "Which station is this screen?",
+  "exit": "Leave the kitchen screen",
+  "switchStation": "Change station",
+  "allDay": "All day",
+  "soundOn": "Turn sound on",
+  "soundOff": "Turn sound off",
+  "history": "Finished tickets",
+  "close": "Close",
+  "offline": "Connection lost — reconnecting. New orders may be missing.",
+  "noHistory": "No finished tickets yet.",
+  "columns": {
+    "new": "New",
+    "in_progress": "In progress",
+    "ready": "Ready"
+  },
+  "table": "Table {{names}}",
+  "takeaway": "Takeaway",
+  "delivery": "Delivery",
+  "orderNo": "Order #{{number}}",
+  "bump": "Mark ticket {{number}} ready",
+  "seat": "Seat {{n}}",
+  "course": "Course {{n}}",
+  "held": "Wait",
+  "itemStatus": {
+    "draft": "Draft",
+    "pending_confirmation": "To confirm",
+    "sent": "New",
+    "preparing": "Cooking",
+    "ready": "Ready",
+    "served": "Served",
+    "voided": "Voided"
+  },
+  "recall": "Recall"
+}

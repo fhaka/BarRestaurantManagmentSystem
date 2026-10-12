@@ -4,9 +4,11 @@ import { env } from './config/env.js';
 import { db } from './db/knex.js';
 import { syncReferenceData } from './db/sync-access.js';
 import { logger } from './lib/logger.js';
+import { attachRealtime, closeRealtime } from './realtime/server.js';
 
 const app = createApp();
 const server = createServer(app);
+attachRealtime(server);
 
 // Keep role → permission rows in line with the code before serving requests (D-016).
 syncReferenceData(db)
@@ -22,6 +24,7 @@ async function shutdown(signal: string) {
   if (shuttingDown) return;
   shuttingDown = true;
   logger.info(`${signal} received, shutting down`);
+  await closeRealtime().catch(() => undefined);
   server.close();
   await db.destroy().catch(() => undefined);
   process.exit(0);

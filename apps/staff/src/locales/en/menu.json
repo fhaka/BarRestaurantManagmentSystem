@@ -7,7 +7,8 @@
     "offers": "Offers",
     "setup": "Stations and VAT",
     "import": "Import / export",
-    "preview": "Guest view"
+    "preview": "Guest view",
+    "combos": "Set menus"
   },
   "categories": {
     "title": "Categories",
@@ -278,5 +279,36 @@
     "edit": "Edit",
     "add": "Add"
   },
-  "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  "combos": {
+    "add": "Add set menu",
+    "emptyTitle": "No set menus yet",
+    "empty": "A set menu has a fixed price and one choice per part, e.g. main + drink + coffee.",
+    "inactive": "Hidden",
+    "close": "Close",
+    "createTitle": "New set menu",
+    "editTitle": "Edit {{name}}",
+    "name": "Name",
+    "namePlaceholder": "e.g. Lunch menu",
+    "price": "Price",
+    "description": "Description",
+    "category": "Shown in category",
+    "active": "Available",
+    "guestVisible": "Show on the guest menu",
+    "slots": "Parts",
+    "slotsHint": "The guest picks one dish in each part. Dishes go to their own station.",
+    "slotName": "Part name",
+    "slotPlaceholder": "e.g. Main course",
+    "removeSlot": "Remove part",
+    "addSlot": "Add part",
+    "surcharge": "Surcharge",
+    "removeItem": "Remove dish",
+    "addItem": "Add a dish…",
+    "save": "Save set menu",
+    "saved": "Set menu saved",
+    "delete": "Delete set menu",
+    "deleteConfirm": "Delete {{name}}?",
+    "deleteDescription": "Orders already taken keep it.",
+    "deleted": "Set menu deleted"
+  }
 }

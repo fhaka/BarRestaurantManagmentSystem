@@ -3,11 +3,13 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu } from 'lucide-react';
 import { Button, Sheet, SheetContent, SheetTitle, Toaster, cn } from '@tavolina/ui';
+import { useRealtime } from '../lib/realtime';
 import { useSession } from '../lib/session';
 import { NAV_ITEMS, visibleNav } from '../nav';
 import { LanguageSelect } from './LanguageSelect';
 import { LocationSwitcher } from './LocationSwitcher';
 import { Logo } from './Logo';
+import { OfflineBanner } from './OfflineBanner';
 import { ThemeSwitch } from './ThemeSwitch';
 import { UserMenu } from './UserMenu';
 
@@ -76,16 +78,17 @@ export function AppLayout() {
   const { t: tc } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
+  useRealtime();
   const current = NAV_ITEMS.find((i) => pathname.startsWith(i.path));
 
   return (
-    <div className="min-h-dvh lg:grid lg:grid-cols-[272px_1fr]">
-      <aside className="sticky top-0 hidden h-dvh border-r border-border bg-surface px-4 py-5 lg:block">
+    <div className="min-h-dvh lg:grid lg:grid-cols-[272px_1fr] print:block">
+      <aside className="sticky top-0 hidden h-dvh border-r border-border bg-surface px-4 py-5 lg:block print:hidden">
         <SidebarContent />
       </aside>
 
       <div className="flex min-w-0 flex-col">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/90 px-2 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/90 px-2 backdrop-blur lg:hidden print:hidden">
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <Button
               variant="ghost"
@@ -107,6 +110,7 @@ export function AppLayout() {
         </header>
 
         <main className="flex-1">
+          <OfflineBanner />
           <Outlet />
         </main>
       </div>

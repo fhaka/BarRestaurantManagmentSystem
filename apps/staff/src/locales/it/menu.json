@@ -7,7 +7,8 @@
     "offers": "Offerte",
     "setup": "Postazioni e IVA",
     "import": "Importa / esporta",
-    "preview": "Vista ospite"
+    "preview": "Vista ospite",
+    "combos": "Menù fissi"
   },
   "categories": {
     "title": "Categorie",
@@ -278,5 +279,36 @@
     "edit": "Modifica",
     "add": "Aggiungi"
   },
-  "weekdays": ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"]
+  "weekdays": ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
+  "combos": {
+    "add": "Aggiungi menù",
+    "emptyTitle": "Nessun menù fisso",
+    "empty": "Un menù fisso ha un prezzo fisso e una scelta per parte, es. piatto + bevanda + caffè.",
+    "inactive": "Nascosto",
+    "close": "Chiudi",
+    "createTitle": "Nuovo menù fisso",
+    "editTitle": "Modifica {{name}}",
+    "name": "Nome",
+    "namePlaceholder": "es. Menù pranzo",
+    "price": "Prezzo",
+    "description": "Descrizione",
+    "category": "Mostrato nella categoria",
+    "active": "Disponibile",
+    "guestVisible": "Mostra nel menù ospiti",
+    "slots": "Parti",
+    "slotsHint": "L'ospite sceglie un piatto per parte. I piatti vanno alla loro postazione.",
+    "slotName": "Nome della parte",
+    "slotPlaceholder": "es. Piatto principale",
+    "removeSlot": "Rimuovi parte",
+    "addSlot": "Aggiungi parte",
+    "surcharge": "Supplemento",
+    "removeItem": "Rimuovi piatto",
+    "addItem": "Aggiungi un piatto…",
+    "save": "Salva menù",
+    "saved": "Menù salvato",
+    "delete": "Elimina menù",
+    "deleteConfirm": "Eliminare {{name}}?",
+    "deleteDescription": "Gli ordini già presi lo mantengono.",
+    "deleted": "Menù eliminato"
+  }
 }

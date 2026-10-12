@@ -28,6 +28,13 @@
   "INVALID_REFERENCE": "Una delle scelte non esiste più. Aggiorna la pagina.",
   "IMPORT_INVALID": "Alcune righe non sono state importate. Controlla gli errori.",
   "PAYLOAD_TOO_LARGE": "Il file è troppo grande.",
+  "AREA_NOT_EMPTY": "Sposta o elimina prima i tavoli di questa zona.",
+  "TABLE_OCCUPIED": "Questo tavolo ha ospiti. Scegli un tavolo libero.",
+  "TABLE_OVERLAP": "I tavoli non possono sovrapporsi.",
+  "NOT_YOUR_TABLE": "Questo tavolo è di un altro cameriere.",
+  "SESSION_STATE": "Il tavolo non può passare a questo stato ora.",
+  "BALANCE_DUE": "Salda il conto prima di chiudere il tavolo.",
+  "CONFLICT": "Questa azione è in conflitto con un altro cambiamento. Aggiorna.",
   "fields": {
     "required": "Questo campo è obbligatorio.",
     "tooShort": "Inserisci almeno {{min}} caratteri.",
@@ -47,6 +54,14 @@
     "minMax": "Il minimo non può superare il massimo.",
     "requiredMin": "Un gruppo obbligatorio richiede un minimo di almeno 1.",
     "maxOptions": "Il massimo non può superare il numero di opzioni.",
-    "percentMax": "Lo sconto non può superare il 100%."
-  }
+    "percentMax": "Lo sconto non può superare il 100%.",
+    "outsideFloor": "Il tavolo esce dalla pianta.",
+    "transferTarget": "Scegli un tavolo o un cameriere."
+  },
+  "ORDER_ITEM_ALREADY_SENT": "Questo articolo è già stato inviato in cucina. Annullalo invece.",
+  "ORDER_ITEM_STATE": "L'articolo non può più cambiare così. Lo schermo è stato aggiornato.",
+  "ORDER_CLOSED": "Questo ordine è già chiuso.",
+  "ITEM_UNAVAILABLE": "{{itemName}} non è disponibile ora.",
+  "MODIFIERS_INVALID": "Controlla le opzioni di {{itemName}}.",
+  "COMBO_INVALID": "Scegli un piatto per ogni parte di {{comboName}}."
 }

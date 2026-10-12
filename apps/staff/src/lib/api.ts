@@ -110,6 +110,8 @@ export interface RequestOptions {
   locationId?: number;
   /** How to read a successful response (default: JSON). */
   responseType?: 'json' | 'text';
+  /** Reuse a key, e.g. when the offline outbox replays a queued action. */
+  idempotencyKey?: string;
 }
 
 /**
@@ -122,7 +124,8 @@ export async function api<T>(
   options: RequestOptions = {},
 ): Promise<T> {
   const { body, query, withLocation = true } = options;
-  const idempotencyKey = method === 'GET' ? undefined : crypto.randomUUID();
+  const idempotencyKey =
+    method === 'GET' ? undefined : (options.idempotencyKey ?? crypto.randomUUID());
   const search = query
     ? `?${new URLSearchParams(
         Object.entries(query)

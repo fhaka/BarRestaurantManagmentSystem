@@ -252,6 +252,57 @@ export const priceRuleInputSchema = z
   });
 export type PriceRuleInput = z.input<typeof priceRuleInputSchema>;
 
+// ---- Combos ("Menu dreke") --------------------------------------------------------------------
+
+export const comboSlotInputSchema = z.object({
+  id: z.number().int().positive().optional(),
+  name,
+  translations: translationsSchema.default({}),
+  /** The dishes the guest chooses one of, with an optional surcharge. */
+  items: z
+    .array(
+      z.object({
+        menuItemId: z.number().int().positive(),
+        priceDeltaMinor: z.number().int().min(0).max(10_000_000).default(0),
+      }),
+    )
+    .min(1)
+    .max(40),
+});
+
+export const comboInputSchema = z.object({
+  name,
+  description: description.default(''),
+  /** Fixed price for the whole menu, tax-inclusive. */
+  priceMinor: minor,
+  /** Where the combo is listed on the order screen and guest menu. */
+  categoryId: z.number().int().positive(),
+  active: z.boolean().default(true),
+  guestVisible: z.boolean().default(true),
+  translations: translationsSchema.default({}),
+  slots: z.array(comboSlotInputSchema).min(1).max(8),
+});
+export type ComboInput = z.input<typeof comboInputSchema>;
+
+export interface MenuComboSlot {
+  id: number;
+  name: string;
+  translations: Translations;
+  items: { menuItemId: number; priceDeltaMinor: number }[];
+}
+
+export interface MenuCombo {
+  id: number;
+  name: string;
+  description: string;
+  priceMinor: number;
+  categoryId: number;
+  active: boolean;
+  guestVisible: boolean;
+  translations: Translations;
+  slots: MenuComboSlot[];
+}
+
 // ---- Import ----------------------------------------------------------------------------------
 
 export const menuImportSchema = z.object({
@@ -394,6 +445,7 @@ export interface PriceRule {
 export interface AdminMenu {
   categories: MenuCategory[];
   items: MenuItem[];
+  combos: MenuCombo[];
   modifierGroups: MenuModifierGroup[];
   priceRules: PriceRule[];
   stations: Station[];

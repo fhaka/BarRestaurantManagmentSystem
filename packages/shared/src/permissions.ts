@@ -23,6 +23,7 @@ export const PERMISSIONS = [
   'floor.edit',
   'table.open',
   'table.transfer',
+  'table.close',
   'table.view_all',
   // Orders & kitchen
   'order.create',
@@ -74,6 +75,7 @@ export const ROLE_PERMISSIONS: Record<RoleKey, readonly Permission[]> = {
     'floor.view',
     'table.open',
     'table.transfer',
+    'table.close',
     'order.create',
     'order.send',
     'order.void',
@@ -85,6 +87,7 @@ export const ROLE_PERMISSIONS: Record<RoleKey, readonly Permission[]> = {
   cashier: [
     'menu.view',
     'floor.view',
+    'table.close',
     'table.view_all',
     'order.create',
     'order.send',

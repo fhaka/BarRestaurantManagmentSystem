@@ -14,6 +14,7 @@ export const badgeVariants = cva(
         warning: 'bg-warning-soft text-warning-soft-fg',
         danger: 'bg-danger-soft text-danger-soft-fg',
         info: 'bg-info-soft text-info-soft-fg',
+        reserved: 'bg-reserved-soft text-reserved-soft-fg',
         solid: 'bg-primary text-primary-fg',
       },
       size: {

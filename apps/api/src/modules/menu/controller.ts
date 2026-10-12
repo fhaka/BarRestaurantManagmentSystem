@@ -127,3 +127,15 @@ export const guestPreview = async (req: Request, res: Response) => {
   const { lang } = z.object({ lang: z.string().max(5).optional() }).parse(req.query);
   res.json(await buildGuestMenu(getLocation(req).id, { lang }));
 };
+
+// Combos
+export const createCombo = async (req: Request, res: Response) => {
+  res.status(201).json(await service.createCombo(menuActor(req), req.body));
+};
+export const updateCombo = async (req: Request, res: Response) => {
+  res.json(await service.updateCombo(menuActor(req), id(req), req.body));
+};
+export const deleteCombo = async (req: Request, res: Response) => {
+  await service.deleteCombo(menuActor(req), id(req));
+  res.status(204).end();
+};

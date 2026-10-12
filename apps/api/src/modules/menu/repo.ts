@@ -5,6 +5,7 @@ import type {
   CategoryIcon,
   DietaryTag,
   MenuCategory,
+  MenuCombo,
   MenuItem,
   MenuModifierGroup,
   PriceRule,
@@ -187,7 +188,8 @@ export async function loadAdminMenu(db: Knex, locationId: number): Promise<Admin
     isDefault: bool(r.is_default),
   }));
 
-  return { categories, items, modifierGroups, priceRules, stations, taxRates };
+  const combos = await loadCombos(db, locationId);
+  return { categories, items, combos, modifierGroups, priceRules, stations, taxRates };
 }
 
 /** Ids from `ids` that do NOT belong to the location (or are deleted). */
@@ -207,7 +209,7 @@ export async function foreignIds(
 
 export async function nextSort(
   db: Knex,
-  table: 'menu_categories' | 'menu_items' | 'modifier_groups' | 'stations',
+  table: 'menu_categories' | 'menu_items' | 'modifier_groups' | 'stations' | 'combos',
   where: Record<string, unknown>,
 ): Promise<number> {
   const row = await db(table).where(where).max<{ max: number | null }>('sort as max').first();
@@ -221,4 +223,53 @@ export async function applyOrder(
   ids: number[],
 ): Promise<void> {
   await Promise.all(ids.map((id, sort) => db(table).where({ id }).update({ sort })));
+}
+
+async function loadCombos(db: Knex, locationId: number): Promise<MenuCombo[]> {
+  const comboRows = await db('combos')
+    .where({ location_id: locationId })
+    .whereNull('deleted_at')
+    .orderBy([{ column: 'sort' }, { column: 'id' }]);
+  if (!comboRows.length) return [];
+  const slotRows = await db('combo_slots')
+    .whereIn(
+      'combo_id',
+      comboRows.map((r) => r.id),
+    )
+    .orderBy([{ column: 'sort' }, { column: 'id' }]);
+  const slotItemRows = slotRows.length
+    ? await db('combo_slot_items')
+        .whereIn(
+          'slot_id',
+          slotRows.map((r) => r.id),
+        )
+        .orderBy('sort')
+    : [];
+  const translations = await loadTranslations(db, [
+    { type: 'combo', ids: comboRows.map((r) => num(r.id)) },
+    { type: 'combo_slot', ids: slotRows.map((r) => num(r.id)) },
+  ]);
+  return comboRows.map((r) => ({
+    id: num(r.id),
+    name: r.name,
+    description: r.description,
+    priceMinor: num(r.price_minor),
+    categoryId: num(r.category_id),
+    active: bool(r.active),
+    guestVisible: bool(r.guest_visible),
+    translations: translationsFor(translations, 'combo', num(r.id)),
+    slots: slotRows
+      .filter((s) => num(s.combo_id) === num(r.id))
+      .map((s) => ({
+        id: num(s.id),
+        name: s.name,
+        translations: translationsFor(translations, 'combo_slot', num(s.id)),
+        items: slotItemRows
+          .filter((i) => num(i.slot_id) === num(s.id))
+          .map((i) => ({
+            menuItemId: num(i.menu_item_id),
+            priceDeltaMinor: num(i.price_delta_minor),
+          })),
+      })),
+  }));
 }

@@ -180,31 +180,33 @@ Audited: `staff.created`, `staff.updated`, `staff.role_changed`, `staff.credenti
 Location-scoped. Money in minor units; prices include VAT. Text fields are in the location's main
 language; other languages go in `translations: { en?: { name?, description? }, it?: {...} }`.
 
-| Method & path                             | Permission          | Notes                                                                              |
-| ----------------------------------------- | ------------------- | ---------------------------------------------------------------------------------- |
-| `GET /menu`                               | `menu.view`         | `AdminMenu`; `costMinor` is null without `menu.edit`                               |
-| `GET /menu/guest-preview?lang=`           | `menu.view`         | Same data as the public guest menu                                                 |
-| `POST /menu/categories`                   | `menu.edit`         | `CategoryInput` (below)                                                            |
-| `PATCH /menu/categories/:id`              | `menu.edit`         | Partial                                                                            |
-| `DELETE /menu/categories/:id`             | `menu.edit`         | `409 CATEGORY_NOT_EMPTY` if it has items or subcategories                          |
-| `POST /menu/categories/reorder`           | `menu.edit`         | `{ ids }` in the new order                                                         |
-| `POST /menu/categories/:id/items/reorder` | `menu.edit`         | `{ ids }`, all from that category                                                  |
-| `POST /menu/categories/:id/image`         | `menu.edit`         | multipart `image`                                                                  |
-| `POST /menu/items`                        | `menu.edit`         | `ItemInput` (below)                                                                |
-| `PATCH /menu/items/:id`                   | `menu.edit`         | Partial; lists replace the full list; price changes audited (`menu.price_changed`) |
-| `DELETE /menu/items/:id`                  | `menu.edit`         | Soft delete                                                                        |
-| `POST /menu/items/:id/image`              | `menu.edit`         | multipart `image`, JPEG/PNG/WebP ≤ 5 MB → item with `imageUrl`, `thumbUrl`         |
-| `DELETE /menu/items/:id/image`            | `menu.edit`         |                                                                                    |
-| `POST /menu/items/:id/out-of-stock`       | `menu.availability` | `{ mode: "today" or "indefinite" or "back" }`                                      |
-| `POST /menu/modifier-groups`              | `menu.edit`         | `ModifierGroupInput` (below)                                                       |
-| `PATCH /menu/modifier-groups/:id`         | `menu.edit`         | Full body; modifiers matched by `id`, missing ones removed                         |
-| `DELETE /menu/modifier-groups/:id`        | `menu.edit`         | Also detaches it from items                                                        |
-| `POST /menu/price-rules`                  | `menu.edit`         | `PriceRuleInput` (below)                                                           |
-| `PATCH` / `DELETE /menu/price-rules/:id`  | `menu.edit`         |                                                                                    |
-| `POST /stations`, `PATCH /stations/:id`   | `menu.edit`         | `{ name, type: kitchen/bar/other, active }`                                        |
-| `POST /tax-rates`, `PATCH /tax-rates/:id` | `settings.edit`     | `{ name, rateBp, isDefault }` (2000 = 20%)                                         |
-| `GET /menu/export`                        | `menu.edit`         | `text/csv`, UTF-8 with BOM                                                         |
-| `POST /menu/import`                       | `menu.edit`         | `{ csv, dryRun = true }` → `MenuImportResult`; problems → `422 IMPORT_INVALID`     |
+| Method & path                                 | Permission          | Notes                                                                                                                                                                     |
+| --------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /menu`                                   | `menu.view`         | `AdminMenu`; `costMinor` is null without `menu.edit`                                                                                                                      |
+| `GET /menu/guest-preview?lang=`               | `menu.view`         | Same data as the public guest menu                                                                                                                                        |
+| `POST /menu/categories`                       | `menu.edit`         | `CategoryInput` (below)                                                                                                                                                   |
+| `PATCH /menu/categories/:id`                  | `menu.edit`         | Partial                                                                                                                                                                   |
+| `DELETE /menu/categories/:id`                 | `menu.edit`         | `409 CATEGORY_NOT_EMPTY` if it has items or subcategories                                                                                                                 |
+| `POST /menu/categories/reorder`               | `menu.edit`         | `{ ids }` in the new order                                                                                                                                                |
+| `POST /menu/categories/:id/items/reorder`     | `menu.edit`         | `{ ids }`, all from that category                                                                                                                                         |
+| `POST /menu/categories/:id/image`             | `menu.edit`         | multipart `image`                                                                                                                                                         |
+| `POST /menu/items`                            | `menu.edit`         | `ItemInput` (below)                                                                                                                                                       |
+| `PATCH /menu/items/:id`                       | `menu.edit`         | Partial; lists replace the full list; price changes audited (`menu.price_changed`)                                                                                        |
+| `DELETE /menu/items/:id`                      | `menu.edit`         | Soft delete                                                                                                                                                               |
+| `POST /menu/items/:id/image`                  | `menu.edit`         | multipart `image`, JPEG/PNG/WebP ≤ 5 MB → item with `imageUrl`, `thumbUrl`                                                                                                |
+| `DELETE /menu/items/:id/image`                | `menu.edit`         |                                                                                                                                                                           |
+| `POST /menu/items/:id/out-of-stock`           | `menu.availability` | `{ mode: "today" or "indefinite" or "back" }`                                                                                                                             |
+| `POST /menu/modifier-groups`                  | `menu.edit`         | `ModifierGroupInput` (below)                                                                                                                                              |
+| `PATCH /menu/modifier-groups/:id`             | `menu.edit`         | Full body; modifiers matched by `id`, missing ones removed                                                                                                                |
+| `DELETE /menu/modifier-groups/:id`            | `menu.edit`         | Also detaches it from items                                                                                                                                               |
+| `POST /menu/combos`, `PATCH /menu/combos/:id` | `menu.edit`         | `{ name, description?, priceMinor, categoryId, active?, guestVisible?, translations?, slots: [{ id?, name, translations?, items: [{ menuItemId, priceDeltaMinor? }] }] }` |
+| `DELETE /menu/combos/:id`                     | `menu.edit`         | Soft delete; orders keep their copy                                                                                                                                       |
+| `POST /menu/price-rules`                      | `menu.edit`         | `PriceRuleInput` (below)                                                                                                                                                  |
+| `PATCH` / `DELETE /menu/price-rules/:id`      | `menu.edit`         |                                                                                                                                                                           |
+| `POST /stations`, `PATCH /stations/:id`       | `menu.edit`         | `{ name, type: kitchen/bar/other, active }`                                                                                                                               |
+| `POST /tax-rates`, `PATCH /tax-rates/:id`     | `settings.edit`     | `{ name, rateBp, isDefault }` (2000 = 20%)                                                                                                                                |
+| `GET /menu/export`                            | `menu.edit`         | `text/csv`, UTF-8 with BOM                                                                                                                                                |
+| `POST /menu/import`                           | `menu.edit`         | `{ csv, dryRun = true }` → `MenuImportResult`; problems → `422 IMPORT_INVALID`                                                                                            |
 
 - **CategoryInput:** `{ name, description?, parentId?, icon?, availableFrom?, availableTo?,
 weekdayMask?, active?, translations? }` (schedule: both times or neither).
@@ -234,3 +236,94 @@ location offers it, else `Accept-Language`, else the location default. Returns `
 active, guest-visible, in-stock items in active categories (empty categories left out), each field
 translated with fallback to the main language, prices including any price rule active now
 (`regularPriceMinor` set when discounted), and `availableNow` per category from its schedule.
+
+## Floor & tables
+
+Location-scoped. Every endpoint that changes the floor returns the full `FloorState` (so the acting
+device updates at once) and emits `table.updated` to the location.
+
+| Method & path                           | Permission       | Notes                                                                |
+| --------------------------------------- | ---------------- | -------------------------------------------------------------------- |
+| `GET /floor`                            | `floor.view`     | `FloorState`: areas, tables with status and session, waiters         |
+| `POST /areas`, `PATCH /areas/:id`       | `floor.edit`     | `{ name, active? }`                                                  |
+| `DELETE /areas/:id`                     | `floor.edit`     | `409 AREA_NOT_EMPTY` if it has tables                                |
+| `GET /areas/:id/qr-sheet`               | `floor.edit`     | `TableQr[]` for the area's active tables                             |
+| `POST /tables`                          | `floor.edit`     | `{ areaId, name, seats?, shape?, x, y, w, h, rotation?, active? }`   |
+| `PATCH /tables/:id`                     | `floor.edit`     | Partial                                                              |
+| `DELETE /tables/:id`                    | `floor.edit`     | `409 TABLE_OCCUPIED` while it has guests                             |
+| `POST /tables/layout`                   | `floor.edit`     | `{ areaId, tables: [{ id, x, y, w, h, rotation }] }`, all or nothing |
+| `GET /tables/:id/qr`                    | `floor.edit`     | `TableQr` JSON, or the SVG with `Accept: image/svg+xml`              |
+| `POST /tables/:id/qr/rotate`            | `floor.edit`     | New token; the old printed code stops working                        |
+| `POST /tables/:id/clean`                | `table.open`     | Clears "needs cleaning"                                              |
+| `POST /table-sessions`                  | `table.open`     | `{ uuid, tableId, guestCount }`; idempotent on `uuid`                |
+| `PATCH /table-sessions/:id`             | `table.open`     | `{ guestCount }`                                                     |
+| `POST /table-sessions/:id/transfer`     | `table.transfer` | `{ toTableId }` or `{ toWaiterId }` (exactly one)                    |
+| `POST /table-sessions/:id/merge`        | `table.transfer` | `{ tableId }` — free table joins, or its session is merged in        |
+| `POST /table-sessions/:id/split`        | `table.transfer` | `{ tableId }` — table leaves the merged group and becomes free       |
+| `POST /table-sessions/:id/request-bill` | `table.open`     | `open → bill_requested`                                              |
+| `POST /table-sessions/:id/reopen`       | `table.open`     | `bill_requested → open`                                              |
+| `POST /table-sessions/:id/close`        | `table.close`    | Closes; tables "need cleaning". `409 BALANCE_DUE` once bills exist   |
+
+Shapes: `square`, `round`, `rectangle`, `bar_stool`. Grid: 48 × 32 cells; tables must fit and must
+not overlap in an area (`400` with `outsideFloor`, `409 TABLE_OVERLAP`). Table statuses: `free`,
+`occupied`, `ordered`, `food_ready`, `bill_requested`, `needs_cleaning`, `reserved` (the last three
+fed by later phases where noted in DECISIONS). Errors: `409 TABLE_OCCUPIED`, `403 NOT_YOUR_TABLE`
+(another waiter's table), `409 SESSION_STATE` (invalid transition), `400 INVALID_REFERENCE`.
+
+## Orders
+
+Location-scoped. Orders, table sessions and order items can be addressed by numeric id or by their
+client-generated `uuid`. Mutations return the full `Order`. Waiters act only on their own tables
+(`403 NOT_YOUR_TABLE`, D-035).
+
+| Method & path                     | Permission     | Notes                                                                                                                                                        |
+| --------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `GET /orders`                     | `order.create` | Open orders: `OrderSummary[]`                                                                                                                                |
+| `POST /orders`                    | `order.create` | `{ uuid, type, tableSessionRef?, customerName?, customerPhone?, deliveryAddress?, pickupAt? }`; idempotent on `uuid`; dine-in returns the table's open order |
+| `GET /orders/:ref`                | `order.create` | `Order`                                                                                                                                                      |
+| `POST /orders/:ref/items`         | `order.create` | `{ items: NewOrderItem[], send? }` (below)                                                                                                                   |
+| `POST /orders/:ref/send`          | `order.send`   | `{ itemRefs? }` — sends drafts (all when omitted)                                                                                                            |
+| `POST /orders/:ref/fire`          | `order.send`   | `{ course: 2 \| 3 }` — releases a held course                                                                                                                |
+| `POST /orders/:ref/serve`         | `order.create` | `{ itemRefs? }` — marks ready items served (all when omitted)                                                                                                |
+| `POST /orders/:ref/repeat`        | `order.send`   | `{ itemRefs, uuids, send? }` — "same again", re-priced now                                                                                                   |
+| `GET /table-sessions/:ref/order`  | `order.create` | `{ order: Order \| null }`                                                                                                                                   |
+| `POST /table-sessions/:ref/items` | `order.create` | Like `/orders/:ref/items`; creates the table's order on the first round                                                                                      |
+| `PATCH /order-items/:ref`         | `order.create` | Drafts only: `{ qty?, seat?, course?, notes? }`                                                                                                              |
+| `DELETE /order-items/:ref`        | `order.create` | Drafts only                                                                                                                                                  |
+| `POST /order-items/:ref/void`     | `order.void`   | `{ reason, approvalToken? }` (D-045)                                                                                                                         |
+| `POST /order-items/:ref/serve`    | `order.create` | One ready item                                                                                                                                               |
+| `PATCH /order-items/:ref/status`  | `kds.bump`     | `{ status: 'preparing' \| 'ready' }`                                                                                                                         |
+| `GET /approvers`                  | `order.create` | People who can approve with their PIN                                                                                                                        |
+
+`NewOrderItem`: `{ uuid, menuItemId | comboId, variantId?, modifierIds?, comboSelections?: [{ slotId,
+menuItemId, variantId?, modifierIds? }], qty?, seat?, course?: 1|2|3, notes? }`. Prices are taken at
+the moment of adding (happy hours applied) and copied onto the line. Errors: `409 ITEM_UNAVAILABLE`,
+`400 MODIFIERS_INVALID` (size or required options missing), `400 COMBO_INVALID`,
+`409 ORDER_ITEM_ALREADY_SENT`, `409 ORDER_ITEM_STATE`, `409 ORDER_CLOSED`, `403 APPROVAL_INVALID`.
+
+## Kitchen display (KDS)
+
+| Method & path                  | Permission | Notes                                                    |
+| ------------------------------ | ---------- | -------------------------------------------------------- |
+| `GET /kds/stations`            | `kds.view` | Active stations                                          |
+| `GET /kds/stations/:id/board`  | `kds.view` | `KdsBoard`: open tickets oldest first + last 10 finished |
+| `POST /kds/tickets/:id/bump`   | `kds.bump` | Every fired dish on the ticket becomes ready             |
+| `POST /kds/tickets/:id/recall` | `kds.bump` | Ready dishes go back to preparing                        |
+
+## Real-time (Socket.IO)
+
+Same origin, path `/socket.io`. Handshake `auth: { token: <accessToken>, locationId }`; errors
+`unauthorized`, `token_expired`, `forbidden`. The socket joins `location:<id>` and `user:<id>`.
+
+| Event                       | Room               | `data`                                                                             |
+| --------------------------- | ------------------ | ---------------------------------------------------------------------------------- |
+| `table.updated`             | location           | `{ tableIds: number[], layout: boolean }`                                          |
+| `menu.item_availability`    | location           | `{ itemId, outOfStockUntil }`                                                      |
+| `order.items_sent`          | location + station | `{ orderId, stationIds, ticketIds }`                                               |
+| `order_item.status_changed` | location           | `{ orderId, tableSessionId, waiterId, tableNames, items: [{ id, name, status }] }` |
+| `kds.ticket_bumped`         | location + station | `{ ticketId, stationId, status }`                                                  |
+
+A kitchen screen joins a station room with `socket.emit('station:join', { stationId }, ack)`
+(`ack(true)` when the station belongs to the location); joining another station leaves the old one.
+
+Every event is `{ type, locationId, at, data }`. Treat events as hints and refetch from the REST API.

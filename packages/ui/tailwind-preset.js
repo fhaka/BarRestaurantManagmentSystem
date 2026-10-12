@@ -58,6 +58,7 @@ export default {
         warning: semantic('warning'),
         danger: semantic('danger'),
         info: semantic('info'),
+        reserved: semantic('reserved'),
         ring: channel('ring'),
       },
       fontFamily: {

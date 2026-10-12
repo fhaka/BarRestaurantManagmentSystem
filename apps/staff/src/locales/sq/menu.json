@@ -7,7 +7,8 @@
     "offers": "Ofertat",
     "setup": "Stacionet dhe TVSH",
     "import": "Import / eksport",
-    "preview": "Pamja e mysafirit"
+    "preview": "Pamja e mysafirit",
+    "combos": "Menu fikse"
   },
   "categories": {
     "title": "Kategoritë",
@@ -278,5 +279,36 @@
     "edit": "Ndrysho",
     "add": "Shto"
   },
-  "weekdays": ["Hën", "Mar", "Mër", "Enj", "Pre", "Sht", "Die"]
+  "weekdays": ["Hën", "Mar", "Mër", "Enj", "Pre", "Sht", "Die"],
+  "combos": {
+    "add": "Shto menu",
+    "emptyTitle": "Ende asnjë menu fikse",
+    "empty": "Një menu fikse ka çmim të caktuar dhe një zgjedhje për çdo pjesë, p.sh. pjatë + pije + kafe.",
+    "inactive": "E fshehur",
+    "close": "Mbyll",
+    "createTitle": "Menu e re",
+    "editTitle": "Ndrysho {{name}}",
+    "name": "Emri",
+    "namePlaceholder": "p.sh. Menu dreke",
+    "price": "Çmimi",
+    "description": "Përshkrimi",
+    "category": "Shfaqet te kategoria",
+    "active": "E disponueshme",
+    "guestVisible": "Shfaqe në menunë e klientit",
+    "slots": "Pjesët",
+    "slotsHint": "Klienti zgjedh një pjatë në çdo pjesë. Pjatat shkojnë te stacioni i tyre.",
+    "slotName": "Emri i pjesës",
+    "slotPlaceholder": "p.sh. Pjata kryesore",
+    "removeSlot": "Hiq pjesën",
+    "addSlot": "Shto pjesë",
+    "surcharge": "Shtesë çmimi",
+    "removeItem": "Hiq pjatën",
+    "addItem": "Shto një pjatë…",
+    "save": "Ruaj menunë",
+    "saved": "Menuja u ruajt",
+    "delete": "Fshi menunë",
+    "deleteConfirm": "Të fshihet {{name}}?",
+    "deleteDescription": "Porositë e marra e ruajnë.",
+    "deleted": "Menuja u fshi"
+  }
 }

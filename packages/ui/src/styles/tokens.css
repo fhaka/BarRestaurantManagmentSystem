@@ -85,6 +85,11 @@
   --info-soft: 224 236 250;
   --info-soft-fg: 26 70 122;
 
+  --reserved: 117 76 168;
+  --reserved-fg: 255 255 255;
+  --reserved-soft: 238 230 248;
+  --reserved-soft-fg: 84 50 128;
+
   --ring: var(--olive-500);
   --shadow: 31 31 26;
 
@@ -132,6 +137,11 @@
   --info-fg: 8 24 48;
   --info-soft: 22 40 66;
   --info-soft-fg: 162 202 245;
+
+  --reserved: 176 140 230;
+  --reserved-fg: 26 12 46;
+  --reserved-soft: 48 32 70;
+  --reserved-soft-fg: 206 182 244;
 
   --ring: 170 190 110;
   --shadow: 0 0 0;

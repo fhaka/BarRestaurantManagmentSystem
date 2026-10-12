@@ -243,3 +243,148 @@ Found while testing: a page reload during an API restart got a 502 from `/auth/r
 treated it as a sign-out. The client now distinguishes "session ended" (401) from "server
 unreachable" (network error or 5xx): it keeps the session, shows "Can't reach the server… trying
 again" and retries every 3 seconds. Plan §1 quality 2 (reliability through short Wi-Fi drops).
+
+## D-032 — Floor grid and table geometry (Phase 3)
+
+Each area is a 48 × 32 grid; tables store `x, y, w, h` in whole cells plus a rotation in degrees.
+Tables may not overlap within an area (checked on the server, also for whole-layout saves).
+Rotation is visual only, so overlap is checked on the unrotated rectangle. The editor moves tables
+by dragging (pointer events, snapped to cells) or with the keyboard (arrows move, Shift+arrows resize,
+R rotates 45°), which is the accessible alternative to drag and drop. Geometry changes are saved
+together with "Save floor plan"; name/seats/shape are saved per table.
+
+## D-033 — Table sessions, merge and split (Phase 3)
+
+A table session has a main table (`table_sessions.table_id`) and its current tables in
+`table_session_tables`, whose unique key on `table_id` guarantees a table is in at most one active
+session. **Merge** adds a free table to a session, or, if the table has its own session, moves that
+session's tables and guest count over and closes it as merged (`merged_into_id`); its orders will
+move too once orders exist (Phase 4). **Split** takes a table back out of a merged group; it becomes
+free. **Transfer** moves the main table to a free table (the old one is marked for cleaning) or
+hands the session to another person who can open tables. Closing marks every table "needs cleaning";
+a "Cleaned" action makes it free again.
+
+## D-034 — Closing tables before bills exist (Phase 3)
+
+Business rule 4 (close only with a zero balance) is implemented as `canCloseSession(status,
+balance)`. Until bills arrive in Phase 6 the balance is always 0, so an open table can be closed
+directly; Phase 6 passes the real balance. A `table.close` permission was added so cashiers can
+close tables without being able to open them (plan §4).
+
+## D-035 — "Own tables only" for waiters (Phase 3)
+
+A waiter sees every table on the floor but can act only on sessions they own, unless their role has
+`table.view_all` (cashier, manager, owner) or the location setting "waiters see all tables" is on.
+Other waiters' tables show as occupied with the waiter's name, dimmed, and the API answers
+`403 NOT_YOUR_TABLE`.
+
+## D-036 — Real-time transport (Phase 3)
+
+Socket.IO on the API server, same origin (Vite proxies `/socket.io`). Clients authenticate in the
+handshake with their access token and location (same checks as REST), and join `location:<id>` and
+`user:<id>`. Events carry `{ type, locationId, at, data }` and are hints: the client refetches the
+affected TanStack Query keys (`table.updated` → floor, `menu.item_availability` → menu) and
+refetches everything after a reconnect. Connection state recovery covers 60-second drops; an expired
+token triggers a refresh and reconnect. The floor also polls every 60 s as a safety net.
+
+## D-037 — Deadlock retry for table locking (Phase 3)
+
+Found by the concurrency test: two waiters opening the same table at the same instant made MySQL
+abort one transaction with `ER_LOCK_DEADLOCK` (500). Transactions that lock table links now go
+through `transactionWithRetry`, which retries deadlocks/lock timeouts; the loser then sees the table
+taken and gets `409 TABLE_OCCUPIED`.
+
+## D-038 — QR codes (Phase 3)
+
+Each table has a random 22-character token; its QR code points to `<GUEST_APP_URL>/t/<token>`
+(`GUEST_APP_URL` in `.env`, default `http://localhost:5181`). Codes are generated on the server as
+SVG (error correction M). The printable sheet shows one card per active table of an area, with the
+location name and Albanian/English/Italian "scan for the menu" text; the app chrome is hidden when
+printing. Rotating a token invalidates the printed code and is audited. The guest page at `/t/:token`
+arrives in Phase 5.
+
+## D-039 — Business day and daily numbers (Phase 4)
+
+Order and kitchen ticket numbers restart every business day per location (business rule 10). A
+business day starts at 04:00 local time (`BUSINESS_DAY_START_HOUR`), so a bar open past midnight
+keeps one day's numbering until closing. Counters live in `daily_counters` and are incremented with
+an upsert inside the order transaction, so concurrent orders never share a number.
+
+## D-040 — Order item state machine (Phase 4)
+
+`draft → sent → preparing → ready → served`, plus `pending_confirmation → sent` (guest orders,
+Phase 5) and `voided` from `sent`, `preparing` or `ready`. `ready → preparing` is allowed so the
+kitchen can recall a dish. Unsent lines are removed, not voided; sent lines can only be voided
+(`409 ORDER_ITEM_ALREADY_SENT` on edit/delete). The full matrix is unit-tested in
+`packages/shared/src/orders.test.ts`. Kitchen tickets follow their dishes: `new → in_progress →
+ready → done` (done once everything is served or voided).
+
+## D-041 — The waiter's cart lives on the device (Phase 4)
+
+The order screen collects new lines in a cart stored in the browser (survives reloads and Wi-Fi
+drops) and sends them in one request with `send: true`. The API also supports server-side drafts
+(`send: false`, then `POST /orders/:ref/send`), used by tests and later by guest ordering. Every line
+has a client-generated `uuid`; adding a line whose uuid already exists is ignored, which makes
+replays safe.
+
+## D-042 — Courses (Phase 4)
+
+A line may have course 1, 2 or 3. When a batch is sent, lines with a later course than the lowest
+course in the batch are **held**: the kitchen sees them greyed out ("Prit") and cannot start them
+until the waiter fires the course (`POST /orders/:ref/fire`). Lines without a course are never held.
+
+## D-043 — Items without a station (Phase 4)
+
+Dishes with no station (e.g. bottled drinks the waiter takes from the fridge) skip the kitchen: they
+become `ready` as soon as they are sent and create no ticket. Staff may order items outside their
+category's schedule (e.g. breakfast after 11:30); schedules apply to the guest menu only. Sold-out
+("86") and inactive items are refused with `409 ITEM_UNAVAILABLE`.
+
+## D-044 — Set menus / combos (Phase 4)
+
+A combo (e.g. "Menu dreke", 900 L) has a fixed price and slots; the guest picks one dish per slot,
+optionally with a surcharge. On an order the combo is one priced parent line with no station; each
+chosen dish is a child line with unit price 0 (plus any paid modifiers) routed to its own station.
+The parent's status follows its dishes; voiding the parent voids the dishes. "Same again" maps
+dishes back to slots by position (dishes are stored in slot order).
+
+## D-045 — Voids and approvals (Phase 4)
+
+Voids need a reason (business rule 3). When the location setting `voidRequiresApproval` is on (the
+default), a manager approves with their PIN on the waiter's device: `POST /approvals` returns a
+single-use 60-second token bound to `order_item.void` and that item. People who hold
+`approval.grant` approve their own voids. The audit log records who voided and who approved. Waste
+for prepared dishes is recorded once inventory exists (Phase 7).
+
+## D-046 — Closing a table closes its order (interim, Phase 4)
+
+Until bills and payments exist (Phase 6), closing a table closes its open order. Merging tables
+moves the other table's lines and tickets into this table's order and marks the empty order
+`cancelled`. Splitting a merged table leaves the order with the main table (bill splitting is Phase
+6).
+
+## D-047 — Offline outbox (Phase 4)
+
+When adding items fails because the network is down, the request is stored in IndexedDB with its
+Idempotency-Key and replayed in order every 5 s and on the browser's `online` event; the screen
+shows "offline – N actions waiting" and the queued lines. A refused replay (e.g. the dish ran out) is
+dropped with an explanatory toast. Each queued action belongs to the user who made it: on a shared
+device it waits while someone else is signed in and is sent when that person switches back (found
+during testing, where a replay under another user was refused and lost).
+
+## D-048 — Kitchen screen (Phase 4)
+
+`/kds` is outside the normal layout, always dark, with item names at 22 px. The device remembers its
+station in `localStorage`; the socket joins `station:<id>` (validated against the location). Ticket
+headers are coloured by age (green < 10 min, amber < 20, red after). Tapping a dish advances it,
+tapping the header bumps the ticket, ready tickets can be recalled. Sound plays only after a tap
+(browser autoplay rules). Kitchen roles have no `menu.view`, so stations come from
+`GET /kds/stations`.
+
+## D-049 — End-to-end tests (Phase 4)
+
+Playwright runs against its own database `tavolina_e2e` (created with the MySQL root password from
+`.env`, then migrated and seeded with the demo data on every run), the API on port 4110 and the staff
+app on 5190, so it never touches the dev database or a running `npm run dev`. The database is
+prepared inside the API web-server command because Playwright starts web servers before its
+`globalSetup`.

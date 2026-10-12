@@ -24,6 +24,9 @@ export const NAMESPACES = [
   'staff',
   'business',
   'menu',
+  'floor',
+  'orders',
+  'kds',
   'showcase',
 ];
 

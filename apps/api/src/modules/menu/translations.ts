@@ -1,7 +1,8 @@
 import type { Knex } from 'knex';
 import { isLang, type Lang, type Translations } from '@tavolina/shared';
 
-export type TranslatableEntity = 'category' | 'item' | 'variant' | 'modifier_group' | 'modifier';
+export type TranslatableEntity =
+  'category' | 'item' | 'variant' | 'modifier_group' | 'modifier' | 'combo' | 'combo_slot';
 const FIELDS = ['name', 'description'] as const;
 
 const keyOf = (type: TranslatableEntity, id: number) => `${type}:${id}`;

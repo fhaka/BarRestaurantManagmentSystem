@@ -1,0 +1,35 @@
+{
+  "chooseStation": "Quale postazione è questo schermo?",
+  "exit": "Esci dallo schermo cucina",
+  "switchStation": "Cambia postazione",
+  "allDay": "Totale",
+  "soundOn": "Attiva audio",
+  "soundOff": "Disattiva audio",
+  "history": "Comande finite",
+  "close": "Chiudi",
+  "offline": "Connessione persa — riconnessione. Potrebbero mancare nuovi ordini.",
+  "noHistory": "Nessuna comanda finita.",
+  "columns": {
+    "new": "Nuove",
+    "in_progress": "In corso",
+    "ready": "Pronte"
+  },
+  "table": "Tavolo {{names}}",
+  "takeaway": "Asporto",
+  "delivery": "Consegna",
+  "orderNo": "Ordine #{{number}}",
+  "bump": "Segna pronta la comanda {{number}}",
+  "seat": "Posto {{n}}",
+  "course": "Portata {{n}}",
+  "held": "Attendi",
+  "itemStatus": {
+    "draft": "Bozza",
+    "pending_confirmation": "Da confermare",
+    "sent": "Nuovo",
+    "preparing": "In cottura",
+    "ready": "Pronto",
+    "served": "Servito",
+    "voided": "Annullato"
+  },
+  "recall": "Richiama"
+}

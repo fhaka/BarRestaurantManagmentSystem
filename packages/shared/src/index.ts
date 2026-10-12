@@ -9,3 +9,6 @@ export * from './staff.js';
 export * from './time.js';
 export * from './menu.js';
 export * from './pricing.js';
+export * from './floor.js';
+export * from './realtime.js';
+export * from './orders.js';

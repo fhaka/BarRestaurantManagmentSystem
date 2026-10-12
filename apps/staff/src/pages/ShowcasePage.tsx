@@ -161,7 +161,7 @@ export function ShowcasePage() {
     { key: 'foodReady', tone: 'success', icon: <ChefHat /> },
     { key: 'billRequested', tone: 'highlight', icon: <Receipt /> },
     { key: 'needsCleaning', tone: 'warning', icon: <Brush /> },
-    { key: 'reserved', tone: 'danger', icon: <CalendarClock /> },
+    { key: 'reserved', tone: 'reserved', icon: <CalendarClock /> },
   ] as const;
 
   return (

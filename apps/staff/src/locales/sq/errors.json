@@ -28,6 +28,13 @@
   "INVALID_REFERENCE": "Një nga zgjedhjet nuk ekziston më. Rifreskoni faqen.",
   "IMPORT_INVALID": "Disa rreshta nuk u importuan. Kontrolloni gabimet.",
   "PAYLOAD_TOO_LARGE": "Skedari është shumë i madh.",
+  "AREA_NOT_EMPTY": "Zhvendosni ose fshini tavolinat e kësaj zone më parë.",
+  "TABLE_OCCUPIED": "Kjo tavolinë ka mysafirë. Zgjidhni një tavolinë të lirë.",
+  "TABLE_OVERLAP": "Tavolinat nuk mund të mbivendosen.",
+  "NOT_YOUR_TABLE": "Kjo tavolinë është e një kamarieri tjetër.",
+  "SESSION_STATE": "Tavolina nuk mund të kalojë në këtë gjendje tani.",
+  "BALANCE_DUE": "Paguani faturën para se ta mbyllni tavolinën.",
+  "CONFLICT": "Ky veprim bie ndesh me një ndryshim tjetër. Rifreskoni.",
   "fields": {
     "required": "Kjo fushë kërkohet.",
     "tooShort": "Shkruani të paktën {{min}} karaktere.",
@@ -47,6 +54,14 @@
     "minMax": "Minimumi nuk mund të jetë më i madh se maksimumi.",
     "requiredMin": "Grupi i detyrueshëm duhet të ketë minimum të paktën 1.",
     "maxOptions": "Maksimumi nuk mund të kalojë numrin e opsioneve.",
-    "percentMax": "Zbritja nuk mund të jetë mbi 100%."
-  }
+    "percentMax": "Zbritja nuk mund të jetë mbi 100%.",
+    "outsideFloor": "Tavolina del jashtë planit.",
+    "transferTarget": "Zgjidhni një tavolinë ose një kamarier."
+  },
+  "ORDER_ITEM_ALREADY_SENT": "Ky artikull është dërguar në kuzhinë. Anulojeni në vend të kësaj.",
+  "ORDER_ITEM_STATE": "Ky artikull nuk mund të ndryshojë më kështu. Ekrani u rifreskua.",
+  "ORDER_CLOSED": "Kjo porosi është mbyllur.",
+  "ITEM_UNAVAILABLE": "{{itemName}} nuk është në dispozicion tani.",
+  "MODIFIERS_INVALID": "Kontrolloni opsionet për {{itemName}}.",
+  "COMBO_INVALID": "Zgjidhni një pjatë për çdo pjesë të {{comboName}}."
 }

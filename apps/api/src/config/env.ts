@@ -44,6 +44,8 @@ const envSchema = z.object({
     .min(32, 'must be at least 32 characters; generate one with `openssl rand -hex 32`'),
   /** bcrypt cost for passwords and PINs. 12 per plan §11; tests use 4 for speed. */
   BCRYPT_COST: z.coerce.number().int().min(4).max(15).default(12),
+  /** Public address of the guest app; table QR codes point to <GUEST_APP_URL>/t/<token>. */
+  GUEST_APP_URL: z.url().default('http://localhost:5181'),
   /** Where uploaded images are stored. Defaults to apps/api/uploads. */
   UPLOADS_DIR: z.string().min(1).optional(),
 });

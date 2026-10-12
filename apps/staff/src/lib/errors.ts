@@ -19,6 +19,8 @@ const FIELD_KEYS = new Set([
   'requiredMin',
   'maxOptions',
   'percentMax',
+  'outsideFloor',
+  'transferTarget',
 ]);
 
 type Issue = Pick<z.core.$ZodIssue, 'code' | 'message' | 'path'> & {
@@ -97,7 +99,11 @@ export function useErrorMessages() {
         if (err.code === 'INVALID_PIN' && typeof err.details.attemptsLeft === 'number') {
           return t('INVALID_PIN_ATTEMPTS', { count: err.details.attemptsLeft });
         }
-        return t(err.code as 'INTERNAL_ERROR', { defaultValue: t('INTERNAL_ERROR') });
+        // Details such as { itemName } fill in the message ("Tavë kosi is not available").
+        return t(err.code as 'INTERNAL_ERROR', {
+          ...err.details,
+          defaultValue: t('INTERNAL_ERROR'),
+        });
       }
       return t('INTERNAL_ERROR');
     },
