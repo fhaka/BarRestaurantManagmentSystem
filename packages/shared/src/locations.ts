@@ -44,6 +44,10 @@ export const locationSettingsSchema = z.object({
   voidRequiresApproval: z.boolean().default(true),
   /** Discounts above this need manager PIN approval (1000 = 10%). */
   discountApprovalThresholdBp: z.number().int().min(0).max(10000).default(1000),
+  /** Business rule 7: stock is booked out when the order is sent (default) or when it is paid. */
+  stockDeductOn: z.enum(['send', 'payment']).default('send'),
+  /** Business rule 3: a void after the kitchen started counts the dish as waste. */
+  voidedPreparedIsWaste: z.boolean().default(true),
   /** Printers by role (stations have their own); null = screens only. */
   receiptPrinterId: z.number().int().positive().nullable().default(null),
   reportPrinterId: z.number().int().positive().nullable().default(null),

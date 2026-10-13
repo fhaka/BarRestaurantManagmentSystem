@@ -21,6 +21,7 @@ import {
   type Order,
   type OrderItemStatus,
   type Permission,
+  type StockLowData,
 } from '@tavolina/shared';
 import type { z } from 'zod';
 import { db } from '../../db/knex.js';
@@ -33,6 +34,7 @@ import { loadSession } from '../floor/sessions.js';
 import * as locationRepo from '../locations/repo.js';
 import * as menuRepo from '../menu/repo.js';
 import { assertDayOpen, paidOnOrder } from '../billing/totals.js';
+import { deductForItems, reverseForItems } from '../inventory/stock.js';
 import { emitItemsChanged, emitItemsSent } from './events.js';
 import * as repo from './repo.js';
 import { refreshTickets } from './tickets.js';
@@ -469,7 +471,7 @@ async function addItemsToOrder(actor: OrderActor, orderId: number, raw: unknown)
     );
     const result =
       input.send && newIds.length
-        ? await sendItemsTx(trx, actor.locationId, orderId, newIds)
+        ? await sendItemsTx(trx, actor.locationId, orderId, newIds, actor.userId)
         : null;
     await repo.recalcTotals(trx, orderId);
     return result;
@@ -521,6 +523,8 @@ async function tableIdsOf(sessionId: number): Promise<number[]> {
 export interface SentResult {
   stationIds: number[];
   ticketIds: number[];
+  /** Ingredients that dropped below their minimum (sent to managers after commit). */
+  lowStock?: (StockLowData | null)[];
 }
 
 /**
@@ -533,6 +537,7 @@ export async function sendItemsTx(
   locationId: number,
   orderId: number,
   itemIds: number[],
+  userId: number | null = null,
 ): Promise<SentResult> {
   const rows = await trx('order_items').whereIn('id', itemIds).where('order_id', orderId);
   const toSend = rows.filter((r) => isUnsent(r.status));
@@ -582,7 +587,18 @@ export async function sendItemsTx(
     ticketIds.push(Number(ticketId));
   }
   await syncComboParents(trx, orderId);
-  return { stationIds: [...byStation.keys()], ticketIds };
+  // Business rule 7: ingredients are booked out in the same transaction as the send.
+  const location = await locationRepo.findLocation(locationId, trx as Knex);
+  const lowStock =
+    location?.settings.stockDeductOn === 'send'
+      ? await deductForItems(
+          trx,
+          locationId,
+          toSend.map((r) => Number(r.id)),
+          userId,
+        )
+      : [];
+  return { stationIds: [...byStation.keys()], ticketIds, lowStock };
 }
 
 export async function sendItems(
@@ -613,9 +629,13 @@ export async function sendItems(
           Number(r.id),
         )
       : [];
-    const sent = await sendItemsTx(trx, actor.locationId, order.id, [
-      ...new Set([...ids, ...children]),
-    ]);
+    const sent = await sendItemsTx(
+      trx,
+      actor.locationId,
+      order.id,
+      [...new Set([...ids, ...children])],
+      actor.userId,
+    );
     await repo.recalcTotals(trx, order.id);
     return sent;
   });
@@ -891,6 +911,28 @@ export async function voidItem(
         ).map((r) => Number(r.id)),
       );
     }
+    // Business rule 3: booked-out ingredients come back, or become waste if the kitchen started.
+    const before = await trx('order_items')
+      .whereIn('id', ids)
+      .where('stock_deducted', true)
+      .select('id', 'status');
+    const started = before
+      .filter((r) => r.status === 'preparing' || r.status === 'ready')
+      .map((r) => Number(r.id));
+    const notStarted = before
+      .filter((r) => !started.includes(Number(r.id)))
+      .map((r) => Number(r.id));
+    const wasteVoids = location?.settings.voidedPreparedIsWaste ?? true;
+    await reverseForItems(
+      trx,
+      actor.locationId,
+      wasteVoids ? notStarted : [...notStarted, ...started],
+      false,
+      input.reason,
+      actor.userId,
+    );
+    if (wasteVoids)
+      await reverseForItems(trx, actor.locationId, started, true, input.reason, actor.userId);
     await trx('order_items')
       .whereIn('id', ids)
       .update({
@@ -1030,7 +1072,7 @@ export async function confirmGuestItems(
         .whereNull('waiter_id')
         .update({ waiter_id: actor.userId });
     }
-    const result = await sendItemsTx(trx, actor.locationId, order.id, ids);
+    const result = await sendItemsTx(trx, actor.locationId, order.id, ids, actor.userId);
     await repo.recalcTotals(trx, order.id);
     await writeAudit(
       actor,

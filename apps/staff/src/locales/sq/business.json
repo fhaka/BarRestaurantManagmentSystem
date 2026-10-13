@@ -30,7 +30,8 @@
       "receipt": "Fatura dhe çmimet",
       "languages": "Gjuhët",
       "guests": "Porositë e mysafirëve (QR)",
-      "control": "Kontrolli dhe miratimet"
+      "control": "Kontrolli dhe miratimet",
+      "stock": "Stoku"
     },
     "name": "Emri i lokalit",
     "address": "Adresa",
@@ -58,6 +59,12 @@
     "discountThreshold": "Zbritjet mbi këtë përqindje kërkojnë miratim (%)",
     "discountThresholdHint": "Menaxheri duhet të japë PIN-in për zbritje më të mëdha.",
     "devices": "Printerët dhe fiskalizimi",
-    "receiptHeaderHint": "Emri, adresa dhe NIPT-i printohen vetë."
+    "receiptHeaderHint": "Emri, adresa dhe NIPT-i printohen vetë.",
+    "stockDeductOn": "Kur zbritet stoku",
+    "stockDeductOnHint": "Përbërësit e recetës hiqen nga stoku kur artikulli dërgohet ose kur fatura paguhet.",
+    "stockDeductOnSend": "Kur dërgohet në kuzhinë/bar",
+    "stockDeductOnPayment": "Kur paguhet fatura",
+    "voidedPreparedIsWaste": "Anulimet pas fillimit të përgatitjes janë humbje",
+    "voidedPreparedIsWasteDescription": "Përbërësit nuk kthehen në stok, por regjistrohen si humbje."
   }
 }

@@ -134,6 +134,12 @@ TAVOLINA_API_URL=http://<api-host>:4100 TAVOLINA_BRIDGE_KEY=<key> npm run start 
 
 Add a printer of type "Test (no printer)" to see receipts and tickets in the bridge window.
 
+Phase 7 adds stock. Sign in as `menaxher@lasvegas.test` and open **Magazina** (Inventory): 32
+ingredients with suppliers, recipes and margins for the coffees, drinks and main dishes, a purchase
+order for sea bass waiting to be received (sea bass is below its minimum), and the stock ledger.
+Sending a cappuccino books out 9 g of coffee and 150 ml of milk; a count shows the variance in
+quantity and lek. Whether stock leaves on send or on payment is under Settings → Stock.
+
 The first `npm run test:e2e` needs Chromium for Playwright: `npx playwright install chromium`.
 
 `.test` addresses can never receive email. Five wrong PINs lock that person for 5 minutes; a manager

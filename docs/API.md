@@ -384,6 +384,39 @@ receives `print.job` `{ jobId, printer, document }` and answers `print.ack` `{ j
 Guest side: `GET /guest/receipts/:token` (digital receipt: document, fiscal info, QR SVG) and
 `POST /guest/t/:tableToken/review` (`{ rating: 1–5, comment? }`). Staff: `GET /reviews` (`report.view`).
 
+## Inventory
+
+Location-scoped. View: `inventory.view`; changes: `inventory.manage`. Quantities are sent as
+decimal strings or numbers in the ingredient's unit (`"0.018"`, `"1,5"`, at most 3 decimals) and
+returned as integer thousandths (`stockMilli`, `qtyMilli`, …). Money in minor units.
+
+| Method & path                       | Notes                                                                                                    |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `GET/POST /suppliers`               | `{ name, contact?, phone?, email?, notes?, active }`                                                     |
+| `PATCH/DELETE /suppliers/:id`       |                                                                                                          |
+| `GET /ingredients`                  | `Ingredient[]` with `stockMilli`, `minMilli`, `costPerUnitMinor`, `valueMinor`, `low`                    |
+| `GET /ingredients/low`              | Active ingredients below their minimum                                                                   |
+| `POST /ingredients`                 | `{ name, unit: kg\|g\|l\|ml\|piece, category, minQty, costPerUnitMinor, supplierId?, active, stockQty }` |
+| `PATCH /ingredients/:id`            | Same without `stockQty` (stock only changes through movements)                                           |
+| `DELETE /ingredients/:id`           | `409 CONFLICT` while a recipe uses it                                                                    |
+| `GET /stock-movements`              | `?ingredientId=&type=&limit=` → `StockMovement[]`, newest first                                          |
+| `POST /waste`                       | `{ type: 'waste'\|'staff_meal', reason, ingredientId + qty \| menuItemId + dishes + variantId? }` → 204  |
+| `GET /costing`                      | `ItemCosting[]`: recipe lines, food cost, net price, margin per item, size and option                    |
+| `PUT /menu/items/:id/recipe`        | `{ lines: [{ ingredientId, qty, variantId? }] }` (replaces the recipe)                                   |
+| `PUT /menu/modifiers/:id/recipe`    | `{ lines: [{ ingredientId, qty }] }`                                                                     |
+| `GET/POST /purchase-orders`         | `{ supplierId, expectedAt?, notes?, lines: [{ ingredientId, qty, unitCostMinor }] }`                     |
+| `GET/PATCH /purchase-orders/:id`    | Drafts only for PATCH                                                                                    |
+| `POST /purchase-orders/:id/send`    | draft → sent                                                                                             |
+| `POST /purchase-orders/:id/receive` | `{ lines: [{ lineId, qty, unitCostMinor? }] }`, partial allowed; weighted-average cost                   |
+| `POST /purchase-orders/:id/cancel`  | draft or sent                                                                                            |
+| `GET/POST /stock-counts`            | `{ category?, note? }` starts a count (expected quantities frozen)                                       |
+| `GET/PATCH /stock-counts/:id`       | `{ lines: [{ ingredientId, counted: qty \| null }] }`                                                    |
+| `POST /stock-counts/:id/apply`      | Corrects counted ingredients by counted − expected; returns the variance                                 |
+| `POST /stock-counts/:id/cancel`     |                                                                                                          |
+
+Errors: `409 PO_STATE`, `409 RECEIVE_TOO_MUCH`, `409 COUNT_STATE`, `400 INVALID_REFERENCE`.
+Stock is deducted automatically when items are sent or paid (location setting `stockDeductOn`).
+
 ## Real-time (Socket.IO)
 
 Same origin, path `/socket.io`. Handshake `auth: { token: <accessToken>, locationId }`; errors
@@ -400,6 +433,7 @@ Same origin, path `/socket.io`. Handshake `auth: { token: <accessToken>, locatio
 | `guest_order.pending`       | location + waiter  | `{ orderId, tableSessionId, tableNames, waiterId, itemCount }`                     |
 | `bill.updated`              | location           | `{ orderId }`                                                                      |
 | `cash_drawer.updated`       | location           | `{}`                                                                               |
+| `stock.low`                 | location           | `{ ingredientId, name, stockMilli, minMilli, unit }`                               |
 
 A kitchen screen joins a station room with `socket.emit('station:join', { stationId }, ack)`
 (`ack(true)` when the station belongs to the location); joining another station leaves the old one.

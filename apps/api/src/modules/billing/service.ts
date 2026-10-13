@@ -23,6 +23,7 @@ import { transactionWithRetry } from '../../lib/transaction.js';
 import { emit, emitTableUpdated } from '../../realtime/server.js';
 import { consumeApproval } from '../approvals/service.js';
 import { createFiscalRecord, fiscalForBills, registerSoon } from '../fiscal/service.js';
+import { deductForItems, emitLowStock } from '../inventory/stock.js';
 import * as locationRepo from '../locations/repo.js';
 import * as orderRepo from '../orders/repo.js';
 import { assertOpen, orderForActor, type OrderActor } from '../orders/service.js';
@@ -584,6 +585,20 @@ export async function pay(
       .where({ id: order.id })
       .first('total_minor', 'table_session_id');
     const fullyPaid = (await paidOnOrder(trx, order.id)) >= num(orderRow.total_minor);
+    let lowStock: Awaited<ReturnType<typeof deductForItems>> = [];
+    if (fullyPaid && location?.settings.stockDeductOn === 'payment') {
+      // Business rule 7 (deduct on payment): every dish of the order is booked out now.
+      const billable = await trx('order_items')
+        .where({ order_id: order.id })
+        .whereIn('status', ['sent', 'preparing', 'ready', 'served'])
+        .select('id');
+      lowStock = await deductForItems(
+        trx,
+        actor.locationId,
+        billable.map((r) => num(r.id)),
+        actor.userId,
+      );
+    }
     if (fullyPaid) {
       if (orderRow.table_session_id) {
         // The table's lifecycle: open → bill_requested → paid → closed (plan §6).
@@ -617,9 +632,10 @@ export async function pay(
       },
       trx,
     );
-    return { billId: num(bill.id), billPaid, fiscalIds };
+    return { billId: num(bill.id), billPaid, fiscalIds, lowStock };
   });
   registerSoon(result.fiscalIds);
+  emitLowStock(actor.locationId, result.lowStock);
   if (result.billPaid && location) {
     void printReceipt(actor.locationId, result.billId).catch(() => undefined);
   }

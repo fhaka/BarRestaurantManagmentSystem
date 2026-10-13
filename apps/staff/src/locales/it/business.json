@@ -30,7 +30,8 @@
       "receipt": "Scontrino e prezzi",
       "languages": "Lingue",
       "guests": "Ordini degli ospiti (QR)",
-      "control": "Controllo e approvazioni"
+      "control": "Controllo e approvazioni",
+      "stock": "Magazzino"
     },
     "name": "Nome del locale",
     "address": "Indirizzo",
@@ -58,6 +59,12 @@
     "discountThreshold": "Gli sconti oltre questa percentuale richiedono approvazione (%)",
     "discountThresholdHint": "Per sconti maggiori un responsabile deve inserire il suo PIN.",
     "devices": "Stampanti e fisco",
-    "receiptHeaderHint": "Nome, indirizzo e NIPT si stampano da soli."
+    "receiptHeaderHint": "Nome, indirizzo e NIPT si stampano da soli.",
+    "stockDeductOn": "Quando scalare il magazzino",
+    "stockDeductOnHint": "Gli ingredienti della ricetta escono dal magazzino all'invio dell'articolo o al pagamento del conto.",
+    "stockDeductOnSend": "All’invio in cucina/bar",
+    "stockDeductOnPayment": "Al pagamento del conto",
+    "voidedPreparedIsWaste": "Gli annullamenti dopo l’inizio della preparazione sono scarti",
+    "voidedPreparedIsWasteDescription": "Gli ingredienti non tornano in magazzino: sono registrati come scarto."
   }
 }

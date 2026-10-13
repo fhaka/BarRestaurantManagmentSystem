@@ -61,7 +61,10 @@
     "tenderedTooLow": "Meno dell'importo dovuto.",
     "referenceRequired": "Inserisci il riferimento.",
     "hostRequired": "Inserisci l'indirizzo IP.",
-    "devicePathRequired": "Inserisci il dispositivo."
+    "devicePathRequired": "Inserisci il dispositivo.",
+    "quantity": "Inserisci una quantità, es. 0,018 o 1,5.",
+    "quantityPositive": "La quantità deve essere maggiore di zero.",
+    "ingredientOrDish": "Scegli un ingrediente con una quantità o un piatto con il numero di porzioni."
   },
   "ORDER_ITEM_ALREADY_SENT": "Questo articolo è già stato inviato in cucina. Annullalo invece.",
   "ORDER_ITEM_STATE": "L'articolo non può più cambiare così. Lo schermo è stato aggiornato.",
@@ -82,5 +85,8 @@
   "CASH_DRAWER_CLOSED": "Apri prima il cassetto (Cassa → Cassetto).",
   "CASH_DRAWER_OPEN": "Conta e chiudi prima il cassetto.",
   "BUSINESS_DAY_CLOSED": "Oggi è stato chiuso con il rapporto Z.",
-  "DAY_HAS_OPEN_TABLES": "Chiudi prima tutti i tavoli e gli ordini."
+  "DAY_HAS_OPEN_TABLES": "Chiudi prima tutti i tavoli e gli ordini.",
+  "PO_STATE": "Questo ordine d'acquisto non può essere modificato nello stato attuale.",
+  "COUNT_STATE": "Questo inventario non può essere modificato. Forse ce n'è un altro aperto o è già chiuso.",
+  "RECEIVE_TOO_MUCH": "La quantità supera quella ancora aperta nell'ordine."
 }

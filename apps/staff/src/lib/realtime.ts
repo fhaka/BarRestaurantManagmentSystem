@@ -7,10 +7,11 @@ import {
   type GuestOrderPendingData,
   type ItemStatusChangedData,
   type ServiceRequestCreatedData,
+  type StockLowData,
   type RealtimeEnvelope,
 } from '@tavolina/shared';
 import { toast } from '@tavolina/ui';
-import i18n from '../i18n';
+import i18n, { currentLocale } from '../i18n';
 import { refreshSession } from './api';
 import { useSession } from './session';
 
@@ -31,6 +32,7 @@ const INVALIDATES: Record<(typeof REALTIME_EVENTS)[number], string[]> = {
   'guest_order.pending': ['floor', 'order', 'orders'],
   'bill.updated': ['bill', 'order', 'orders'],
   'cash_drawer.updated': ['cash'],
+  'stock.low': ['inventory'],
 };
 
 // The KDS screen follows one station; remembered so a reconnect joins it again.
@@ -99,6 +101,22 @@ function notifyReady(event: RealtimeEnvelope<ItemStatusChangedData>) {
   }
 }
 
+/** An ingredient fell below its minimum: tell whoever looks after stock (plan §5.9). */
+function notifyLowStock(data: StockLowData) {
+  if (!useSession.getState().can('inventory.view')) return;
+  const qty = (milli: number) =>
+    `${new Intl.NumberFormat(currentLocale(), { maximumFractionDigits: 3 }).format(milli / 1000)} ${i18n.t(`inventory:units.${data.unit}`)}`;
+  toast({
+    tone: 'warning',
+    title: i18n.t('inventory:toast.low', { name: data.name }),
+    description: i18n.t('inventory:toast.lowDescription', {
+      stock: qty(data.stockMilli),
+      min: qty(data.minMilli),
+    }),
+    duration: 10_000,
+  });
+}
+
 /**
  * Keeps one Socket.IO connection for the signed-in user and current location (mounted in the app
  * layout). Reconnects with a fresh token after refreshes, and refetches everything after a
@@ -146,6 +164,7 @@ export function useRealtime(): void {
         for (const key of INVALIDATES[type])
           void queryClient.invalidateQueries({ queryKey: [key] });
         notifyGuest(type, event.data);
+        if (type === 'stock.low') notifyLowStock(event.data as unknown as StockLowData);
         if (type === 'order_item.status_changed') {
           notifyReady(event as unknown as RealtimeEnvelope<ItemStatusChangedData>);
         }

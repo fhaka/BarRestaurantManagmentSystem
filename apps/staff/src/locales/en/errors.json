@@ -61,7 +61,10 @@
     "tenderedTooLow": "Less than the amount due.",
     "referenceRequired": "Enter the reference.",
     "hostRequired": "Enter the IP address.",
-    "devicePathRequired": "Enter the device."
+    "devicePathRequired": "Enter the device.",
+    "quantity": "Enter a quantity, e.g. 0.018 or 1.5.",
+    "quantityPositive": "The quantity must be more than zero.",
+    "ingredientOrDish": "Choose an ingredient with a quantity, or a dish with a number of portions."
   },
   "ORDER_ITEM_ALREADY_SENT": "This item was already sent to the kitchen. Void it instead.",
   "ORDER_ITEM_STATE": "This item cannot change like that any more. The screen has been refreshed.",
@@ -82,5 +85,8 @@
   "CASH_DRAWER_CLOSED": "Open the cash drawer first (Till → Cash drawer).",
   "CASH_DRAWER_OPEN": "Count and close the cash drawer first.",
   "BUSINESS_DAY_CLOSED": "Today has been closed with a Z report.",
-  "DAY_HAS_OPEN_TABLES": "Close every table and order first."
+  "DAY_HAS_OPEN_TABLES": "Close every table and order first.",
+  "PO_STATE": "This purchase order cannot be changed in its current state.",
+  "COUNT_STATE": "This count cannot be changed. Another count may be open, or this one is finished.",
+  "RECEIVE_TOO_MUCH": "That is more than is still open on the order."
 }

@@ -45,6 +45,8 @@ interface FormState {
   waitersSeeAllTables: boolean;
   voidRequiresApproval: boolean;
   discountThresholdPct: string;
+  stockDeductOn: 'send' | 'payment';
+  voidedPreparedIsWaste: boolean;
 }
 
 const bpToPct = (bp: number) => String(bp / 100);
@@ -68,6 +70,8 @@ function toForm(l: Location): FormState {
     waitersSeeAllTables: s.waitersSeeAllTables,
     voidRequiresApproval: s.voidRequiresApproval,
     discountThresholdPct: bpToPct(s.discountApprovalThresholdBp),
+    stockDeductOn: s.stockDeductOn,
+    voidedPreparedIsWaste: s.voidedPreparedIsWaste,
   };
 }
 
@@ -94,6 +98,8 @@ function toPayload(f: FormState) {
       waitersSeeAllTables: f.waitersSeeAllTables,
       voidRequiresApproval: f.voidRequiresApproval,
       discountApprovalThresholdBp: pctToBp(f.discountThresholdPct),
+      stockDeductOn: f.stockDeductOn,
+      voidedPreparedIsWaste: f.voidedPreparedIsWaste,
     },
   };
 }
@@ -365,6 +371,28 @@ function SettingsForm({ location }: { location: Location }) {
             onChange={(e) => set('discountThresholdPct', e.target.value)}
           />
         </Field>
+      </Section>
+
+      <Section title={t('settings.sections.stock')}>
+        <Field label={t('settings.stockDeductOn')} hint={t('settings.stockDeductOnHint')}>
+          <Select
+            className="sm:w-72"
+            value={form.stockDeductOn}
+            onValueChange={(v) => set('stockDeductOn', v as FormState['stockDeductOn'])}
+            options={[
+              { value: 'send', label: t('settings.stockDeductOnSend') },
+              { value: 'payment', label: t('settings.stockDeductOnPayment') },
+            ]}
+          />
+        </Field>
+        <div className="-my-3 divide-y divide-border">
+          <SwitchField
+            label={t('settings.voidedPreparedIsWaste')}
+            description={t('settings.voidedPreparedIsWasteDescription')}
+            checked={form.voidedPreparedIsWaste}
+            onCheckedChange={(v) => set('voidedPreparedIsWaste', v)}
+          />
+        </div>
       </Section>
 
       <div

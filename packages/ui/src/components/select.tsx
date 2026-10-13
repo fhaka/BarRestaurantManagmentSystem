@@ -11,13 +11,14 @@ export const SelectGroup = SelectPrimitive.Group;
 export const SelectTrigger = forwardRef<
   ElementRef<typeof SelectPrimitive.Trigger>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(function SelectTrigger({ className, children, ...props }, ref) {
+>(function SelectTrigger({ className, children, id, ...props }, ref) {
   const field = useField();
   const invalid = field?.invalid || Boolean(props['aria-invalid']);
   return (
     <SelectPrimitive.Trigger
       ref={ref}
-      id={props.id ?? field?.id}
+      // Taken out of props: Select passes id={undefined}, which must not hide the Field's id.
+      id={id ?? field?.id}
       aria-invalid={invalid || undefined}
       aria-describedby={invalid && field ? field.errorId : undefined}
       className={cn(

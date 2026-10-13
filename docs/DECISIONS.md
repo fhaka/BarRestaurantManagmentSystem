@@ -565,3 +565,72 @@ fiscal QR code (the staff screen links to it). Phones at a table that has paid s
 and can leave one review (1–5 stars, optional comment) per visit, also for a few hours after the
 table closed: a phone's new visit remembers its previous one (`guest_sessions.previous_id`). Staff
 read reviews at `GET /reviews`; the dashboard shows them in Phase 9.
+
+## D-070 — Stock quantities and the ledger (Phase 7)
+
+Quantities are DECIMAL(14,3) in the ingredient's own unit and are handled in code as exact integer
+thousandths (`toMilli`/`fromMilli` in `inventory-math.ts`), so thousands of 9 g espresso doses never
+drift. Units are a fixed list (kg, g, l, ml, piece) in code instead of the plan's `units` table:
+nothing about a unit is configurable, and a recipe line is always in its ingredient's unit (a
+coffee recipe says 0.009 kg). The plan's `recipes` table is `recipe_lines`. Every change of
+`ingredients.stock_qty` writes a `stock_movements` row in the same transaction (`moveStock`),
+including opening stock; system movements carry a reference (`ref_type`: order_item, purchase_order,
+stock_count, opening) instead of English text so the screen can show them in its language. Stock is
+allowed to go negative (sold before the delivery was booked in) and shows in red. `transfer` exists
+in the movement types for the multi-location phase but nothing creates it yet.
+
+## D-071 — When stock is deducted, voids and waste (Phase 7)
+
+Business rule 7: location setting `stockDeductOn` = `send` (default) books the recipe out in the
+same transaction that sends the item; `payment` books out every sent item of the order when the
+order becomes fully paid. `order_items.stock_deducted` makes sure a dish is booked once whichever
+way. A size line in a recipe replaces the general line for the same ingredient (a large latte has
+its own milk); option recipes (e.g. "extra shot") are added. Set menus are booked through their
+dishes. A void gives the stock back (`sale_reversal`); if the kitchen had started the dish and
+`voidedPreparedIsWaste` is on (default), the stock is booked again as `waste` with the void reason
+(business rule 3). Waste and staff meals can be entered per ingredient or as whole dishes, which
+books out their recipe.
+
+## D-072 — Purchase orders and cost (Phase 7)
+
+Draft → sent → partially received / received; draft or sent orders can be cancelled; only drafts
+can be edited. Receiving can be partial, never more than is still open (`RECEIVE_TOO_MUCH`), and
+can record the price actually paid. The ingredient's cost becomes the weighted average of the stock
+on hand and what arrived (negative stock counts as zero); the menu items using it get their food
+cost refreshed. Ordering from a supplier pre-fills that supplier's ingredients that are below their
+minimum (twice the minimum minus stock, at least 1 unit); it is only a suggestion in the form.
+Sending an order does not email the supplier (no mail service yet, see D-075); "sent" records that
+it was ordered.
+
+## D-073 — Stock counts (Phase 7)
+
+A count covers every active ingredient or one category, and freezes each ingredient's expected
+quantity and cost when it starts. Counted quantities can be saved while counting; applying corrects
+each counted ingredient by counted − expected (a `count_adjust` movement), so sales made while the
+count was open are kept. Uncounted lines change nothing. The variance is shown in quantity and in
+lek at the frozen cost, per line and in total. One count can be open per location.
+
+## D-074 — Food cost and margins (Phase 7)
+
+Food cost = recipe × current ingredient cost; margin is on the price without VAT (prices include
+VAT), shown per item, per size and per option. `menu_items.cost_minor` keeps the general recipe's
+cost for the menu editor. Colours on the margin are only a visual hint (under 30% red, under 60%
+amber); the plan sets no target.
+
+## D-075 — Low-stock alerts (Phase 7)
+
+When a movement takes an ingredient below its minimum (only the movement that crosses it), the API
+sends `stock.low` after commit; staff with `inventory.view` see a toast and the Stock tab counts
+items below minimum (`GET /ingredients/low`). The dashboard card comes with the dashboard in
+Phase 9. Email alerts ("optionally by email" in the plan) are deferred: there is no mail service
+configured yet.
+
+## D-076 — Inventory permissions and demo stock (Phase 7)
+
+Inventory follows the existing permission matrix: owners and managers have `inventory.view` and
+`inventory.manage`; waiters, cashiers and kitchen screens have neither (nothing in the plan gives
+them stock access). The demo has 32 ingredients from five suppliers at Tirana wholesale prices,
+recipes for the coffees, bottled drinks, fresh orange juice (per glass size), the "extra shot" and
+"whipped cream" options and 13 dishes, and a sent purchase order for sea bass, which is below its
+minimum. Milk alternatives (oat, almond) have no recipe in the demo: as options they would add milk
+on top of the whole milk in the drink's recipe.

@@ -26,6 +26,9 @@ const FIELD_KEYS = new Set([
   'referenceRequired',
   'hostRequired',
   'devicePathRequired',
+  'quantity',
+  'quantityPositive',
+  'ingredientOrDish',
 ]);
 
 type Issue = Pick<z.core.$ZodIssue, 'code' | 'message' | 'path'> & {

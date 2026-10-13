@@ -30,7 +30,8 @@
       "receipt": "Receipt and prices",
       "languages": "Languages",
       "guests": "Guest orders (QR)",
-      "control": "Control and approvals"
+      "control": "Control and approvals",
+      "stock": "Stock"
     },
     "name": "Location name",
     "address": "Address",
@@ -58,6 +59,12 @@
     "discountThreshold": "Discounts above this percentage need approval (%)",
     "discountThresholdHint": "A manager must enter their PIN for larger discounts.",
     "devices": "Printers and fiscal",
-    "receiptHeaderHint": "Name, address and NIPT are printed automatically."
+    "receiptHeaderHint": "Name, address and NIPT are printed automatically.",
+    "stockDeductOn": "When stock is deducted",
+    "stockDeductOnHint": "Recipe ingredients leave stock when the item is sent, or when the bill is paid.",
+    "stockDeductOnSend": "When sent to kitchen/bar",
+    "stockDeductOnPayment": "When the bill is paid",
+    "voidedPreparedIsWaste": "Voids after preparation started are waste",
+    "voidedPreparedIsWasteDescription": "The ingredients do not go back into stock; they are booked as waste."
   }
 }

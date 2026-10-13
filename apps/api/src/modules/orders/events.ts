@@ -1,6 +1,12 @@
-import { roomFor, type ItemStatusChangedData, type ItemsSentData } from '@tavolina/shared';
+import {
+  roomFor,
+  type ItemStatusChangedData,
+  type ItemsSentData,
+  type StockLowData,
+} from '@tavolina/shared';
 import { db } from '../../db/knex.js';
 import { emit, emitTableUpdated } from '../../realtime/server.js';
+import { emitLowStock } from '../inventory/stock.js';
 import { printTickets } from '../printing/tickets.js';
 import * as repo from './repo.js';
 import type { TicketChange } from './tickets.js';
@@ -9,10 +15,12 @@ import type { TicketChange } from './tickets.js';
 export function emitItemsSent(
   locationId: number,
   orderId: number,
-  sent: Omit<ItemsSentData, 'orderId'>,
+  sent: Omit<ItemsSentData, 'orderId'> & { lowStock?: (StockLowData | null)[] },
 ): void {
-  if (!sent.stationIds.length && !sent.ticketIds.length) return;
-  const data: ItemsSentData = { orderId, ...sent };
+  const { lowStock, ...routing } = sent;
+  emitLowStock(locationId, lowStock ?? []);
+  if (!routing.stationIds.length && !routing.ticketIds.length) return;
+  const data: ItemsSentData = { orderId, ...routing };
   emit('order.items_sent', locationId, { ...data }, sent.stationIds.map(roomFor.station));
   void printTickets(locationId, sent.ticketIds);
 }
