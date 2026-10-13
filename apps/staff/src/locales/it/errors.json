@@ -56,7 +56,12 @@
     "maxOptions": "Il massimo non può superare il numero di opzioni.",
     "percentMax": "Lo sconto non può superare il 100%.",
     "outsideFloor": "Il tavolo esce dalla pianta.",
-    "transferTarget": "Scegli un tavolo o un cameriere."
+    "transferTarget": "Scegli un tavolo o un cameriere.",
+    "wholeLek": "Usa lek interi.",
+    "tenderedTooLow": "Meno dell'importo dovuto.",
+    "referenceRequired": "Inserisci il riferimento.",
+    "hostRequired": "Inserisci l'indirizzo IP.",
+    "devicePathRequired": "Inserisci il dispositivo."
   },
   "ORDER_ITEM_ALREADY_SENT": "Questo articolo è già stato inviato in cucina. Annullalo invece.",
   "ORDER_ITEM_STATE": "L'articolo non può più cambiare così. Lo schermo è stato aggiornato.",
@@ -67,5 +72,15 @@
   "GUEST_ORDERING_DISABLED": "Gli ordini dal menù QR sono disattivati.",
   "GUEST_BLOCKED": "Questo telefono è bloccato.",
   "TOO_MANY_ORDERS": "Troppi ordini in un minuto.",
-  "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} non è servito a quest’ora."
+  "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} non è servito a quest’ora.",
+  "ORDER_HAS_PAYMENTS": "Parte del conto è già pagata; rimborsa prima.",
+  "BILL_PAID": "Questo conto è già pagato.",
+  "ITEM_PAID": "Questo piatto è su un conto pagato; fai un rimborso.",
+  "PAYMENT_TOO_HIGH": "È più di quanto resta da pagare.",
+  "REFUND_TOO_HIGH": "È più di quanto è stato pagato.",
+  "SPLIT_INVALID": "Questa divisione non funziona. Controlla piatti e importi.",
+  "CASH_DRAWER_CLOSED": "Apri prima il cassetto (Cassa → Cassetto).",
+  "CASH_DRAWER_OPEN": "Conta e chiudi prima il cassetto.",
+  "BUSINESS_DAY_CLOSED": "Oggi è stato chiuso con il rapporto Z.",
+  "DAY_HAS_OPEN_TABLES": "Chiudi prima tutti i tavoli e gli ordini."
 }

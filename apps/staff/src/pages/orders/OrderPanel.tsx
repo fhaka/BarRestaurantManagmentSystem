@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Ban,
@@ -9,6 +10,7 @@ import {
   Minus,
   MoreVertical,
   Pencil,
+  Receipt,
   Plus,
   Repeat,
   Send,
@@ -333,10 +335,20 @@ export function OrderPanel({
       </div>
 
       <footer className="flex flex-col gap-2 border-t border-border bg-surface p-3">
-        <div className="flex items-baseline justify-between text-sm">
+        <div className="flex items-center justify-between gap-2 text-sm">
           <span className="text-foreground-muted">{t('total')}</span>
-          <span className="font-mono text-lg font-bold tabular-nums">
-            {formatMoney((order?.totalMinor ?? 0) + cartTotal)}
+          <span className="flex items-center gap-2">
+            <span className="font-mono text-lg font-bold tabular-nums">
+              {formatMoney((order?.totalMinor ?? 0) + cartTotal)}
+            </span>
+            {order && order.totalMinor > 0 && can('payment.take') ? (
+              <Button size="sm" variant="outline" asChild>
+                <Link to={`/orders/${order.id}/bill`}>
+                  <Receipt />
+                  {t('bill')}
+                </Link>
+              </Button>
+            ) : null}
           </span>
         </div>
         <Button

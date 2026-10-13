@@ -5,6 +5,7 @@ import { actorFromRequest } from '../../lib/audit.js';
 import { getLocation } from '../../middleware/auth.js';
 import { guestLimiter } from '../../middleware/rate-limit.js';
 import { scoped } from '../../middleware/stacks.js';
+import { digitalReceipt } from '../billing/receipts.js';
 import { buildGuestMenu } from '../menu/guest.js';
 import * as guest from './service.js';
 import * as staff from './staff.js';
@@ -88,6 +89,19 @@ guestRouter.post('/guest/t/:tableToken/requests', guestLimiter, async (req, res)
   res.status(201).json(await guest.tableState(table, session));
 });
 
+guestRouter.post('/guest/t/:tableToken/review', guestLimiter, async (req, res) => {
+  const table = await tableFor(req);
+  await guest.leaveReview(table, cookieToken(req), req.body);
+  const session = await guestFor(req, res, table);
+  res.status(201).json(await guest.tableState(table, session));
+});
+
+/** The digital receipt behind the QR on the paper receipt (no account needed). */
+guestRouter.get('/guest/receipts/:token', guestLimiter, async (req, res) => {
+  const { token } = z.object({ token: z.string().min(10).max(40) }).parse(req.params);
+  res.set('Cache-Control', 'no-store').json(await digitalReceipt(token));
+});
+
 // ---- Staff side ------------------------------------------------------------------------------
 
 const idParams = z.object({ id: z.coerce.number().int().positive() });
@@ -111,4 +125,8 @@ guestRouter.get('/table-sessions/:ref/guests', ...scoped('order.create'), async 
 guestRouter.post('/guest-sessions/:id/block', ...scoped('table.open'), async (req, res) => {
   await staff.blockGuestSession(staffActor(req), idParams.parse(req.params).id, req.body);
   res.status(204).end();
+});
+
+guestRouter.get('/reviews', ...scoped('report.view'), async (req, res) => {
+  res.json(await staff.listReviews(staffActor(req)));
 });

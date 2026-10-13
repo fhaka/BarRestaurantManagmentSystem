@@ -35,7 +35,7 @@
     "name": "Emri i lokalit",
     "address": "Adresa",
     "nipt": "NIPT",
-    "receiptHeader": "Teksti në krye të faturës",
+    "receiptHeader": "Rreshta shtesë në krye të kuponit",
     "receiptFooter": "Teksti në fund të faturës",
     "currencyDisplay": "Shfaqja e monedhës",
     "currencyL": "1 200 L",
@@ -56,6 +56,8 @@
     "voidRequiresApproval": "Anulimi kërkon PIN-in e menaxherit",
     "voidRequiresApprovalDescription": "Për artikujt që janë dërguar tashmë në kuzhinë ose bar.",
     "discountThreshold": "Zbritjet mbi këtë përqindje kërkojnë miratim (%)",
-    "discountThresholdHint": "Menaxheri duhet të japë PIN-in për zbritje më të mëdha."
+    "discountThresholdHint": "Menaxheri duhet të japë PIN-in për zbritje më të mëdha.",
+    "devices": "Printerët dhe fiskalizimi",
+    "receiptHeaderHint": "Emri, adresa dhe NIPT-i printohen vetë."
   }
 }

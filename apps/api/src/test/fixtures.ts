@@ -91,6 +91,7 @@ export function as(app: Express, session: Session, locationId?: number) {
     get: (url: string) => headers(request(app).get(url)),
     post: (url: string) => headers(request(app).post(url)),
     patch: (url: string) => headers(request(app).patch(url)),
+    put: (url: string) => headers(request(app).put(url)),
     delete: (url: string) => headers(request(app).delete(url)),
   };
 }

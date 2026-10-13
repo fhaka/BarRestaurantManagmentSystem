@@ -1,0 +1,21 @@
+{
+  "name": "@tavolina/print-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Runs on a PC in the restaurant and prints Tavolina receipts and tickets on ESC/POS printers.",
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false src/main.ts",
+    "start": "tsx src/main.ts",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@tavolina/shared": "*",
+    "socket.io-client": "^4.8.4"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.15"
+  }
+}

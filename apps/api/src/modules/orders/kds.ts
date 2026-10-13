@@ -27,7 +27,10 @@ async function stationFor(actor: OrderActor, stationId: number) {
   return { id: Number(station.id), name: String(station.name), type: String(station.type) };
 }
 
-async function loadTickets(trx: Tx, ticketRows: Record<string, unknown>[]): Promise<KdsTicket[]> {
+export async function loadTickets(
+  trx: Tx,
+  ticketRows: Record<string, unknown>[],
+): Promise<KdsTicket[]> {
   if (!ticketRows.length) return [];
   const ids = ticketRows.map((t) => Number(t.id));
   const items = await trx('kds_ticket_items as k')

@@ -56,7 +56,12 @@
     "maxOptions": "Maksimumi nuk mund të kalojë numrin e opsioneve.",
     "percentMax": "Zbritja nuk mund të jetë mbi 100%.",
     "outsideFloor": "Tavolina del jashtë planit.",
-    "transferTarget": "Zgjidhni një tavolinë ose një kamarier."
+    "transferTarget": "Zgjidhni një tavolinë ose një kamarier.",
+    "wholeLek": "Përdorni lekë të plota.",
+    "tenderedTooLow": "Më pak se shuma për t’u paguar.",
+    "referenceRequired": "Shkruani referencën.",
+    "hostRequired": "Shkruani adresën IP.",
+    "devicePathRequired": "Shkruani pajisjen."
   },
   "ORDER_ITEM_ALREADY_SENT": "Ky artikull është dërguar në kuzhinë. Anulojeni në vend të kësaj.",
   "ORDER_ITEM_STATE": "Ky artikull nuk mund të ndryshojë më kështu. Ekrani u rifreskua.",
@@ -67,5 +72,15 @@
   "GUEST_ORDERING_DISABLED": "Porosia nga menuja QR është e fikur.",
   "GUEST_BLOCKED": "Ky telefon është i bllokuar.",
   "TOO_MANY_ORDERS": "Shumë porosi brenda një minute.",
-  "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} nuk shërbehet në këtë orë."
+  "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} nuk shërbehet në këtë orë.",
+  "ORDER_HAS_PAYMENTS": "Një pjesë e faturës është paguar; ktheni paratë më parë.",
+  "BILL_PAID": "Kjo faturë është paguar.",
+  "ITEM_PAID": "Kjo pjatë është në një faturë të paguar; bëni kthim parash.",
+  "PAYMENT_TOO_HIGH": "Kjo është më shumë se sa mbetet për t’u paguar.",
+  "REFUND_TOO_HIGH": "Kjo është më shumë se sa u pagua.",
+  "SPLIT_INVALID": "Kjo ndarje nuk funksionon. Kontrolloni pjatat dhe shumat.",
+  "CASH_DRAWER_CLOSED": "Hapni më parë sirtarin e parave (Arka → Sirtari).",
+  "CASH_DRAWER_OPEN": "Numëroni dhe mbyllni më parë sirtarin.",
+  "BUSINESS_DAY_CLOSED": "Dita e sotme është mbyllur me raportin Z.",
+  "DAY_HAS_OPEN_TABLES": "Mbyllni më parë të gjitha tavolinat dhe porositë."
 }

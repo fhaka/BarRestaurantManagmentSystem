@@ -64,7 +64,8 @@
     "noFreeTables": "Nuk ka tavolina të lira në këtë moment.",
     "actions": "Veprime",
     "saved": "U ruajt",
-    "noWaiter": "Pa kamarier ende"
+    "noWaiter": "Pa kamarier ende",
+    "bill": "Fatura · {{amount}}"
   },
   "editor": {
     "title": "Redaktori i planit",

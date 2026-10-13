@@ -101,3 +101,30 @@ export async function blockGuestSession(actor: StaffActor, id: number, raw: unkn
   });
   emitTableUpdated(actor.locationId, [Number(guest.table_id)]);
 }
+
+/** Latest guest reviews of the location (the dashboard shows them in Phase 9). */
+export async function listReviews(actor: StaffActor) {
+  const rows = await db('reviews as r')
+    .join('table_sessions as s', 's.id', 'r.table_session_id')
+    .join('tables as t', 't.id', 's.table_id')
+    .leftJoin('users as u', 'u.id', 's.waiter_id')
+    .where('r.location_id', actor.locationId)
+    .orderBy('r.created_at', 'desc')
+    .limit(100)
+    .select(
+      'r.id',
+      'r.rating',
+      'r.comment',
+      'r.created_at',
+      't.name as table_name',
+      'u.name as waiter_name',
+    );
+  return rows.map((r) => ({
+    id: Number(r.id),
+    rating: Number(r.rating),
+    comment: r.comment ?? null,
+    tableName: String(r.table_name),
+    waiterName: r.waiter_name ?? null,
+    createdAt: iso(r.created_at),
+  }));
+}

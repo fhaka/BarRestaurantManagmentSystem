@@ -339,6 +339,51 @@ the moment of adding (happy hours applied) and copied onto the line. Errors: `40
 | `POST /kds/tickets/:id/bump`   | `kds.bump` | Every fired dish on the ticket becomes ready             |
 | `POST /kds/tickets/:id/recall` | `kds.bump` | Ready dishes go back to preparing                        |
 
+## Bills and payments
+
+Location-scoped; money in minor units. Endpoints return the full `BillView` (order, totals with VAT
+per rate, discounts, bills with payments and fiscal status, balance).
+
+| Method & path                       | Permission       | Notes                                                                                                                                           |
+| ----------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /orders/:ref/bill`             | `payment.take`   | `BillView`                                                                                                                                      |
+| `POST /orders/:ref/discounts`       | `order.discount` | `{ orderItemId?, type: 'percent' \| 'fixed', value, reason, approvalToken? }`                                                                   |
+| `DELETE /discounts/:id`             | `order.discount` | Before any payment                                                                                                                              |
+| `POST /orders/:ref/split`           | `bill.split`     | `{ type: 'full' }`, `{ type: 'equal', parts }`, `{ type: 'seat' }`, `{ type: 'items', groups: number[][] }`, `{ type: 'custom', amountsMinor }` |
+| `POST /orders/:ref/payments`        | `payment.take`   | `{ billId?, uuid, method, amountMinor, tipMinor?, tenderedMinor?, reference? }`; idempotent on `uuid`                                           |
+| `POST /bills/:id/print`             | `payment.take`   | Reprint the receipt → `{ jobId \| null }`                                                                                                       |
+| `POST /payments/:id/refund`         | `payment.take`   | `{ amountMinor, reason, approvalToken? }` (always manager-approved)                                                                             |
+| `GET /cash-drawers/current`         | `cash.drawer`    | `{ drawer: CashDrawer \| null }`                                                                                                                |
+| `POST /cash-drawers`                | `cash.drawer`    | `{ floatMinor }`                                                                                                                                |
+| `GET /cash-drawers/:id`             | `cash.drawer`    | `CashDrawer`                                                                                                                                    |
+| `POST /cash-drawers/:id/movements`  | `cash.movement`  | `{ type: 'pay_in' \| 'pay_out' \| 'tip_out', amountMinor, reason }`                                                                             |
+| `POST /cash-drawers/:id/no-sale`    | `cash.drawer`    | `{ reason, approvalToken? }`                                                                                                                    |
+| `POST /cash-drawers/:id/close`      | `cash.drawer`    | `{ counts: { "1000": 3, … }, note?, approvalToken? }`                                                                                           |
+| `GET /business-days/current/report` | `cash.drawer`    | X report (`ZReport`, `closed: false`)                                                                                                           |
+| `GET /business-days/:date/report`   | `cash.drawer`    | Stored Z report, or the live numbers                                                                                                            |
+| `POST /business-days/close`         | `cash.approve`   | Stores and prints the Z report, locks the day                                                                                                   |
+| `POST /fiscal/retry`                | `settings.edit`  | Retry pending fiscal registrations now                                                                                                          |
+
+Errors: `409 ORDER_HAS_PAYMENTS`, `409 BILL_PAID`, `409 ITEM_PAID`, `409 PAYMENT_TOO_HIGH`,
+`409 REFUND_TOO_HIGH`, `409 SPLIT_INVALID`, `409 CASH_DRAWER_CLOSED`, `409 CASH_DRAWER_OPEN`,
+`409 BUSINESS_DAY_CLOSED`, `409 DAY_HAS_OPEN_TABLES`, `409 BALANCE_DUE`, `403 APPROVAL_INVALID`.
+Approval actions: `order.discount` (order), `payment.refund` (payment),
+`cash_drawer.open_no_sale` and `cash_drawer.close` (cash drawer).
+
+## Printers
+
+`settings.edit`. Printers: `GET/POST /printers`, `PATCH/DELETE /printers/:id`
+(`{ name, connection: 'network' | 'usb' | 'console', host?, port?, devicePath?, widthChars: 32 | 42 | 48, active }`).
+Routing: `GET/PUT /print-routes` (`{ receiptPrinterId, reportPrinterId, stations: [{ stationId, printerId }] }`).
+Print bridges: `GET/POST /print-bridges` (the key is returned once), `DELETE /print-bridges/:id`.
+Jobs: `GET /print-jobs`, `POST /print-jobs/:id/retry`.
+
+The print bridge connects to the Socket.IO namespace `/print-bridge` with `auth: { token: <key> }`,
+receives `print.job` `{ jobId, printer, document }` and answers `print.ack` `{ jobId, ok, error? }`.
+
+Guest side: `GET /guest/receipts/:token` (digital receipt: document, fiscal info, QR SVG) and
+`POST /guest/t/:tableToken/review` (`{ rating: 1–5, comment? }`). Staff: `GET /reviews` (`report.view`).
+
 ## Real-time (Socket.IO)
 
 Same origin, path `/socket.io`. Handshake `auth: { token: <accessToken>, locationId }`; errors
@@ -353,6 +398,8 @@ Same origin, path `/socket.io`. Handshake `auth: { token: <accessToken>, locatio
 | `kds.ticket_bumped`         | location + station | `{ ticketId, stationId, status }`                                                  |
 | `service_request.created`   | location + waiter  | `{ requestId, type, tableId, tableName, tableSessionId, waiterId }`                |
 | `guest_order.pending`       | location + waiter  | `{ orderId, tableSessionId, tableNames, waiterId, itemCount }`                     |
+| `bill.updated`              | location           | `{ orderId }`                                                                      |
+| `cash_drawer.updated`       | location           | `{}`                                                                               |
 
 A kitchen screen joins a station room with `socket.emit('station:join', { stationId }, ack)`
 (`ack(true)` when the station belongs to the location); joining another station leaves the old one.

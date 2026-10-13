@@ -15,6 +15,7 @@ import { verifyAccessToken } from '../lib/jwt.js';
 import { logger } from '../lib/logger.js';
 import * as accessRepo from '../modules/auth/access-repo.js';
 import * as floorRepo from '../modules/floor/repo.js';
+import { attachPrintBridge } from '../modules/printing/queue.js';
 
 export interface SocketData {
   userId: number;
@@ -72,6 +73,7 @@ export function attachRealtime(httpServer: HttpServer): Server {
     });
   });
   attachGuestNamespace(io);
+  attachPrintBridge(io);
   return io;
 }
 

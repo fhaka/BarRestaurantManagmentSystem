@@ -15,6 +15,7 @@ import { AppError } from '../../lib/errors.js';
 import { writeAudit } from '../../lib/audit.js';
 import { transactionWithRetry } from '../../lib/transaction.js';
 import { emitTableUpdated } from '../../realtime/server.js';
+import { paidOnOrder } from '../billing/totals.js';
 import * as orderRepo from '../orders/repo.js';
 import * as repo from './repo.js';
 import { canActOnAllTables, getFloor, type FloorActor } from './service.js';
@@ -329,10 +330,18 @@ export async function reopenSession(actor: FloorActor, id: number): Promise<Floo
  * Ends the session (business rule 4: only when nothing is owed). Its tables become free and are
  * flagged for cleaning.
  */
+/** What is still owed on the table's open order (total minus payments). */
+async function sessionBalance(sessionId: number): Promise<number> {
+  const order = await orderRepo.findOrderForSession(db, sessionId);
+  if (!order) return 0;
+  const row = await db('orders').where({ id: order.id }).first('total_minor');
+  return Number(row.total_minor) - (await paidOnOrder(db, order.id));
+}
+
 export async function closeSession(actor: FloorActor, id: number): Promise<FloorState> {
   const session = await loadSession(actor, id);
-  // Bills and payments arrive in Phase 6; until then nothing can be owed.
-  const balanceMinor = 0;
+  // Business rule 4: nothing may be left to pay.
+  const balanceMinor = await sessionBalance(id);
   if (!canCloseSession(session.status, balanceMinor)) {
     throw AppError.conflict('BALANCE_DUE', 'Settle the bill before closing the table.', {
       balanceMinor,

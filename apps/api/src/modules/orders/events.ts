@@ -1,6 +1,7 @@
 import { roomFor, type ItemStatusChangedData, type ItemsSentData } from '@tavolina/shared';
 import { db } from '../../db/knex.js';
 import { emit, emitTableUpdated } from '../../realtime/server.js';
+import { printTickets } from '../printing/tickets.js';
 import * as repo from './repo.js';
 import type { TicketChange } from './tickets.js';
 
@@ -13,6 +14,7 @@ export function emitItemsSent(
   if (!sent.stationIds.length && !sent.ticketIds.length) return;
   const data: ItemsSentData = { orderId, ...sent };
   emit('order.items_sent', locationId, { ...data }, sent.stationIds.map(roomFor.station));
+  void printTickets(locationId, sent.ticketIds);
 }
 
 /**

@@ -64,7 +64,8 @@
     "noFreeTables": "Al momento non ci sono tavoli liberi.",
     "actions": "Azioni",
     "saved": "Salvato",
-    "noWaiter": "Ancora senza cameriere"
+    "noWaiter": "Ancora senza cameriere",
+    "bill": "Conto · {{amount}}"
   },
   "editor": {
     "title": "Editor della pianta",

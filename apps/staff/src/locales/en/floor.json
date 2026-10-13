@@ -64,7 +64,8 @@
     "noFreeTables": "There are no free tables right now.",
     "actions": "Actions",
     "saved": "Saved",
-    "noWaiter": "No waiter yet"
+    "noWaiter": "No waiter yet",
+    "bill": "Bill · {{amount}}"
   },
   "editor": {
     "title": "Floor plan editor",

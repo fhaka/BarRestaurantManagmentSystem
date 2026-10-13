@@ -9,6 +9,7 @@ import type menu from './locales/sq/menu.json';
 import type floor from './locales/sq/floor.json';
 import type orders from './locales/sq/orders.json';
 import type kds from './locales/sq/kds.json';
+import type billing from './locales/sq/billing.json';
 import type showcase from './locales/sq/showcase.json';
 
 // Type-safe translation keys, checked against the Albanian source files.
@@ -26,6 +27,7 @@ declare module 'i18next' {
       floor: typeof floor;
       orders: typeof orders;
       kds: typeof kds;
+      billing: typeof billing;
       showcase: typeof showcase;
     };
     returnNull: false;

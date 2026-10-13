@@ -44,6 +44,23 @@ export const locationSettingsSchema = z.object({
   voidRequiresApproval: z.boolean().default(true),
   /** Discounts above this need manager PIN approval (1000 = 10%). */
   discountApprovalThresholdBp: z.number().int().min(0).max(10000).default(1000),
+  /** Printers by role (stations have their own); null = screens only. */
+  receiptPrinterId: z.number().int().positive().nullable().default(null),
+  reportPrinterId: z.number().int().positive().nullable().default(null),
+  /** Fiscal codes issued by the tax authority (DPT); placeholders until registration. */
+  fiscal: z
+    .object({
+      businessUnitCode: z.string().trim().max(20).default('ab123cd456'),
+      tcrCode: z.string().trim().max(20).default('ef789gh012'),
+      softwareCode: z.string().trim().max(20).default('tv000tv000'),
+      maintainerCode: z.string().trim().max(20).default('mn000mn000'),
+    })
+    .default({
+      businessUnitCode: 'ab123cd456',
+      tcrCode: 'ef789gh012',
+      softwareCode: 'tv000tv000',
+      maintainerCode: 'mn000mn000',
+    }),
 });
 export type LocationSettings = z.infer<typeof locationSettingsSchema>;
 

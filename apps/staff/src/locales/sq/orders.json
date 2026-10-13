@@ -179,5 +179,6 @@
     "fromPhone": "E porositur nga telefoni",
     "toast_one": "Tavolina {{tables}} porositi {{count}} artikull nga menuja QR",
     "toast_other": "Tavolina {{tables}} porositi {{count}} artikuj nga menuja QR"
-  }
+  },
+  "bill": "Fatura"
 }

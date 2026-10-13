@@ -29,6 +29,8 @@ const INVALIDATES: Record<(typeof REALTIME_EVENTS)[number], string[]> = {
   'kds.ticket_bumped': ['kds'],
   'service_request.created': ['floor'],
   'guest_order.pending': ['floor', 'order', 'orders'],
+  'bill.updated': ['bill', 'order', 'orders'],
+  'cash_drawer.updated': ['cash'],
 };
 
 // The KDS screen follows one station; remembered so a reconnect joins it again.

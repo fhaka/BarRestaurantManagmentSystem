@@ -179,5 +179,6 @@
     "fromPhone": "Ordered from a phone",
     "toast_one": "Table {{tables}} ordered {{count}} item from the QR menu",
     "toast_other": "Table {{tables}} ordered {{count}} items from the QR menu"
-  }
+  },
+  "bill": "Bill"
 }

@@ -117,6 +117,23 @@ phone at Salla 2 with two lemonades waiting for the waiter's confirmation, and t
 calling a waiter. Guest orders wait for a waiter by default (location setting). Orders from a free
 table open it without a waiter; the first waiter to confirm takes it.
 
+Phase 6 adds bills and the till. Sign in as `arka@lasvegas.test` and open **Arka** (Till): the cash
+drawer is already open with a 5 000 L float, and every table with an order is waiting to be paid.
+Split a bill, take cash (with change) or a card, then close the table; **Mbyllja e ditës** shows
+the X report and closes the day with a Z report (a manager or owner). Fiscal registration uses a
+mock service (DECISIONS D-067): codes look real but nothing is sent to the tax office. To make it
+fail for a demo, start the API with `FISCAL_MOCK_FAILURES=3`.
+
+**Printing.** Without printers everything stays on screen. To print, add printers under
+Settings → Printers and fiscal, choose what prints where, create a print bridge key, then on the PC
+next to the printers run:
+
+```bash
+TAVOLINA_API_URL=http://<api-host>:4100 TAVOLINA_BRIDGE_KEY=<key> npm run start -w @tavolina/print-bridge
+```
+
+Add a printer of type "Test (no printer)" to see receipts and tickets in the bridge window.
+
 The first `npm run test:e2e` needs Chromium for Playwright: `npx playwright install chromium`.
 
 `.test` addresses can never receive email. Five wrong PINs lock that person for 5 minutes; a manager

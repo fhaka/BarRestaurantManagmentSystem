@@ -280,7 +280,18 @@ describe('anti-abuse', () => {
     const { agent } = await guestOrder();
     const sessionId = (await floorTable()).session!.id;
     const order: Order = (await waiter.get(`/api/v1/table-sessions/${sessionId}/order`)).body.order;
-    await waiter.post(`/api/v1/orders/${order.id}/guest-items/confirm`).send({});
+    const confirmed: Order = (
+      await waiter.post(`/api/v1/orders/${order.id}/guest-items/confirm`).send({})
+    ).body;
+    await waiter
+      .post(`/api/v1/orders/${order.id}/payments`)
+      .send({
+        uuid: randomUUID(),
+        method: 'card',
+        amountMinor: confirmed.totalMinor,
+        reference: 'T1',
+      })
+      .expect(201);
     await waiter.post(`/api/v1/table-sessions/${sessionId}/close`).expect(200);
 
     const view: GuestTableState = (await agent.get(url('/state'))).body;

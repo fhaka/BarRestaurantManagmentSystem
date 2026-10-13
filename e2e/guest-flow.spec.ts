@@ -67,7 +67,7 @@ test('guest orders from the QR menu → waiter confirms → kitchen → guest se
   await waiter.getByRole('link', { name: 'Shiko' }).click();
   await expect(waiter.getByText('1 pjatë e porositur nga telefoni')).toBeVisible();
   await waiter.getByRole('button', { name: 'Konfirmo dhe dërgo' }).click();
-  await expect(waiter.getByText('Porosia e klientit shkoi në kuzhinë')).toBeVisible();
+  await expect(waiter.getByText('Porosia e klientit shkoi në kuzhinë').first()).toBeVisible();
 
   // The phone follows along live.
   await expect(status.getByText('U mor në kuzhinë')).toBeVisible();

@@ -1,6 +1,5 @@
 import type { Knex } from 'knex';
 import {
-  isBillable,
   lineTotal,
   type Course,
   type Order,
@@ -9,6 +8,7 @@ import {
   type OrderSummary,
   type OrderType,
 } from '@tavolina/shared';
+import * as billingTotals from '../billing/totals.js';
 
 type Tx = Knex | Knex.Transaction;
 
@@ -80,7 +80,7 @@ export async function nextNumber(
   trx: Tx,
   locationId: number,
   businessDate: string,
-  kind: 'order' | 'ticket',
+  kind: 'order' | 'ticket' | 'fiscal',
 ) {
   await trx.raw(
     'INSERT INTO daily_counters (location_id, business_date, kind, value) VALUES (?, ?, ?, 1) ON DUPLICATE KEY UPDATE value = value + 1',
@@ -92,30 +92,9 @@ export async function nextNumber(
   return num(row.value);
 }
 
-/** Recomputes the order totals from its lines (business rule 2; discounts etc. in Phase 6). */
+/** Recomputes the order totals (business rule 2); see billing/totals.ts. */
 export async function recalcTotals(trx: Tx, orderId: number): Promise<void> {
-  const items = await trx('order_items')
-    .where({ order_id: orderId })
-    .select('id', 'unit_price_minor', 'qty', 'status');
-  const mods = items.length
-    ? await trx('order_item_modifiers')
-        .whereIn(
-          'order_item_id',
-          items.map((i) => i.id),
-        )
-        .select('order_item_id', 'price_delta_minor')
-    : [];
-  let subtotal = 0;
-  for (const i of items) {
-    if (!isBillable(i.status as OrderItemStatus)) continue;
-    const deltas = mods
-      .filter((m) => num(m.order_item_id) === num(i.id))
-      .map((m) => num(m.price_delta_minor));
-    subtotal += lineTotal(num(i.unit_price_minor), deltas, num(i.qty));
-  }
-  await trx('orders')
-    .where({ id: orderId })
-    .update({ subtotal_minor: subtotal, total_minor: subtotal });
+  await billingTotals.recalcTotals(trx, orderId);
 }
 
 async function tableNamesForSessions(db: Tx, sessionIds: number[]): Promise<Map<number, string[]>> {

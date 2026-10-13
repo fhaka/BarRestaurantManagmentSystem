@@ -179,5 +179,6 @@
     "fromPhone": "Ordinato da telefono",
     "toast_one": "Il tavolo {{tables}} ha ordinato {{count}} articolo dal menù QR",
     "toast_other": "Il tavolo {{tables}} ha ordinato {{count}} articoli dal menù QR"
-  }
+  },
+  "bill": "Conto"
 }

@@ -4,6 +4,7 @@ import { env } from './config/env.js';
 import { db } from './db/knex.js';
 import { syncReferenceData } from './db/sync-access.js';
 import { logger } from './lib/logger.js';
+import { startFiscalWorker, stopFiscalWorker } from './modules/fiscal/service.js';
 import { attachRealtime, closeRealtime } from './realtime/server.js';
 
 const app = createApp();
@@ -17,6 +18,8 @@ syncReferenceData(db)
     server.listen(env.API_PORT, () => {
       logger.info(`Tavolina API listening on http://localhost:${env.API_PORT}`);
     });
+    // Retries fiscal registrations the tax service did not confirm (plan §5.11).
+    startFiscalWorker();
   });
 
 let shuttingDown = false;
@@ -24,6 +27,7 @@ async function shutdown(signal: string) {
   if (shuttingDown) return;
   shuttingDown = true;
   logger.info(`${signal} received, shutting down`);
+  stopFiscalWorker();
   await closeRealtime().catch(() => undefined);
   server.close();
   await db.destroy().catch(() => undefined);

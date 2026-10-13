@@ -14,6 +14,13 @@ export default defineConfig({
       },
       {
         test: {
+          name: 'print-bridge',
+          root: './apps/print-bridge',
+          environment: 'node',
+        },
+      },
+      {
+        test: {
           name: 'api',
           root: './apps/api',
           environment: 'node',

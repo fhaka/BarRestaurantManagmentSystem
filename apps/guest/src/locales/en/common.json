@@ -141,5 +141,23 @@
     "vegetarian": "Vegetarian",
     "gluten_free": "Gluten-free",
     "spicy": "Spicy"
+  },
+  "receipt": {
+    "title": "Receipt",
+    "notFound": "This receipt could not be found.",
+    "fiscalized": "Fiscalized with the tax office",
+    "pending": "Being registered with the tax office…",
+    "verify": "Verify with the tax office"
+  },
+  "review": {
+    "paid": "Thank you! Your bill is paid.",
+    "receipt": "Receipt · {{amount}}",
+    "question": "How was your visit?",
+    "rating": "Your rating",
+    "stars_one": "{{count}} star",
+    "stars_other": "{{count}} stars",
+    "commentPlaceholder": "Anything you would like to tell us? (optional)",
+    "send": "Send review",
+    "thanks": "Thank you for your review!"
   }
 }

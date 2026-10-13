@@ -21,6 +21,11 @@ const FIELD_KEYS = new Set([
   'percentMax',
   'outsideFloor',
   'transferTarget',
+  'wholeLek',
+  'tenderedTooLow',
+  'referenceRequired',
+  'hostRequired',
+  'devicePathRequired',
 ]);
 
 type Issue = Pick<z.core.$ZodIssue, 'code' | 'message' | 'path'> & {

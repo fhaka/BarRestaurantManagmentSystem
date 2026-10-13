@@ -141,5 +141,23 @@
     "vegetarian": "Vegetariano",
     "gluten_free": "Senza glutine",
     "spicy": "Piccante"
+  },
+  "receipt": {
+    "title": "Scontrino",
+    "notFound": "Scontrino non trovato.",
+    "fiscalized": "Fiscalizzato presso il fisco",
+    "pending": "In registrazione presso il fisco…",
+    "verify": "Verifica presso il fisco"
+  },
+  "review": {
+    "paid": "Grazie! Il conto è pagato.",
+    "receipt": "Scontrino · {{amount}}",
+    "question": "Com’è andata la visita?",
+    "rating": "Il tuo voto",
+    "stars_one": "{{count}} stella",
+    "stars_other": "{{count}} stelle",
+    "commentPlaceholder": "Qualcosa da dirci? (facoltativo)",
+    "send": "Invia la recensione",
+    "thanks": "Grazie per la recensione!"
   }
 }

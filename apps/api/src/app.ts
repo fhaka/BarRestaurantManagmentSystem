@@ -18,6 +18,7 @@ import { menuRouter } from './modules/menu/routes.js';
 import { guestRouter } from './modules/guest/routes.js';
 import { floorRouter } from './modules/floor/routes.js';
 import { ordersRouter } from './modules/orders/routes.js';
+import { billingRouter } from './modules/billing/routes.js';
 import { UPLOADS_PUBLIC_PATH, uploadsDir } from './lib/storage.js';
 
 export function createApp(): Express {
@@ -72,6 +73,7 @@ export function createApp(): Express {
   api.use(menuRouter);
   api.use(floorRouter);
   api.use(ordersRouter);
+  api.use(billingRouter);
   api.use(guestRouter);
   app.use(API_BASE_PATH, api);
 

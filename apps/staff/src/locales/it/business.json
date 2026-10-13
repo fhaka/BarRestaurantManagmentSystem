@@ -35,7 +35,7 @@
     "name": "Nome del locale",
     "address": "Indirizzo",
     "nipt": "NIPT",
-    "receiptHeader": "Testo in testa allo scontrino",
+    "receiptHeader": "Righe extra in cima allo scontrino",
     "receiptFooter": "Testo in fondo allo scontrino",
     "currencyDisplay": "Visualizzazione della valuta",
     "currencyL": "1 200 L",
@@ -56,6 +56,8 @@
     "voidRequiresApproval": "Gli storni richiedono il PIN del responsabile",
     "voidRequiresApprovalDescription": "Per gli articoli già inviati in cucina o al bar.",
     "discountThreshold": "Gli sconti oltre questa percentuale richiedono approvazione (%)",
-    "discountThresholdHint": "Per sconti maggiori un responsabile deve inserire il suo PIN."
+    "discountThresholdHint": "Per sconti maggiori un responsabile deve inserire il suo PIN.",
+    "devices": "Stampanti e fisco",
+    "receiptHeaderHint": "Nome, indirizzo e NIPT si stampano da soli."
   }
 }

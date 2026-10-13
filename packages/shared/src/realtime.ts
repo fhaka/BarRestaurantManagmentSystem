@@ -12,6 +12,8 @@ export const REALTIME_EVENTS = [
   'kds.ticket_bumped',
   'service_request.created',
   'guest_order.pending',
+  'bill.updated',
+  'cash_drawer.updated',
 ] as const;
 export type RealtimeEventType = (typeof REALTIME_EVENTS)[number];
 

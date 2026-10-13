@@ -62,6 +62,10 @@ export interface GuestTableState {
   /** Open requests from this table, so the buttons can say "waiter is coming". */
   openRequests: { type: ServiceRequestType; createdAt: string }[];
   blocked: boolean;
+  /** Paid bills of this visit: links to the digital receipts. */
+  receipts: { label: string; splitType: string; totalMinor: number; token: string }[];
+  /** "Leave a review" once the table has paid (plan §5.5). */
+  review: 'available' | 'done' | null;
 }
 
 /** A guest phone at a table, as staff see it (to block abuse). */

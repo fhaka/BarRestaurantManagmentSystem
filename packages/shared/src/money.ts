@@ -8,7 +8,7 @@ export const MINOR_PER_LEK = 100;
 export type CurrencyDisplay = 'L' | 'ALL';
 
 /** Non-breaking space, so "1 200 L" never wraps across lines. */
-const NBSP = ' ';
+const NBSP = '\u00a0';
 
 export function isMinor(value: unknown): value is number {
   return typeof value === 'number' && Number.isSafeInteger(value);

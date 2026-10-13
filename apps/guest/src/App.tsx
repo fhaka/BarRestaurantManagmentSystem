@@ -2,16 +2,21 @@ import { useTranslation } from 'react-i18next';
 import { BookOpen, QrCode, Smartphone } from 'lucide-react';
 import { useTheme } from '@tavolina/ui';
 import { LanguageSwitch } from './components/LanguageSwitch';
+import { ReceiptPage } from './pages/ReceiptPage';
 import { TablePage } from './pages/TablePage';
 
 /** The QR code points to /t/<tableToken>; anything else shows how to start. */
 const TABLE_PATH = /^\/t\/([A-Za-z0-9_-]{10,64})\/?$/;
+const RECEIPT_PATH = /^\/r\/([A-Za-z0-9_-]{10,40})\/?$/;
 
 export function App() {
   // Guest app always follows the system theme.
   useTheme({ initial: 'system', persist: false });
-  const match = TABLE_PATH.exec(window.location.pathname);
-  return match ? <TablePage tableToken={match[1]!} /> : <Welcome />;
+  const table = TABLE_PATH.exec(window.location.pathname);
+  if (table) return <TablePage tableToken={table[1]!} />;
+  const receipt = RECEIPT_PATH.exec(window.location.pathname);
+  if (receipt) return <ReceiptPage token={receipt[1]!} />;
+  return <Welcome />;
 }
 
 function Welcome() {

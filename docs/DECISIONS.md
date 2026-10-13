@@ -356,7 +356,7 @@ single-use 60-second token bound to `order_item.void` and that item. People who 
 `approval.grant` approve their own voids. The audit log records who voided and who approved. Waste
 for prepared dishes is recorded once inventory exists (Phase 7).
 
-## D-046 — Closing a table closes its order (interim, Phase 4)
+## D-046 — Closing a table closes its order (interim, Phase 4; payment rule replaced by D-063)
 
 Until bills and payments exist (Phase 6), closing a table closes its open order. Merging tables
 moves the other table's lines and tickets into this table's order and marks the empty order
@@ -463,3 +463,105 @@ the translated menu (lines store the main-language name, business rule 1).
 "Leave a review after payment" needs payments and arrives with Phase 6. When a table session is
 moved to another table, phones keep pointing at the old table's QR code and see the table as free
 until they scan the new one; acceptable for now.
+
+## D-059 — Bill arithmetic (Phase 6)
+
+Business rule 2 lives in `packages/shared/src/billing-math.ts` and is checked against hand-calculated
+fixtures (`billing-math.test.ts`, repeated end to end in `billing.test.ts`): line = (unit + modifier
+deltas) × qty rounded to lek → item discounts → bill discount → service charge → VAT extracted per
+rate. Every amount a guest sees or pays is a whole lek; behind the scenes a bill discount and the
+service charge are spread over the lines to the qindarka (largest remainder) so the VAT breakdown
+per rate adds up exactly. VAT is rounded to the qindarka. Each line keeps a copy of its VAT rate
+(`order_items.tax_rate_bp`, business rule 1); lines from before Phase 6 use the location's default
+rate. A set menu line is taxed at the default rate.
+
+## D-060 — Discounts (Phase 6)
+
+One discount per line and one on the whole bill; a new one replaces the old. Percent (basis points)
+or a fixed whole-lek amount, never more than the base, always with a reason. A discount above the
+location's `discountApprovalThresholdBp` (as a percentage of its base) needs a manager's PIN;
+people with `approval.grant` approve their own. Every discount is audited with who approved it.
+Discounts and splits are locked once a payment is taken (`409 ORDER_HAS_PAYMENTS`); refund first.
+
+## D-061 — Service charge (Phase 6)
+
+`serviceChargeBp` applies to dine-in orders only (not takeaway or delivery), on the amount after
+discounts, rounded to lek. It is taxed at the rates of the dishes it is charged on.
+
+## D-062 — Splits and bills (Phase 6)
+
+A split creates bills: whole, equal parts (whole-lek parts, the first ones take the leftover lek),
+by seat (dishes without a seat go on a shared bill), by dishes (every dish on exactly one bill;
+combo dishes follow their set menu) or custom whole-lek amounts that must add up to the total.
+Each bill has its own VAT breakdown: from its own dishes, or the order's mix for equal and custom
+parts. A bill can be paid in several payments (mixed). Paying without a split creates one whole
+bill. If the order changes, unpaid bills without payments are dropped and the cashier splits
+again; paid bills stay. A dish on a paid bill cannot be voided (`409 ITEM_PAID`), and a void may
+not take the total below what was paid.
+
+## D-063 — Payments, tips and the table lifecycle (Phase 6)
+
+Methods: cash (needs an open cash drawer; tendered amount and change are recorded), card (terminal
+reference optional; no card terminal integration), voucher and house account (reference required).
+Tips are recorded per payment and credited to the table's waiter (or whoever opened the order).
+When the order is fully paid the table goes `→ paid` (`open → bill_requested → paid`, plan §6) and
+its bill requests are settled; takeaway and delivery orders close. Business rule 4 is now enforced:
+a table closes only when nothing is owed (`409 BALANCE_DUE`). This replaces the interim D-046.
+
+## D-064 — Refunds (Phase 6)
+
+Refunds are against one payment, full or partial, never more than was paid, always with a manager's
+PIN (managers approve their own) and audited. Cash refunds need the drawer open and are recorded as
+a drawer movement. Each refund sends a corrective (negative) invoice to the fiscal service.
+
+## D-065 — Cash drawer (Phase 6)
+
+One open drawer per location (device management arrives in Phase 10). Opening registers the float
+with DPT as a cash deposit; pay-outs register a withdrawal. Expected cash = float + cash sales (with
+cash tips) + pay-ins − pay-outs − refunds − tips paid out. Closing needs a count by denomination
+(ALL notes and coins 5 000 … 1 lek) and a manager's approval (people with `cash.approve` approve
+their own). "Open without a sale" needs a manager's PIN, is audited and kicks the drawer through
+the receipt printer.
+
+## D-066 — Z report and closing the day (Phase 6)
+
+The X report is the same as the Z report while the day is open. Closing (`cash.approve`) requires no
+open table, no open takeaway order and no open drawer (business rule 5). The Z report is stored on
+`business_days`, printed on the report printer and locks the business day: new orders, payments,
+refunds and drawers on that day are refused (`409 BUSINESS_DAY_CLOSED`) until the next business day
+starts (04:00, D-039). Voids in the report are dishes that reached the kitchen and were cancelled.
+
+## D-067 — Fiscalization is mocked (Phase 6)
+
+Per plan §5.11 the real DPT connection is **not** implemented. `FiscalProvider` has
+`registerInvoice`, `registerCashDeposit` and `registerWithdrawal`; `MockFiscalProvider` returns a
+realistic NSLF (32 hex), NIVF (UUID) and a verification URL on the DPT test site. Every record
+keeps what the real integration needs: business unit, TCR, software, maintainer and operator codes,
+invoice number per TCR per year, issue time, total, VAT per rate and payment methods. Records are
+created as `pending` in the sale's transaction, sent right after commit, and retried by a job every
+30 s with back-off (30 s doubling to 1 h; after 12 attempts `failed`, still visible). A sale is
+never blocked by the tax service; receipts say "pending" until confirmed. **Before go-live the real
+provider must be implemented and certified against the current DPT specification**, with the
+business's certificate and real codes (Settings → Printers and fiscal). Operator codes are derived
+from the user id until DPT-issued codes are stored per person.
+
+## D-068 — Printing and the print bridge (Phase 6)
+
+The API builds receipts, station tickets and Z reports as plain lines (`PrintDocument`) in the
+location's main language; the print bridge (`apps/print-bridge`, a Node app on a PC in the
+restaurant) turns them into ESC/POS (code page 858 for ë, ç and Italian accents; QR codes; cut;
+drawer kick) and sends them to network printers (port 9100) or USB device files, or shows them in
+its window ("console" printers, for trying it out). The bridge signs in on the Socket.IO namespace
+`/print-bridge` with a key created under Settings → Printers (shown once, stored as a hash), gets
+queued jobs on connect and confirms each print. Routing: one printer for receipts, one for Z
+reports, one per station. Without a printer nothing is queued and screens remain the output.
+Found while testing: a fast bridge could confirm a job before the API marked it "sent", so the API
+now marks it first; and two knex updates were never awaited (knex queries only run when awaited).
+
+## D-069 — Digital receipt and reviews (Phase 6)
+
+Every bill has a random receipt token; the guest app shows the same receipt at `/r/<token>` with the
+fiscal QR code (the staff screen links to it). Phones at a table that has paid see their receipts
+and can leave one review (1–5 stars, optional comment) per visit, also for a few hours after the
+table closed: a phone's new visit remembers its previous one (`guest_sessions.previous_id`). Staff
+read reviews at `GET /reviews`; the dashboard shows them in Phase 9.

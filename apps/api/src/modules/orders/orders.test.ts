@@ -691,10 +691,18 @@ describe('floor integration', () => {
     expect(await db('orders').where({ status: 'cancelled' })).toHaveLength(1);
   });
 
-  it('closing the table closes its order', async () => {
+  it('a table closes only when paid, and its order closes with it', async () => {
     const s1 = await openTable();
     const o = await order(s1, [line(m.tave)]);
     await waiter.post(`/api/v1/table-sessions/${s1}/request-bill`).expect(200);
+    // Business rule 4: not while something is owed.
+    expect((await waiter.post(`/api/v1/table-sessions/${s1}/close`)).body.error.code).toBe(
+      'BALANCE_DUE',
+    );
+    await waiter
+      .post(`/api/v1/orders/${o.id}/payments`)
+      .send({ uuid: randomUUID(), method: 'card', amountMinor: o.totalMinor, reference: 'T1' })
+      .expect(201);
     await waiter.post(`/api/v1/table-sessions/${s1}/close`).expect(200);
     expect(await db('orders').where({ id: o.id }).first()).toMatchObject({ status: 'closed' });
     const res = await waiter.post(`/api/v1/orders/${o.id}/items`).send({ items: [line(m.salad)] });

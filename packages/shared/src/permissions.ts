@@ -129,6 +129,7 @@ export const APPROVAL_ACTIONS = [
   'order.discount',
   'payment.refund',
   'cash_drawer.open_no_sale',
+  'cash_drawer.close',
   'order.delete_paid',
 ] as const;
 export type ApprovalAction = (typeof APPROVAL_ACTIONS)[number];

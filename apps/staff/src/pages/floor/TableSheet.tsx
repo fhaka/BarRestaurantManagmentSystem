@@ -18,6 +18,7 @@ import {
   Smartphone,
   Split,
   UserRoundCog,
+  Wallet,
 } from 'lucide-react';
 import { formatMoney, type FloorState, type FloorTable } from '@tavolina/shared';
 import {
@@ -299,6 +300,14 @@ function TableActions({
                   <Link to={`/floor/sessions/${session.id}`}>
                     <ClipboardList />
                     {t('table.takeOrder')}
+                  </Link>
+                </Button>
+              ) : null}
+              {session.totalMinor > 0 && can('payment.take') ? (
+                <Button size="lg" variant="outline" block asChild>
+                  <Link to={`/floor/sessions/${session.id}/bill`}>
+                    <Wallet />
+                    {t('table.bill', { amount: formatMoney(session.totalMinor) })}
                   </Link>
                 </Button>
               ) : null}

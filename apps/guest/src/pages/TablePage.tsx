@@ -39,6 +39,7 @@ import {
   cn,
   toast,
 } from '@tavolina/ui';
+import { AfterPayment } from '../components/AfterPayment';
 import { CartSheet } from '../components/CartSheet';
 import { Chip, ItemSheet, type Subject } from '../components/ItemSheet';
 import { LanguageSwitch } from '../components/LanguageSwitch';
@@ -347,6 +348,8 @@ function Menu({
           {t('browseOnly')}
         </p>
       ) : null}
+
+      {state ? <AfterPayment tableToken={tableToken} state={state} currency={currency} /> : null}
 
       {/* Waiter and bill: always one tap away. */}
       <div className="grid grid-cols-2 gap-2 px-4 pb-3">

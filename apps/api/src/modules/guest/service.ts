@@ -4,6 +4,7 @@ import {
   GUEST_ORDERS_PER_MINUTE,
   businessDate,
   guestOrderSchema,
+  reviewSchema,
   inTimeWindow,
   isBillable,
   lineTotal,
@@ -27,6 +28,7 @@ import { emit, emitTableUpdated } from '../../realtime/server.js';
 import * as floorRepo from '../floor/repo.js';
 import * as locationRepo from '../locations/repo.js';
 import * as menuRepo from '../menu/repo.js';
+import { assertDayOpen } from '../billing/totals.js';
 import { emitItemsSent } from '../orders/events.js';
 import * as orderRepo from '../orders/repo.js';
 import { insertLinesTx, prepareLine, sendItemsTx, type ParsedItem } from '../orders/service.js';
@@ -113,7 +115,14 @@ export async function ensureGuestSession(
     return { session: existing, newToken: null };
   }
   const token = randomToken(24);
+  // The same phone's earlier visit at this table (e.g. the table just paid and closed).
+  const previous = cookieToken
+    ? await db('guest_sessions')
+        .where({ token_hash: sha256(cookieToken), table_id: table.id })
+        .first('id')
+    : undefined;
   const [id] = await db('guest_sessions').insert({
+    previous_id: previous?.id ?? null,
     location_id: table.location.id,
     table_id: table.id,
     table_session_id: await activeSessionId(table.id),
@@ -200,6 +209,7 @@ export async function tableState(
       createdAt: (r.created_at as Date).toISOString(),
     })),
     blocked: guest?.blocked ?? false,
+    ...(await afterPayment(sessionId, guest?.id ?? null)),
   };
 }
 
@@ -319,6 +329,7 @@ export async function placeOrder(
   for (;;) {
     try {
       const result = await transactionWithRetry(async (trx) => {
+        await assertDayOpen(trx, location.id);
         const sessionId = await sessionForOrdering(trx, table);
         // A phone that scanned before anyone sat down joins the party now.
         await trx('guest_sessions')
@@ -455,4 +466,105 @@ export async function createRequest(
       )
     : [table.id];
   emitTableUpdated(table.location.id, tableIds);
+}
+
+// ---- After paying: receipts and reviews --------------------------------------------------------
+
+/** How long after leaving a phone may still review its visit. */
+const REVIEW_WINDOW_MS = 3 * 60 * 60 * 1000;
+
+/**
+ * The visit this phone may review: its current or previous table session, once that has paid
+ * (or closed within the last few hours).
+ */
+async function reviewableVisit(guestId: number | null) {
+  if (guestId === null) return null;
+  const current = await db('guest_sessions')
+    .where({ id: guestId })
+    .first('id', 'table_session_id', 'previous_id');
+  const candidates = [current];
+  if (current?.previous_id) {
+    candidates.push(
+      await db('guest_sessions')
+        .where({ id: current.previous_id })
+        .first('id', 'table_session_id', 'previous_id'),
+    );
+  }
+  for (const c of candidates) {
+    if (!c?.table_session_id) continue;
+    const s = await db('table_sessions')
+      .where({ id: c.table_session_id })
+      .first('status', 'closed_at');
+    const recentlyClosed =
+      s?.status === 'closed' &&
+      s.closed_at &&
+      Date.now() - (s.closed_at as Date).getTime() < REVIEW_WINDOW_MS;
+    if (s && (s.status === 'paid' || recentlyClosed)) {
+      return { guestSessionId: Number(c.id), tableSessionId: Number(c.table_session_id) };
+    }
+  }
+  return null;
+}
+
+async function afterPayment(
+  activeSessionId: number | null,
+  guestId: number | null,
+): Promise<Pick<GuestTableState, 'receipts' | 'review'>> {
+  const visit = await reviewableVisit(guestId);
+  const sessionIds = [
+    ...new Set([activeSessionId, visit?.tableSessionId].filter((v): v is number => Boolean(v))),
+  ];
+  const bills = sessionIds.length
+    ? await db('bills as b')
+        .join('orders as o', 'o.id', 'b.order_id')
+        .whereIn('o.table_session_id', sessionIds)
+        .whereNot('b.status', 'open')
+        .orderBy(['b.sort', 'b.id'])
+        .select('b.label', 'b.split_type', 'b.total_minor', 'b.receipt_token')
+    : [];
+  let review: GuestTableState['review'] = null;
+  if (visit) {
+    const done = await db('reviews')
+      .where({ table_session_id: visit.tableSessionId, guest_session_id: visit.guestSessionId })
+      .first('id');
+    review = done ? 'done' : 'available';
+  }
+  return {
+    receipts: bills.map((b) => ({
+      label: String(b.label),
+      splitType: String(b.split_type),
+      totalMinor: Number(b.total_minor),
+      token: String(b.receipt_token),
+    })),
+    review,
+  };
+}
+
+/** Guests rate their visit after paying; one review per phone per visit. */
+export async function leaveReview(
+  table: GuestTable,
+  cookieToken: string | undefined,
+  raw: unknown,
+) {
+  const input = reviewSchema.parse(raw);
+  const row = cookieToken
+    ? await db('guest_sessions')
+        .where({ token_hash: sha256(cookieToken), table_id: table.id })
+        .first('id')
+    : undefined;
+  const visit = await reviewableVisit(row ? Number(row.id) : null);
+  if (!visit) throw AppError.conflict('SESSION_STATE', 'Reviews open once the table has paid.');
+  try {
+    await db('reviews').insert({
+      location_id: table.location.id,
+      table_session_id: visit.tableSessionId,
+      guest_session_id: visit.guestSessionId,
+      rating: input.rating,
+      comment: input.comment?.trim() || null,
+    });
+  } catch (err) {
+    if (isDuplicate(err))
+      throw AppError.conflict('CONFLICT', 'You already reviewed this visit. Thank you!');
+    throw err;
+  }
 }

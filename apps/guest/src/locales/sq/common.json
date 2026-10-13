@@ -141,5 +141,23 @@
     "vegetarian": "Vegjetariane",
     "gluten_free": "Pa gluten",
     "spicy": "Pikante"
+  },
+  "receipt": {
+    "title": "Kuponi",
+    "notFound": "Ky kupon nuk u gjet.",
+    "fiscalized": "I fiskalizuar në tatime",
+    "pending": "Po regjistrohet në tatime…",
+    "verify": "Verifiko në tatime"
+  },
+  "review": {
+    "paid": "Faleminderit! Fatura u pagua.",
+    "receipt": "Kuponi · {{amount}}",
+    "question": "Si ishte vizita juaj?",
+    "rating": "Vlerësimi juaj",
+    "stars_one": "{{count}} yll",
+    "stars_other": "{{count}} yje",
+    "commentPlaceholder": "Diçka që doni të na thoni? (opsionale)",
+    "send": "Dërgo vlerësimin",
+    "thanks": "Faleminderit për vlerësimin!"
   }
 }

@@ -32,6 +32,7 @@ import { consumeApproval } from '../approvals/service.js';
 import { loadSession } from '../floor/sessions.js';
 import * as locationRepo from '../locations/repo.js';
 import * as menuRepo from '../menu/repo.js';
+import { assertDayOpen, paidOnOrder } from '../billing/totals.js';
 import { emitItemsChanged, emitItemsSent } from './events.js';
 import * as repo from './repo.js';
 import { refreshTickets } from './tickets.js';
@@ -54,7 +55,12 @@ const now3 = (trx: Tx) => trx.fn.now(3);
 
 // ---- Access --------------------------------------------------------------------------------------
 
-async function orderForActor(actor: OrderActor, ref: string | number, trx: Tx = db, lock = false) {
+export async function orderForActor(
+  actor: OrderActor,
+  ref: string | number,
+  trx: Tx = db,
+  lock = false,
+) {
   const order = await repo.findOrderRow(trx, actor.locationId, ref, lock);
   if (!order) throw AppError.notFound('Order not found');
   // Dine-in orders follow the table's owner rule (own tables only, plan §4).
@@ -67,7 +73,7 @@ async function loadSessionIfActive(actor: OrderActor, sessionId: number, trx: Tx
   if (session && session.status !== 'closed') await loadSession(actor, sessionId, trx);
 }
 
-function assertOpen(order: { status: string }) {
+export function assertOpen(order: { status: string }) {
   if (order.status !== 'open')
     throw AppError.conflict('ORDER_CLOSED', 'This order is already closed.');
 }
@@ -99,6 +105,7 @@ export async function createOrder(actor: OrderActor, raw: unknown): Promise<Orde
   if (!location) throw AppError.notFound('Location not found');
 
   const id = await transactionWithRetry(async (trx) => {
+    await assertDayOpen(trx, actor.locationId);
     let sessionId: number | null = null;
     if (input.type === 'dine_in') {
       const session = await repo.findSessionRow(trx, actor.locationId, input.tableSessionRef!);
@@ -171,7 +178,16 @@ interface InsertRow {
   priceRuleId: number | null;
   qty: number;
   stationId: number | null;
+  /** VAT copied from the item's rate (or the default rate) when added. */
+  taxRateBp: number;
   modifiers: { modifierId: number; name: string; priceDeltaMinor: number }[];
+}
+
+/** The item's VAT rate, else the location's default rate (20% if none is set up). */
+export function taxRateFor(menu: AdminMenu, taxRateId: number | null): number {
+  const rate =
+    menu.taxRates.find((r) => r.id === taxRateId) ?? menu.taxRates.find((r) => r.isDefault);
+  return rate?.rateBp ?? 2000;
 }
 
 const unavailable = (name: string) =>
@@ -268,6 +284,7 @@ function prepareItem(
     unitPriceMinor,
     priceRuleId,
     stationId: item.stationId,
+    taxRateBp: taxRateFor(menu, item.taxRateId),
     modifiers,
   };
 }
@@ -333,6 +350,8 @@ export function prepareLine(
       priceRuleId: null,
       qty: input.qty,
       stationId: null,
+      // A set menu is taxed at the default rate; its dishes are priced at 0.
+      taxRateBp: taxRateFor(menu, null),
       modifiers: [],
     },
     children,
@@ -374,6 +393,7 @@ async function insertRow(
     notes: line.notes ?? null,
     status,
     station_id: row.stationId,
+    tax_rate_bp: row.taxRateBp,
     source: origin.guestSessionId === null ? 'staff' : 'guest',
     added_by: origin.userId,
     guest_session_id: origin.guestSessionId,
@@ -439,6 +459,7 @@ async function addItemsToOrder(actor: OrderActor, orderId: number, raw: unknown)
   const sent = await transactionWithRetry(async (trx) => {
     const order = await repo.findOrderRow(trx, actor.locationId, orderId, true);
     assertOpen(order!);
+    await assertDayOpen(trx, actor.locationId);
     const newIds = await insertLinesTx(
       trx,
       orderId,
@@ -839,6 +860,14 @@ export async function voidItem(
         status: item.status,
       });
     }
+    const onPaidBill = await trx('bill_items as bi')
+      .join('bills as b', 'b.id', 'bi.bill_id')
+      .where('bi.order_item_id', item.id)
+      .whereNot('b.status', 'open')
+      .first('b.id');
+    if (onPaidBill) {
+      throw AppError.conflict('ITEM_PAID', 'This dish is on a paid bill; refund it instead.');
+    }
     let approvedBy: number | null = null;
     if (location?.settings.voidRequiresApproval) {
       approvedBy = actor.permissions.has('approval.grant')
@@ -874,6 +903,16 @@ export async function voidItem(
     await syncComboParents(trx, Number(item.order_id));
     const bumped = await refreshTickets(trx, ids);
     await repo.recalcTotals(trx, Number(item.order_id));
+    // A void may not take the order below what has already been paid.
+    const total = Number(
+      (await trx('orders').where({ id: item.order_id }).first('total_minor')).total_minor,
+    );
+    if (total < (await paidOnOrder(trx, Number(item.order_id)))) {
+      throw AppError.conflict(
+        'ORDER_HAS_PAYMENTS',
+        'Part of this bill is already paid; refund it first.',
+      );
+    }
     await writeAudit(
       actor,
       {

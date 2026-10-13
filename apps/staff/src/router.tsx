@@ -21,6 +21,9 @@ import { LockPage } from './pages/LockPage';
 import { LoginPage } from './pages/LoginPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { OrderPage } from './pages/orders/OrderPage';
+import { BillPage, SessionBill } from './pages/billing/BillPage';
+import { CashierPage } from './pages/cashier/CashierPage';
+import { DevicesPage } from './pages/settings/DevicesPage';
 import { OrdersPage } from './pages/orders/OrdersPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -36,6 +39,7 @@ const BUILT: ReadonlySet<string> = new Set([
   'floor',
   'orders',
   'kds',
+  'cashier',
 ]);
 const placeholderRoutes: RouteObject[] = NAV_ITEMS.filter((item) => !BUILT.has(item.key)).map(
   (item) => ({
@@ -135,6 +139,38 @@ export const router = createBrowserRouter([
                 element: (
                   <RequirePermission permission="order.create">
                     <OrdersPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'floor/sessions/:sessionId/bill',
+                element: (
+                  <RequirePermission permission="payment.take">
+                    <SessionBill />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'orders/:orderRef/bill',
+                element: (
+                  <RequirePermission permission="payment.take">
+                    <BillPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'cashier',
+                element: (
+                  <RequirePermission permission="payment.take">
+                    <CashierPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'settings/devices',
+                element: (
+                  <RequirePermission permission="settings.edit">
+                    <DevicesPage />
                   </RequirePermission>
                 ),
               },

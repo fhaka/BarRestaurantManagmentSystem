@@ -35,7 +35,7 @@
     "name": "Location name",
     "address": "Address",
     "nipt": "NIPT",
-    "receiptHeader": "Receipt header text",
+    "receiptHeader": "Extra lines at the top of the receipt",
     "receiptFooter": "Receipt footer text",
     "currencyDisplay": "Currency display",
     "currencyL": "1 200 L",
@@ -56,6 +56,8 @@
     "voidRequiresApproval": "Voids need a manager PIN",
     "voidRequiresApprovalDescription": "For items already sent to the kitchen or bar.",
     "discountThreshold": "Discounts above this percentage need approval (%)",
-    "discountThresholdHint": "A manager must enter their PIN for larger discounts."
+    "discountThresholdHint": "A manager must enter their PIN for larger discounts.",
+    "devices": "Printers and fiscal",
+    "receiptHeaderHint": "Name, address and NIPT are printed automatically."
   }
 }

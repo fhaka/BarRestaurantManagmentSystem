@@ -27,6 +27,7 @@ export const NAMESPACES = [
   'floor',
   'orders',
   'kds',
+  'billing',
   'showcase',
 ];
 

@@ -37,7 +37,8 @@ export async function seed(knex: Knex): Promise<void> {
     nipt: 'L00000001A',
     settings: JSON.stringify({
       ...DEFAULT_LOCATION_SETTINGS,
-      receiptHeader: 'Bar Restaurant Las Vegas\nRruga e Durrësit, Tiranë',
+      // Name, address and NIPT print automatically; the header adds extra lines.
+      receiptHeader: 'Tel. +355 4 222 0000 · Hapur 07:00–23:00',
       receiptFooter: 'Faleminderit! Ju mirëpresim përsëri.',
     }),
   });

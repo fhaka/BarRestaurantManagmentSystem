@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { formatMoney, lekToMinor, minorToLek, roundToLek } from './money.js';
 
-const nb = (s: string) => s.replace(/ /g, ' ');
+const nb = (s: string) => s.replace(/ /g, '\u00a0');
 
 describe('lekToMinor / minorToLek', () => {
   it('converts lek to integer minor units without float drift', () => {

@@ -1,6 +1,8 @@
 import { useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Printer } from 'lucide-react';
 import {
   LANGS,
   formatMoney,
@@ -191,6 +193,14 @@ function SettingsForm({ location }: { location: Location }) {
       <PageHeader
         title={t('settings.title')}
         subtitle={t('settings.subtitle', { location: location.name })}
+        actions={
+          <Button type="button" variant="outline" asChild>
+            <Link to="/settings/devices">
+              <Printer />
+              {t('settings.devices')}
+            </Link>
+          </Button>
+        }
       />
 
       <Section title={t('settings.sections.business')}>
@@ -214,7 +224,11 @@ function SettingsForm({ location }: { location: Location }) {
 
       <Section title={t('settings.sections.receipt')}>
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label={t('settings.receiptHeader')} error={err('receiptHeader')}>
+          <Field
+            label={t('settings.receiptHeader')}
+            hint={t('settings.receiptHeaderHint')}
+            error={err('receiptHeader')}
+          >
             <Textarea
               value={form.receiptHeader}
               onChange={(e) => set('receiptHeader', e.target.value)}

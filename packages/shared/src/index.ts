@@ -13,3 +13,4 @@ export * from './floor.js';
 export * from './realtime.js';
 export * from './orders.js';
 export * from './guest.js';
+export * from './billing.js';

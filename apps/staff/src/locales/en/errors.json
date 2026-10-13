@@ -56,7 +56,12 @@
     "maxOptions": "The maximum cannot exceed the number of options.",
     "percentMax": "The discount cannot be more than 100%.",
     "outsideFloor": "The table goes outside the floor plan.",
-    "transferTarget": "Choose a table or a waiter."
+    "transferTarget": "Choose a table or a waiter.",
+    "wholeLek": "Use whole lek.",
+    "tenderedTooLow": "Less than the amount due.",
+    "referenceRequired": "Enter the reference.",
+    "hostRequired": "Enter the IP address.",
+    "devicePathRequired": "Enter the device."
   },
   "ORDER_ITEM_ALREADY_SENT": "This item was already sent to the kitchen. Void it instead.",
   "ORDER_ITEM_STATE": "This item cannot change like that any more. The screen has been refreshed.",
@@ -67,5 +72,15 @@
   "GUEST_ORDERING_DISABLED": "Ordering from the QR menu is turned off.",
   "GUEST_BLOCKED": "This phone is blocked.",
   "TOO_MANY_ORDERS": "Too many orders in a minute.",
-  "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} is not served at this time."
+  "ITEM_NOT_AVAILABLE_NOW": "{{itemName}} is not served at this time.",
+  "ORDER_HAS_PAYMENTS": "Part of this bill is already paid; refund it first.",
+  "BILL_PAID": "This bill is already paid.",
+  "ITEM_PAID": "This dish is on a paid bill; refund it instead.",
+  "PAYMENT_TOO_HIGH": "That is more than is left to pay.",
+  "REFUND_TOO_HIGH": "That is more than was paid.",
+  "SPLIT_INVALID": "This split does not work. Check the dishes and amounts.",
+  "CASH_DRAWER_CLOSED": "Open the cash drawer first (Till → Cash drawer).",
+  "CASH_DRAWER_OPEN": "Count and close the cash drawer first.",
+  "BUSINESS_DAY_CLOSED": "Today has been closed with a Z report.",
+  "DAY_HAS_OPEN_TABLES": "Close every table and order first."
 }

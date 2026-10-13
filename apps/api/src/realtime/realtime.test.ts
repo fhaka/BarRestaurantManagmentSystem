@@ -222,4 +222,77 @@ describe('Socket.IO', () => {
     expect((await updated).tableIds).toEqual([tableId]);
     expect(staffEvent).toBe(false);
   });
+
+  it('the print bridge signs in with its key, receives station tickets and confirms them', async () => {
+    const owner = as(app, await login(app, fx.users.owner.email), fx.locationId);
+    const api = as(app, manager, fx.locationId);
+    const stationId = (await api.post('/api/v1/stations').send({ name: 'Kuzhina' })).body.id;
+    const categoryId = (await api.post('/api/v1/menu/categories').send({ name: 'Gatime' })).body.id;
+    const itemId = (
+      await api
+        .post('/api/v1/menu/items')
+        .send({ categoryId, stationId, name: 'Fërgesë', priceMinor: 70_000 })
+    ).body.id;
+    const printerId = (
+      await owner
+        .post('/api/v1/printers')
+        .send({ name: 'Kuzhina', connection: 'network', host: '192.168.1.50' })
+    ).body.id;
+    await owner
+      .put('/api/v1/print-routes')
+      .send({ receiptPrinterId: null, reportPrinterId: null, stations: [{ stationId, printerId }] })
+      .expect(200);
+    const { token } = (await owner.post('/api/v1/print-bridges').send({ name: 'PC në bar' })).body;
+
+    const connectBridge = (auth: Record<string, unknown>) =>
+      new Promise<Socket>((resolve, reject) => {
+        const s = connect(`${url}/print-bridge`, {
+          path: '/socket.io',
+          auth,
+          transports: ['websocket'],
+          reconnection: false,
+        });
+        sockets.push(s);
+        s.once('connect', () => resolve(s));
+        s.once('connect_error', reject);
+      });
+    await expect(connectBridge({ token: 'tpb_wrong_wrong_wrong_wrong' })).rejects.toThrow(
+      'unauthorized',
+    );
+    const bridge = await connectBridge({ token });
+    const job = new Promise<{
+      jobId: number;
+      printer: { host: string };
+      document: { lines: { kind: string; text?: string }[] };
+    }>((resolve) => bridge.on('print.job', resolve));
+
+    const areaId = (await api.post('/api/v1/areas').send({ name: 'Salla' })).body.id;
+    const tableId = (
+      await api.post('/api/v1/tables').send({ areaId, name: '3', x: 0, y: 0, w: 3, h: 3 })
+    ).body.id;
+    const waiter = as(app, await login(app, fx.users.waiter.email), fx.locationId);
+    const sessionId = (
+      await waiter
+        .post('/api/v1/table-sessions')
+        .send({ uuid: randomUUID(), tableId, guestCount: 2 })
+    ).body.tables.find((t: { id: number }) => t.id === tableId).session.id;
+    await waiter
+      .post(`/api/v1/table-sessions/${sessionId}/items`)
+      .send({ items: [{ uuid: randomUUID(), menuItemId: itemId, notes: 'pa piper' }], send: true })
+      .expect(201);
+
+    const received = await job;
+    expect(received.printer.host).toBe('192.168.1.50');
+    const text = received.document.lines.map((l) => l.text ?? '').join(' | ');
+    expect(text).toContain('Fërgesë');
+    expect(text).toContain('!! pa piper');
+    bridge.emit('print.ack', { jobId: received.jobId, ok: true });
+    const { db } = await import('../db/knex.js');
+    for (let i = 0; i < 20; i++) {
+      if ((await db('print_jobs').where({ id: received.jobId }).first()).status === 'printed')
+        break;
+      await new Promise((r) => setTimeout(r, 25));
+    }
+    expect((await db('print_jobs').where({ id: received.jobId }).first()).status).toBe('printed');
+  });
 });
