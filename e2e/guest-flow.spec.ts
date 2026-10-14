@@ -1,46 +1,6 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import dotenv from 'dotenv';
-import mysql from 'mysql2/promise';
-import { devices, expect, test, type Browser, type Page } from '@playwright/test';
-import { E2E_DATABASE, GUEST_PORT } from '../playwright.config';
-
-// Demo accounts from apps/api/src/db/seeds/01_demo_access.ts.
-const PASSWORD = 'Tavolina2026!';
-
-/** The QR token of a demo table (what the printed QR code points to). */
-async function qrToken(area: string, table: string): Promise<string> {
-  dotenv.config({
-    path: path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '.env'),
-    quiet: true,
-  });
-  const connection = await mysql.createConnection({
-    host: process.env.MYSQL_HOST ?? '127.0.0.1',
-    port: Number(process.env.MYSQL_PORT ?? 3310),
-    user: process.env.MYSQL_USER ?? 'tavolina',
-    password: process.env.MYSQL_PASSWORD,
-    database: E2E_DATABASE,
-  });
-  try {
-    const [rows] = await connection.query(
-      'SELECT t.qr_token FROM tables t JOIN areas a ON a.id = t.area_id WHERE a.name = ? AND t.name = ?',
-      [area, table],
-    );
-    return (rows as { qr_token: string }[])[0]!.qr_token;
-  } finally {
-    await connection.end();
-  }
-}
-
-async function signIn(browser: Browser, email: string): Promise<Page> {
-  const page = await (await browser.newContext()).newPage();
-  await page.goto('/login');
-  await page.getByLabel('Email').fill(email);
-  await page.getByRole('textbox', { name: 'Fjalëkalimi' }).fill(PASSWORD);
-  await page.getByRole('button', { name: 'Hyr' }).click();
-  await expect(page).not.toHaveURL(/\/login/);
-  return page;
-}
+import { devices, expect, test } from '@playwright/test';
+import { GUEST_PORT } from '../playwright.config';
+import { qrToken, signIn } from './helpers';
 
 test('guest orders from the QR menu → waiter confirms → kitchen → guest sees it ready', async ({
   browser,

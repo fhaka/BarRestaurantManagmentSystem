@@ -35,6 +35,7 @@ export function UserMenu({ compact = false }: { compact?: boolean }) {
     queryKey: ['time', 'me', locationId, user?.id],
     queryFn: () => api<ClockStatus>('GET', '/me/clock'),
     enabled: clockable,
+    throwOnError: false,
   });
   const toggle = useMutation({
     mutationFn: (action: 'in' | 'out') => api<ClockResult>('POST', `/time-entries/clock-${action}`),

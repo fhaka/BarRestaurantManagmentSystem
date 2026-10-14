@@ -1,7 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-
-// Demo accounts from apps/api/src/db/seeds/01_demo_access.ts.
-const PASSWORD = 'Tavolina2026!';
+import { PASSWORD } from './helpers';
 
 async function signIn(page: Page, email: string) {
   await page.goto('/login');

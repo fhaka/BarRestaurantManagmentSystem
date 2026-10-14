@@ -1,9 +1,13 @@
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Knex } from 'knex';
 import { env, isTest } from '../config/env.js';
 
-const dbDir = path.dirname(fileURLToPath(import.meta.url));
+const here = path.dirname(fileURLToPath(import.meta.url));
+// From source this file sits in src/db; in the production build it may be bundled into a shared
+// chunk at the root of dist, next to the db/ folder that holds the compiled migrations and seeds.
+const dbDir = existsSync(path.join(here, 'migrations')) ? here : path.join(here, 'db');
 
 export function buildKnexConfig(database = isTest ? env.MYSQL_TEST_DATABASE : env.MYSQL_DATABASE) {
   return {

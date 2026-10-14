@@ -23,5 +23,12 @@
     "title": "Pagina non trovata",
     "description": "L'indirizzo aperto non esiste. Torna alla pagina iniziale.",
     "back": "Torna all'inizio"
+  },
+  "pageError": {
+    "title": "Impossibile aprire la pagina",
+    "description": "Qualcosa è andato storto durante il caricamento. Riprova; se continua, controlla la connessione a internet.",
+    "retry": "Riprova",
+    "reload": "Ricarica l’app",
+    "updated": "È stata pubblicata una nuova versione dell’app. Ricarica per aprirla."
   }
 }

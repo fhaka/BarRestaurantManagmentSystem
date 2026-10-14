@@ -1,0 +1,68 @@
+# Production stack (Phase 10): MySQL, the API and the web server (staff app :8080, guest app :8081).
+#   cp .env.production.example .env.production   # then set real secrets and addresses
+#   docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+# Put HTTPS in front of ports 8080/8081 (a reverse proxy or load balancer); cookies are Secure.
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-tavolina}
+      MYSQL_USER: ${MYSQL_USER:-tavolina}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
+      TZ: Europe/Tirane
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+00:00
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: api
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      API_PORT: 4100
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-tavolina}
+      MYSQL_USER: ${MYSQL_USER:-tavolina}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?set JWT_ACCESS_SECRET (openssl rand -hex 32)}
+      BCRYPT_COST: 12
+      CORS_ORIGINS: ${CORS_ORIGINS:?set CORS_ORIGINS (the public staff and guest addresses)}
+      GUEST_APP_URL: ${GUEST_APP_URL:?set GUEST_APP_URL (printed in table QR codes)}
+      SEED_DEMO: ${SEED_DEMO:-false}
+    volumes:
+      - uploads:/data/uploads
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - '${STAFF_PUBLIC_PORT:-8080}:8080'
+      - '${GUEST_PUBLIC_PORT:-8081}:8081'
+
+volumes:
+  mysql-data:
+  uploads:

@@ -1,6 +1,7 @@
 import { createBrowserRouter, type RouteObject } from 'react-router-dom';
 import { AppLayout } from './components/AppLayout';
 import { AppShell } from './components/AppShell';
+import { RootError, RouteBoundary } from './components/RouteBoundary';
 import {
   HomeRedirect,
   NoAccess,
@@ -11,28 +12,32 @@ import {
   SessionBoot,
 } from './components/guards';
 import { NAV_ITEMS } from './nav';
-import { LocationsPage } from './pages/LocationsPage';
-import { MenuPage } from './pages/menu/MenuPage';
-import { FloorEditorPage } from './pages/floor/FloorEditorPage';
+import {
+  AuditPage,
+  BillPage,
+  CashierPage,
+  DashboardPage,
+  DevicesPage,
+  FloorEditorPage,
+  InventoryPage,
+  KdsPage,
+  LocationsPage,
+  MenuPage,
+  OrdersPage,
+  QrSheetPage,
+  ReportsPage,
+  ReservationsPage,
+  SessionBill,
+  SettingsPage,
+  ShowcasePage,
+  StaffPage,
+} from './pages/lazy-pages';
 import { FloorPage } from './pages/floor/FloorPage';
-import { QrSheetPage } from './pages/floor/QrSheetPage';
-import { KdsPage } from './pages/kds/KdsPage';
 import { LockPage } from './pages/LockPage';
 import { LoginPage } from './pages/LoginPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { OrderPage } from './pages/orders/OrderPage';
-import { BillPage, SessionBill } from './pages/billing/BillPage';
-import { CashierPage } from './pages/cashier/CashierPage';
-import { DevicesPage } from './pages/settings/DevicesPage';
-import { InventoryPage } from './pages/inventory/InventoryPage';
-import { ReservationsPage } from './pages/reservations/ReservationsPage';
-import { DashboardPage } from './pages/reports/DashboardPage';
-import { ReportsPage } from './pages/reports/ReportsPage';
-import { OrdersPage } from './pages/orders/OrdersPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
-import { SettingsPage } from './pages/SettingsPage';
-import { ShowcasePage } from './pages/ShowcasePage';
-import { StaffPage } from './pages/staff/StaffPage';
 
 // Screens built in later phases: reachable (with permission checks) but showing a placeholder.
 const BUILT: ReadonlySet<string> = new Set([
@@ -48,6 +53,7 @@ const BUILT: ReadonlySet<string> = new Set([
   'reservations',
   'dashboard',
   'reports',
+  'audit',
 ]);
 const placeholderRoutes: RouteObject[] = NAV_ITEMS.filter((item) => !BUILT.has(item.key)).map(
   (item) => ({
@@ -62,12 +68,27 @@ const placeholderRoutes: RouteObject[] = NAV_ITEMS.filter((item) => !BUILT.has(i
 
 // The component showcase is a development tool only.
 const devRoutes: RouteObject[] = import.meta.env.DEV
-  ? [{ element: <AppShell />, children: [{ path: 'dev/showcase', element: <ShowcasePage /> }] }]
+  ? [
+      {
+        element: <AppShell />,
+        children: [
+          {
+            path: 'dev/showcase',
+            element: (
+              <RouteBoundary>
+                <ShowcasePage />
+              </RouteBoundary>
+            ),
+          },
+        ],
+      },
+    ]
   : [];
 
 export const router = createBrowserRouter([
   {
     element: <SessionBoot />,
+    errorElement: <RootError />,
     children: [
       {
         path: 'login',
@@ -94,7 +115,9 @@ export const router = createBrowserRouter([
             path: 'kds',
             element: (
               <RequirePermission permission="kds.view">
-                <KdsPage />
+                <RouteBoundary>
+                  <KdsPage />
+                </RouteBoundary>
               </RequirePermission>
             ),
           },
@@ -195,6 +218,14 @@ export const router = createBrowserRouter([
                 element: (
                   <RequirePermission permission="menu.edit">
                     <MenuPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'audit',
+                element: (
+                  <RequirePermission permission="audit.view">
+                    <AuditPage />
                   </RequirePermission>
                 ),
               },

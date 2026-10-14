@@ -1,10 +1,22 @@
+import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BookOpen, QrCode, Smartphone } from 'lucide-react';
-import { useTheme } from '@tavolina/ui';
+import { Skeleton, useTheme } from '@tavolina/ui';
 import { LanguageSwitch } from './components/LanguageSwitch';
-import { BookingPage } from './pages/BookingPage';
-import { ReceiptPage } from './pages/ReceiptPage';
 import { TablePage } from './pages/TablePage';
+
+// The table menu is what most guests open; the receipt and booking pages load only when needed.
+const ReceiptPage = lazy(() =>
+  import('./pages/ReceiptPage').then((m) => ({ default: m.ReceiptPage })),
+);
+const BookingPage = lazy(() =>
+  import('./pages/BookingPage').then((m) => ({ default: m.BookingPage })),
+);
+const loading = (
+  <div className="mx-auto max-w-md p-5">
+    <Skeleton className="h-96" />
+  </div>
+);
 
 /** The QR code points to /t/<tableToken>; anything else shows how to start. */
 const TABLE_PATH = /^\/t\/([A-Za-z0-9_-]{10,64})\/?$/;
@@ -17,9 +29,21 @@ export function App() {
   const table = TABLE_PATH.exec(window.location.pathname);
   if (table) return <TablePage tableToken={table[1]!} />;
   const receipt = RECEIPT_PATH.exec(window.location.pathname);
-  if (receipt) return <ReceiptPage token={receipt[1]!} />;
+  if (receipt) {
+    return (
+      <Suspense fallback={loading}>
+        <ReceiptPage token={receipt[1]!} />
+      </Suspense>
+    );
+  }
   const booking = BOOKING_PATH.exec(window.location.pathname);
-  if (booking) return <BookingPage locationId={Number(booking[1])} />;
+  if (booking) {
+    return (
+      <Suspense fallback={loading}>
+        <BookingPage locationId={Number(booking[1])} />
+      </Suspense>
+    );
+  }
   return <Welcome />;
 }
 

@@ -19,7 +19,9 @@ export async function truncateAppTables(
   knex: Knex,
   { mode = 'truncate' }: { mode?: 'truncate' | 'delete' } = {},
 ): Promise<void> {
-  if (process.env.NODE_ENV === 'production') {
+  // Production data is never wiped; the only exception is loading the demo into an empty database
+  // (`cli.ts demo`, which sets this flag after checking there is nothing to lose).
+  if (process.env.NODE_ENV === 'production' && process.env.TAVOLINA_EMPTY_DB_CONFIRMED !== 'true') {
     throw new Error('Refusing to truncate tables in production');
   }
   const [rows] = (await knex.raw(

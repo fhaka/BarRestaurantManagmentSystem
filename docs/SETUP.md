@@ -63,19 +63,20 @@ npm run dev
 
 ## Useful scripts
 
-| Script                | What it does                                                               |
-| --------------------- | -------------------------------------------------------------------------- |
-| `npm run dev`         | API (tsx watch) + staff + guest (Vite) together                            |
-| `npm run test`        | Vitest: unit tests and API tests (needs MySQL running)                     |
-| `npm run test:e2e`    | Playwright end-to-end tests (own database `tavolina_e2e`, ports 4110/5190) |
-| `npm run test:all`    | Lint + format check + typecheck + tests + e2e. Must pass to end a phase    |
-| `npm run lint`        | ESLint across the monorepo                                                 |
-| `npm run format`      | Prettier write                                                             |
-| `npm run typecheck`   | `tsc --noEmit` in every workspace                                          |
-| `npm run build`       | Production builds (API via tsup, apps via Vite)                            |
-| `npm run db:migrate`  | Run Knex migrations                                                        |
-| `npm run db:rollback` | Roll back the last migration batch                                         |
-| `npm run db:seed`     | Run seeds                                                                  |
+| Script                                     | What it does                                                               |
+| ------------------------------------------ | -------------------------------------------------------------------------- |
+| `npm run dev`                              | API (tsx watch) + staff + guest (Vite) together                            |
+| `npm run test`                             | Vitest: unit tests and API tests (needs MySQL running)                     |
+| `npm run test:e2e`                         | Playwright end-to-end tests (own database `tavolina_e2e`, ports 4110/5190) |
+| `npm run test:all`                         | Lint + format check + typecheck + tests + e2e. Must pass to end a phase    |
+| `npm run lint`                             | ESLint across the monorepo                                                 |
+| `npm run format`                           | Prettier write                                                             |
+| `npm run typecheck`                        | `tsc --noEmit` in every workspace                                          |
+| `npm run build`                            | Production builds (API via tsup, apps via Vite)                            |
+| `npm run db:migrate`                       | Run Knex migrations                                                        |
+| `npm run db:rollback`                      | Roll back the last migration batch                                         |
+| `npm run db:seed`                          | Run seeds                                                                  |
+| `npm run profile:queries -w @tavolina/api` | SQL queries and time per main endpoint on the demo data (N+1 check)        |
 
 ## Demo credentials
 
@@ -158,6 +159,37 @@ The first `npm run test:e2e` needs Chromium for Playwright: `npx playwright inst
 
 `.test` addresses can never receive email. Five wrong PINs lock that person for 5 minutes; a manager
 can clear it by setting a new PIN under **Staff**.
+
+Phase 10 adds the audit log (**Regjistri i veprimeve**: who did what, approved by whom, before and
+after; read-only), page-level error screens with "try again", and the production Docker build
+below. `npm run test:e2e` now covers every flow (orders, guest QR, payments, reservations and the
+booking page, stock, clock-in, reports with CSV, permissions, audit) plus an accessibility scan
+(axe, WCAG 2.1 AA) of every main screen.
+
+## Production with Docker
+
+The production stack is MySQL, the API and nginx (staff app on port 8080, guest app on port 8081;
+both proxy `/api`, `/socket.io` and `/uploads` to the API). Security notes: `docs/SECURITY.md`.
+
+```bash
+cp .env.production.example .env.production
+```
+
+Edit `.env.production`: long random database passwords, `JWT_ACCESS_SECRET` (`openssl rand -hex
+32`), and the public HTTPS addresses in `CORS_ORIGINS` and `GUEST_APP_URL` (printed in table QR
+codes). Then build and start:
+
+```bash
+docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+```
+
+The API runs the database migrations every time it starts. With `SEED_DEMO=true` it loads the
+"Bar Restaurant Las Vegas" demo, but only into an empty database (a restart never wipes data).
+Put HTTPS in front of ports 8080 and 8081 (a reverse proxy or load balancer): sign-in cookies are
+`Secure`, so outside `localhost` the apps only work over HTTPS. Data lives in the `mysql-data` and
+`uploads` volumes; back them up. Logs: `docker compose -f docker-compose.prod.yml logs -f api`.
+The restaurant's printers are reached by the print bridge on a PC in the restaurant (see
+"Printing" above); it connects to the public staff address.
 
 ## Troubleshooting
 

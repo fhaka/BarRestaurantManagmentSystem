@@ -8,7 +8,8 @@
   "new": "Rezervim i ri",
   "views": {
     "timeline": "Sipas tavolinave",
-    "list": "Lista"
+    "list": "Lista",
+    "label": "Pamja"
   },
   "summary_one": "{{count}} rezervim · {{covers}} persona",
   "summary_other": "{{count}} rezervime · {{covers}} persona",

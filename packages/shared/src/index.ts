@@ -18,3 +18,4 @@ export * from './inventory.js';
 export * from './reservations.js';
 export * from './staff-time.js';
 export * from './reports.js';
+export * from './audit.js';

@@ -41,6 +41,9 @@ export interface InventoryActor extends ActorContext {
 }
 
 type Tx = Knex | Knex.Transaction;
+/** A raw row from a knex query (untyped by knex; fields are converted where used). */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type DbRow = Record<string, any>;
 const num = (v: unknown) => Number(v);
 const milli = (v: unknown) => toMilli(String(v));
 const iso = (v: unknown) => (v ? (v as Date).toISOString() : null);
@@ -511,17 +514,40 @@ export async function listMovements(
 
 // ---- Purchase orders ---------------------------------------------------------------------------
 
-async function loadPurchaseOrder(trx: Tx, locationId: number, id: number): Promise<PurchaseOrder> {
-  const po = await trx('purchase_orders as p')
+/** Orders with their lines in two queries, whatever the number of orders (no N+1). */
+async function loadPurchaseOrders(
+  trx: Tx,
+  locationId: number,
+  ids: number[],
+): Promise<PurchaseOrder[]> {
+  if (!ids.length) return [];
+  const orders = await trx('purchase_orders as p')
     .join('suppliers as s', 's.id', 'p.supplier_id')
-    .where({ 'p.id': id, 'p.location_id': locationId })
-    .first('p.*', 's.name as supplier_name');
-  if (!po) throw AppError.notFound('Purchase order not found');
-  const lines = await trx('purchase_order_lines as l')
+    .whereIn('p.id', ids)
+    .where('p.location_id', locationId)
+    .select('p.*', 's.name as supplier_name');
+  const allLines = await trx('purchase_order_lines as l')
     .join('ingredients as i', 'i.id', 'l.ingredient_id')
-    .where('l.purchase_order_id', id)
+    .whereIn('l.purchase_order_id', ids)
     .orderBy('l.id')
     .select('l.*', 'i.name as ingredient_name', 'i.unit');
+  const byId = new Map(orders.map((o) => [num(o.id), o]));
+  return ids
+    .filter((id) => byId.has(id))
+    .map((id) => {
+      const po = byId.get(id)!;
+      const lines = allLines.filter((l) => num(l.purchase_order_id) === id);
+      return toPurchaseOrder(po, lines);
+    });
+}
+
+async function loadPurchaseOrder(trx: Tx, locationId: number, id: number): Promise<PurchaseOrder> {
+  const [po] = await loadPurchaseOrders(trx, locationId, [id]);
+  if (!po) throw AppError.notFound('Purchase order not found');
+  return po;
+}
+
+function toPurchaseOrder(po: DbRow, lines: DbRow[]): PurchaseOrder {
   return {
     id: num(po.id),
     number: num(po.number),
@@ -561,7 +587,7 @@ export async function listPurchaseOrders(actor: InventoryActor): Promise<Purchas
       .limit(100)
       .select('id')
   ).map((r) => num(r.id));
-  return Promise.all(ids.map((id) => loadPurchaseOrder(db, actor.locationId, id)));
+  return loadPurchaseOrders(db, actor.locationId, ids);
 }
 
 export const getPurchaseOrder = (actor: InventoryActor, id: number) =>
@@ -757,17 +783,37 @@ export async function receivePurchaseOrder(
 
 // ---- Stock counts ------------------------------------------------------------------------------
 
-async function loadCount(trx: Tx, locationId: number, id: number): Promise<StockCount> {
-  const count = await trx('stock_counts as c')
+/** Counts with their lines in two queries, whatever the number of counts (no N+1). */
+async function loadCounts(trx: Tx, locationId: number, ids: number[]): Promise<StockCount[]> {
+  if (!ids.length) return [];
+  const counts = await trx('stock_counts as c')
     .join('users as u', 'u.id', 'c.created_by')
-    .where({ 'c.id': id, 'c.location_id': locationId })
-    .first('c.*', 'u.name as created_by_name');
-  if (!count) throw AppError.notFound('Stock count not found');
-  const lines = await trx('stock_count_lines as l')
+    .whereIn('c.id', ids)
+    .where('c.location_id', locationId)
+    .select('c.*', 'u.name as created_by_name');
+  const allLines = await trx('stock_count_lines as l')
     .join('ingredients as i', 'i.id', 'l.ingredient_id')
-    .where('l.stock_count_id', id)
+    .whereIn('l.stock_count_id', ids)
     .orderBy(['i.category', 'i.name'])
     .select('l.*', 'i.name as ingredient_name', 'i.unit');
+  const byId = new Map(counts.map((c) => [num(c.id), c]));
+  return ids
+    .filter((id) => byId.has(id))
+    .map((id) =>
+      toCount(
+        byId.get(id)!,
+        allLines.filter((l) => num(l.stock_count_id) === id),
+      ),
+    );
+}
+
+async function loadCount(trx: Tx, locationId: number, id: number): Promise<StockCount> {
+  const [count] = await loadCounts(trx, locationId, [id]);
+  if (!count) throw AppError.notFound('Stock count not found');
+  return count;
+}
+
+function toCount(count: DbRow, lines: DbRow[]): StockCount {
   const view = lines.map((l) => {
     const expected = milli(l.expected_qty);
     const counted = l.counted_qty === null ? null : milli(l.counted_qty);
@@ -805,7 +851,7 @@ export async function listCounts(actor: InventoryActor) {
       .limit(30)
       .select('id')
   ).map((r) => num(r.id));
-  return Promise.all(ids.map((id) => loadCount(db, actor.locationId, id)));
+  return loadCounts(db, actor.locationId, ids);
 }
 
 export const getCount = (actor: InventoryActor, id: number) => loadCount(db, actor.locationId, id);

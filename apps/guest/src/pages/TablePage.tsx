@@ -494,7 +494,8 @@ function Menu({
                   : t('menu.notNow')}
               </p>
             ) : null}
-            <ul className={cn('mt-3 flex flex-col gap-3', !c.availableNow && 'opacity-60')}>
+            {/* Not served now: images in grey, text kept readable (WCAG contrast); the note above says why. */}
+            <ul className={cn('mt-3 flex flex-col gap-3', !c.availableNow && 'grayscale')}>
               {c.combos.map((combo) => comboRow(combo, c))}
               {c.items.map((item) => itemRow(item, c))}
             </ul>

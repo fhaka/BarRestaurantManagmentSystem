@@ -1,4 +1,4 @@
-# Development services. Production services (api, web, nginx) are added in Phase 10.
+# Development services (MySQL only). The production stack is docker-compose.prod.yml.
 services:
   mysql:
     image: mysql:8.4

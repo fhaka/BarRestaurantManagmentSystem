@@ -97,11 +97,29 @@ export async function login(raw: LoginRequest, meta: RequestMeta): Promise<Sessi
     await verifyAgainstDummy(input.password);
     throw invalidCredentials();
   }
-  if (!(await verifySecret(input.password, user.password_hash))) throw invalidCredentials();
+  // Sign-ins are audited (plan §11); a wrong password for a known account is too, without the
+  // password. Unknown emails belong to no account, so they are only rate-limited.
+  const audit = (action: string, deviceId: number | null) =>
+    writeAudit(
+      {
+        userId: user.id,
+        accountId: user.account_id,
+        locationId: null,
+        deviceId,
+        ip: meta.ip,
+        requestId: meta.requestId,
+      },
+      { action, entityType: 'user', entityId: user.id, locationId: null },
+    );
+  if (!(await verifySecret(input.password, user.password_hash))) {
+    await audit('auth.login_failed', null);
+    throw invalidCredentials();
+  }
 
   const deviceId = input.device ? await repo.upsertDevice(user.account_id, input.device) : null;
   const session = await issueSession(user, deviceId, randomUUID(), meta);
   await repo.touchLastLogin(user.id);
+  await audit('auth.login', deviceId);
   return session;
 }
 

@@ -40,6 +40,8 @@ export function LockPage() {
     enabled: locationId !== null,
     queryFn: () => publicGet<PinUser[]>(`/auth/pin-users?locationId=${locationId}`),
     retry: false,
+    // Handled here: an expired device session sends the device back to sign-in.
+    throwOnError: false,
   });
 
   // Without a valid device session there is nobody to switch to: back to sign-in

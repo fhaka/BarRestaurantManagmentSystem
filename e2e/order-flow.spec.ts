@@ -1,17 +1,5 @@
-import { expect, test, type Browser, type Page } from '@playwright/test';
-
-// Demo accounts from apps/api/src/db/seeds/01_demo_access.ts.
-const PASSWORD = 'Tavolina2026!';
-
-async function signIn(browser: Browser, email: string): Promise<Page> {
-  const page = await (await browser.newContext()).newPage();
-  await page.goto('/login');
-  await page.getByLabel('Email').fill(email);
-  await page.getByRole('textbox', { name: 'Fjalëkalimi' }).fill(PASSWORD);
-  await page.getByRole('button', { name: 'Hyr' }).click();
-  await expect(page).not.toHaveURL(/\/login/);
-  return page;
-}
+import { expect, test, type Page } from '@playwright/test';
+import { signIn } from './helpers';
 
 /** Adds the one dish matching the search (Enter adds a single match). */
 async function addBySearch(page: Page, name: string) {

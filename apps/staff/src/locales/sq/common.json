@@ -23,5 +23,12 @@
     "title": "Faqja nuk u gjet",
     "description": "Adresa që hapët nuk ekziston. Kthehuni në faqen kryesore.",
     "back": "Kthehu në fillim"
+  },
+  "pageError": {
+    "title": "Kjo faqe nuk u hap",
+    "description": "Diçka shkoi keq gjatë ngarkimit. Provoni përsëri; nëse vazhdon, kontrolloni lidhjen me internetin.",
+    "retry": "Provo përsëri",
+    "reload": "Rifresko aplikacionin",
+    "updated": "U publikua një version i ri i aplikacionit. Rifreskoni për ta hapur."
   }
 }

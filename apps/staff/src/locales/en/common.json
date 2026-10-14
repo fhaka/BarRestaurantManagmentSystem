@@ -23,5 +23,12 @@
     "title": "Page not found",
     "description": "The address you opened does not exist. Go back to the start page.",
     "back": "Back to start"
+  },
+  "pageError": {
+    "title": "This page could not open",
+    "description": "Something went wrong while loading. Try again; if it keeps happening, check the internet connection.",
+    "retry": "Try again",
+    "reload": "Reload the app",
+    "updated": "A new version of the app was published. Reload to open it."
   }
 }

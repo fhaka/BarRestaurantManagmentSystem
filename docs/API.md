@@ -479,6 +479,19 @@ current one). Money in minor units.
 | `GET /reports/inventory`       | `InventoryReport`: per ingredient stock and value today; purchased, consumed, waste, count variance |
 | `GET /reports/hours`           | `HoursReport`: worked vs scheduled minutes per person                                               |
 
+## Audit log
+
+`audit.view`. Read-only (there is no route that edits or deletes audit rows). A location sees its
+own rows and account-wide ones (staff, locations).
+
+| Method & path            | Notes                                                                                                                                                                                                             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /audit-logs`        | `?from&to` (local dates), `action` (exact key, or a prefix ending in `.`), `userId`, `entityType`, `entityId`, `approved=true\|false`, `before` (cursor), `limit` ≤ 200 → `{ rows: AuditLogEntry[], nextCursor }` |
+| `GET /audit-logs/facets` | `{ actions, users }` that appear in this location's log, for filters                                                                                                                                              |
+
+Each entry: `{ id, at, action, entityType, entityId, userId, userName, approvedById, approvedByName, deviceName, ip, requestId, before, after }`.
+Sign-ins (`auth.login`) and wrong passwords for known accounts (`auth.login_failed`) are logged too.
+
 ## Real-time (Socket.IO)
 
 Same origin, path `/socket.io`. Handshake `auth: { token: <accessToken>, locationId }`; errors

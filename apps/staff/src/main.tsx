@@ -8,7 +8,14 @@ import { router } from './router';
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { staleTime: 30_000, retry: 1, refetchOnWindowFocus: false },
+    queries: {
+      staleTime: 30_000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+      // A page whose data never loaded shows the page error (components/RouteBoundary); a failed
+      // background refresh keeps showing what is already on screen.
+      throwOnError: (_error, query) => query.state.data === undefined,
+    },
   },
 });
 

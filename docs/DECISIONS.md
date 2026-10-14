@@ -772,3 +772,48 @@ fallback. esbuild is pinned to 0.28 with an npm `overrides` entry because Vite 8
 still ask for 0.27; all builds and tests pass with it. Remove the override once they catch up.
 Found while checking the screens: at exactly 1024 px (landscape tablet with the sidebar) the order
 screen left the dishes 160 px; between `lg` and `xl` the categories now run as a strip on top.
+
+## D-092 — Audit log viewer (Phase 10)
+
+Plan §5.14: a read-only screen for `audit.view` (owners, managers). The API has no route that
+changes or deletes audit rows. A location sees its own rows and the account-wide ones (staff,
+locations). Filters: dates, action group (the prefix before the dot), person, "approved only";
+newest first, 50 at a time with a cursor. Each row expands to before/after (changed fields
+highlighted), device, IP and request id. Action keys get human names in sq/en/it for the common
+ones and fall back to the key. Sign-ins and wrong passwords of known accounts are now audited too
+(security review). The demo history writes audit rows for its voids, discounts, refunds and
+sign-ins, so the screen has a month to show.
+
+## D-093 — Performance pass (Phase 10)
+
+`npm run profile:queries` counts SQL queries per main endpoint on the demo data: all stay between
+3 and 18 queries regardless of data size; the 30-day reports take about 80 ms. Two lists loaded
+each row separately (purchase orders, stock counts) and now load in two queries. New indexes for
+today's covers, refunds by business day and the audit filters. Bundles: the staff app's first load
+went from 468 KB to 300 KB gzipped (the floor and order screens stay in the main bundle so waiters
+never wait; reports with the chart library, menu, inventory, settings and the other management
+screens load on first use); the guest menu's first load is 133 KB gzipped with the receipt and
+booking pages split off.
+
+## D-094 — Errors, empty states, accessibility (Phase 10)
+
+A failed first load (React Query `throwOnError` when there is no data yet) or a crash inside a page
+shows a "this page could not open / try again" screen within the layout instead of a blank page;
+a missing code chunk after a deploy offers "reload the app"; failed background refreshes keep what
+is on screen. Every page already had an empty state. Accessibility: an axe scan (WCAG 2.1 A/AA) of
+16 staff screens, two dialogs, the lock, sign-in and kitchen screens and the guest menu and booking
+page runs in the e2e suite; it found two issues, both fixed (dimmed dishes not served now failed
+contrast — now shown in greyscale with readable text; the reservations view switch misused tabs —
+now a pressed-button group).
+
+## D-095 — Production build (Phase 10)
+
+One Dockerfile with two targets: `api` (Node 22, only the API's runtime dependencies; tsup also
+compiles the database CLI, migrations and seeds so the container migrates on start with plain
+node) and `web` (nginx serving both apps with security headers, long caching of hashed assets,
+no caching of `index.html`, WebSocket upgrade for Socket.IO). `docker-compose.prod.yml` adds MySQL
+(not exposed) and volumes for data and uploads; secrets come from `.env.production` (git-ignored;
+`.env.production.example` committed). `SEED_DEMO=true` loads the demo only into an empty database —
+production data is otherwise never truncated. Only `/book/*` on the guest app may be framed by
+other sites. TLS is expected in front (cookies are Secure). Tested locally: build, migrate, demo,
+sign-in through nginx, live socket, headers, restart without data loss.

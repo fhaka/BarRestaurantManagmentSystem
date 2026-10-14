@@ -30,8 +30,23 @@ async function main() {
       logger.info(`Ran ${files.length} seed file(s)`);
       break;
     }
+    case 'demo': {
+      // Loads the demo only into an empty database, so a container restart can never wipe data.
+      const users = await db('users').count({ n: '*' }).first();
+      if (Number(users?.n ?? 0) > 0) {
+        logger.info('The database already has data; the demo was not loaded');
+        break;
+      }
+      process.env.TAVOLINA_EMPTY_DB_CONFIRMED = 'true';
+      await syncReferenceData(db);
+      const [files] = (await db.seed.run()) as [string[]];
+      logger.info(`Empty database: loaded the demo (${files.length} seed files)`);
+      break;
+    }
     default:
-      throw new Error(`Unknown command "${String(command)}". Use migrate | rollback | seed.`);
+      throw new Error(
+        `Unknown command "${String(command)}". Use migrate | rollback | seed | demo.`,
+      );
   }
 }
 

@@ -8,7 +8,8 @@
   "new": "New reservation",
   "views": {
     "timeline": "By table",
-    "list": "List"
+    "list": "List",
+    "label": "View"
   },
   "summary_one": "{{count}} reservation · {{covers}} guests",
   "summary_other": "{{count}} reservations · {{covers}} guests",

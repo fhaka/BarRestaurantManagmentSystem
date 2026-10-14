@@ -10,6 +10,7 @@ import { LanguageSelect } from './LanguageSelect';
 import { LocationSwitcher } from './LocationSwitcher';
 import { Logo } from './Logo';
 import { OfflineBanner } from './OfflineBanner';
+import { RouteBoundary } from './RouteBoundary';
 import { ThemeSwitch } from './ThemeSwitch';
 import { UserMenu } from './UserMenu';
 
@@ -111,7 +112,9 @@ export function AppLayout() {
 
         <main className="flex-1">
           <OfflineBanner />
-          <Outlet />
+          <RouteBoundary>
+            <Outlet />
+          </RouteBoundary>
         </main>
       </div>
       <Toaster closeLabel={tc('actions.close')} />

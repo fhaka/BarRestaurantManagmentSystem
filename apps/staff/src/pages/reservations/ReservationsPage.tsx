@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CalendarDays, ChevronLeft, ChevronRight, LayoutList, Plus, Rows3 } from 'lucide-react';
 import { addDays, type Reservation } from '@tavolina/shared';
-import { Button, EmptyState, Input, Skeleton, Tabs, TabsList, TabsTrigger } from '@tavolina/ui';
+import { Button, EmptyState, Input, Skeleton } from '@tavolina/ui';
 import { PageHeader } from '../../components/AppLayout';
 import { formatDay } from '../../lib/format';
 import { useSession } from '../../lib/session';
@@ -85,18 +85,30 @@ export function ReservationsPage() {
         <span className="text-sm text-foreground-muted">
           {t('summary', { count: active.length, covers })}
         </span>
-        <Tabs value={view} onValueChange={(v) => set({ view: v })} className="ml-auto">
-          <TabsList>
-            <TabsTrigger value="timeline">
-              <Rows3 aria-hidden />
-              {t('views.timeline')}
-            </TabsTrigger>
-            <TabsTrigger value="list">
-              <LayoutList aria-hidden />
-              {t('views.list')}
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        {/* A view switch, not tabs: both views show the same reservations. */}
+        <div
+          className="ml-auto flex rounded-control border border-border bg-surface p-0.5"
+          role="group"
+          aria-label={t('views.label')}
+        >
+          {(
+            [
+              ['timeline', Rows3],
+              ['list', LayoutList],
+            ] as const
+          ).map(([key, Icon]) => (
+            <Button
+              key={key}
+              size="sm"
+              variant={view === key ? 'secondary' : 'ghost'}
+              aria-pressed={view === key}
+              onClick={() => set({ view: key })}
+            >
+              <Icon aria-hidden />
+              {t(`views.${key}`)}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {reservations.isLoading || floor.isLoading ? (

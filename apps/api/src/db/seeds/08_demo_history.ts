@@ -525,6 +525,48 @@ export async function seed(knex: Knex): Promise<void> {
   }
 
   await stockHistory(knex, locationId, manager, today, used);
+  await auditHistory(knex, locationId);
+}
+
+/**
+ * The audit log of the month (plan §5.14), derived from what the history contains: every void,
+ * discount and refund with who approved it, and each sign-in on the shared device.
+ */
+async function auditHistory(knex: Knex, locationId: number) {
+  const { account_id: accountId } = await knex('locations')
+    .where({ id: locationId })
+    .first('account_id');
+  const common = [accountId, locationId];
+  await knex.raw(
+    `INSERT INTO audit_logs (account_id, location_id, user_id, action, entity_type, entity_id, \`before\`, \`after\`, approved_by, created_at)
+     SELECT ?, o.location_id, i.voided_by, 'order_item.voided', 'order_item', i.id,
+            JSON_OBJECT('status', 'served'), JSON_OBJECT('status', 'voided', 'reason', i.void_reason),
+            i.void_approved_by, i.voided_at
+     FROM order_items i JOIN orders o ON o.id = i.order_id
+     WHERE o.location_id = ? AND i.status = 'voided' AND i.voided_at IS NOT NULL`,
+    common,
+  );
+  await knex.raw(
+    `INSERT INTO audit_logs (account_id, location_id, user_id, action, entity_type, entity_id, \`after\`, approved_by, created_at)
+     SELECT ?, o.location_id, d.created_by, 'order.discount_added', 'order', o.id,
+            JSON_OBJECT('type', d.type, 'value', d.value, 'amountMinor', d.amount_minor, 'reason', d.reason),
+            d.approved_by, d.created_at
+     FROM discounts d JOIN orders o ON o.id = d.order_id WHERE o.location_id = ?`,
+    common,
+  );
+  await knex.raw(
+    `INSERT INTO audit_logs (account_id, location_id, user_id, action, entity_type, entity_id, \`after\`, approved_by, created_at)
+     SELECT ?, p.location_id, r.created_by, 'payment.refunded', 'payment', p.id,
+            JSON_OBJECT('amountMinor', r.amount_minor, 'reason', r.reason), r.approved_by, r.created_at
+     FROM refunds r JOIN payments p ON p.id = r.payment_id WHERE p.location_id = ?`,
+    common,
+  );
+  await knex.raw(
+    `INSERT INTO audit_logs (account_id, location_id, user_id, action, entity_type, entity_id, ip, created_at)
+     SELECT ?, e.location_id, e.user_id, 'auth.pin_switch', 'user', e.user_id, '192.168.1.20', e.clock_in
+     FROM time_entries e WHERE e.location_id = ?`,
+    common,
+  );
 }
 
 /**

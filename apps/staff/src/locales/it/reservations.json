@@ -8,7 +8,8 @@
   "new": "Nuova prenotazione",
   "views": {
     "timeline": "Per tavolo",
-    "list": "Elenco"
+    "list": "Elenco",
+    "label": "Vista"
   },
   "summary_one": "{{count}} prenotazione · {{covers}} coperti",
   "summary_other": "{{count}} prenotazioni · {{covers}} coperti",

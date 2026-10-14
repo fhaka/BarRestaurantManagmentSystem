@@ -73,7 +73,12 @@ function Line({
     <li className="flex flex-col gap-2 py-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className={cn('font-bold', line.status === 'voided' && 'line-through opacity-60')}>
+          <p
+            className={cn(
+              'font-bold',
+              line.status === 'voided' && 'text-foreground-muted line-through',
+            )}
+          >
             {line.qty}× {local.name}
             {local.variantName ? (
               <span className="font-normal text-foreground-muted"> · {local.variantName}</span>
