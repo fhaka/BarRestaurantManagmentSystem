@@ -418,10 +418,12 @@ function MenuBrowser({
   );
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-col sm:flex-row">
+    // Categories run down the side when there is room; from lg to xl the ticket column sits next to
+    // the menu (and the sidebar is open), so they become a strip on top to leave the dishes room.
+    <div className="flex min-h-0 min-w-0 flex-col sm:flex-row lg:flex-col xl:flex-row">
       <nav
         aria-label={t('menu.categories')}
-        className="flex shrink-0 gap-1.5 overflow-x-auto border-b border-border p-2 sm:w-48 sm:flex-col sm:overflow-y-auto sm:border-b-0 sm:border-r"
+        className="flex shrink-0 gap-1.5 overflow-x-auto border-b border-border p-2 sm:w-48 sm:flex-col sm:overflow-y-auto sm:border-b-0 sm:border-r lg:w-auto lg:flex-row lg:overflow-x-auto lg:border-b lg:border-r-0 xl:w-48 xl:flex-col xl:overflow-y-auto xl:border-b-0 xl:border-r"
       >
         {hasFavourites ? chip(FAVOURITES, t('menu.favourites'), <Star />) : null}
         {topCategories.map((c) => {

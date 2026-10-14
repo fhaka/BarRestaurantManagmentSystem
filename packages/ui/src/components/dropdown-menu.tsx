@@ -34,7 +34,7 @@ export const DropdownMenuItem = forwardRef<
     <DropdownPrimitive.Item
       ref={ref}
       className={cn(
-        'flex min-h-10 cursor-pointer select-none items-center gap-2.5 rounded-md px-2.5 text-sm font-medium outline-none',
+        'flex min-h-10 cursor-pointer select-none items-center gap-2.5 rounded-md px-2.5 text-sm font-medium outline-hidden',
         'data-[highlighted]:bg-surface-sunken data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         '[&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-foreground-muted',
         destructive && 'text-danger [&_svg]:text-danger',

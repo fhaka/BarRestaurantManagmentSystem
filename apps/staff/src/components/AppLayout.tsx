@@ -88,7 +88,7 @@ export function AppLayout() {
       </aside>
 
       <div className="flex min-w-0 flex-col">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/90 px-2 backdrop-blur lg:hidden print:hidden">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/90 px-2 backdrop-blur-sm lg:hidden print:hidden">
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <Button
               variant="ghost"

@@ -14,7 +14,7 @@ import { cn } from '../lib/cn.js';
 export const controlClasses = [
   'w-full rounded-control border bg-surface px-3 text-sm text-foreground',
   'placeholder:text-foreground-subtle transition-colors duration-150',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:border-ring',
+  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:border-ring',
   'disabled:cursor-not-allowed disabled:opacity-60',
 ].join(' ');
 

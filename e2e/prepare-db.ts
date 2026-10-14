@@ -35,7 +35,7 @@ async function prepare() {
   for (const command of ['migrate', 'seed']) {
     const result = spawnSync(process.execPath, ['--import', 'tsx', 'src/db/cli.ts', command], {
       cwd: path.join(root, 'apps', 'api'),
-      env: { ...process.env, MYSQL_DATABASE: DATABASE },
+      env: { ...process.env, MYSQL_DATABASE: DATABASE, SEED_HISTORY_TODAY: 'false' },
       encoding: 'utf8',
     });
     if (result.status !== 0) {

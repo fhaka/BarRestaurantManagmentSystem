@@ -30,6 +30,7 @@ export const NAMESPACES = [
   'billing',
   'inventory',
   'reservations',
+  'reports',
   'showcase',
 ];
 

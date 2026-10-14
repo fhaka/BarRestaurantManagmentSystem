@@ -374,7 +374,7 @@ function Menu({
         </Button>
       </div>
 
-      <div className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
+      <div className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur-sm">
         <div className="flex gap-2 px-4 pt-2">
           <div className="relative flex-1">
             <Search
@@ -503,7 +503,7 @@ function Menu({
       </main>
 
       {/* Bottom bar: the cart, and the order status once something was ordered. */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface-raised/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface-raised/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-sm">
         <div className="mx-auto flex max-w-2xl gap-2">
           {activeLines.length ? (
             <Button

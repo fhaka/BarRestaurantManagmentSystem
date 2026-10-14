@@ -156,7 +156,7 @@ function BillScreen({ view }: { view: BillView }) {
                           <button
                             type="button"
                             aria-label={t('discount.remove')}
-                            className="rounded p-0.5 hover:bg-surface-sunken"
+                            className="rounded-sm p-0.5 hover:bg-surface-sunken"
                             onClick={() => void removeDiscount(d.id)}
                           >
                             <X className="size-3.5" />
@@ -207,7 +207,7 @@ function BillScreen({ view }: { view: BillView }) {
                       <button
                         type="button"
                         aria-label={t('discount.remove')}
-                        className="rounded p-0.5 hover:bg-surface-sunken"
+                        className="rounded-sm p-0.5 hover:bg-surface-sunken"
                         onClick={() => void removeDiscount(orderDiscount.id)}
                       >
                         <X className="size-3.5" />

@@ -1,8 +1,9 @@
 @import '@fontsource-variable/manrope';
 @import '@fontsource/jetbrains-mono/400.css';
 @import '@fontsource/jetbrains-mono/600.css';
+@import 'tailwindcss';
 @import '@tavolina/ui/styles.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind 4 with the shared preset (JS config) and the UI package's components as a source. */
+@config '../tailwind.config.js';
+@source '../../../packages/ui/src';

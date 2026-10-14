@@ -22,6 +22,7 @@ import { billingRouter } from './modules/billing/routes.js';
 import { inventoryRouter } from './modules/inventory/routes.js';
 import { reservationsRouter } from './modules/reservations/routes.js';
 import { timeRouter } from './modules/time/routes.js';
+import { reportsRouter } from './modules/reports/routes.js';
 import { UPLOADS_PUBLIC_PATH, uploadsDir } from './lib/storage.js';
 
 export function createApp(): Express {
@@ -80,6 +81,7 @@ export function createApp(): Express {
   api.use(inventoryRouter);
   api.use(reservationsRouter);
   api.use(timeRouter);
+  api.use(reportsRouter);
   api.use(guestRouter);
   app.use(API_BASE_PATH, api);
 

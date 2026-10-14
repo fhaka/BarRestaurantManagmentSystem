@@ -26,6 +26,8 @@ import { CashierPage } from './pages/cashier/CashierPage';
 import { DevicesPage } from './pages/settings/DevicesPage';
 import { InventoryPage } from './pages/inventory/InventoryPage';
 import { ReservationsPage } from './pages/reservations/ReservationsPage';
+import { DashboardPage } from './pages/reports/DashboardPage';
+import { ReportsPage } from './pages/reports/ReportsPage';
 import { OrdersPage } from './pages/orders/OrdersPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -44,6 +46,8 @@ const BUILT: ReadonlySet<string> = new Set([
   'cashier',
   'inventory',
   'reservations',
+  'dashboard',
+  'reports',
 ]);
 const placeholderRoutes: RouteObject[] = NAV_ITEMS.filter((item) => !BUILT.has(item.key)).map(
   (item) => ({
@@ -191,6 +195,22 @@ export const router = createBrowserRouter([
                 element: (
                   <RequirePermission permission="menu.edit">
                     <MenuPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'dashboard',
+                element: (
+                  <RequirePermission permission="report.view">
+                    <DashboardPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'reports',
+                element: (
+                  <RequirePermission permission="report.view">
+                    <ReportsPage />
                   </RequirePermission>
                 ),
               },

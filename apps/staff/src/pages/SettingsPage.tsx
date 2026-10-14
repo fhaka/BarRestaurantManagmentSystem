@@ -460,7 +460,7 @@ function SettingsForm({ location }: { location: Location }) {
 
       <div
         className={cn(
-          'fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface/95 backdrop-blur transition-transform lg:left-[272px]',
+          'fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm transition-transform lg:left-[272px]',
           dirty ? 'translate-y-0' : 'translate-y-full',
         )}
         aria-hidden={!dirty}

@@ -1,6 +1,6 @@
 /*
  * Tavolina design tokens. Values are space-separated RGB channels so Tailwind can apply
- * opacity: rgb(var(--primary) / 0.5). Import this file once, before @tailwind directives.
+ * opacity: rgb(var(--primary) / 0.5). Import this file once, after `@import 'tailwindcss'`.
  */
 
 :root {
@@ -93,6 +93,13 @@
   --ring: var(--olive-500);
   --shadow: 31 31 26;
 
+  /* Categorical chart slots (identity only, e.g. payment methods), validated for colour-vision
+     deficiency in both modes; slots 3–4 are under 3:1 on light, so such charts carry labels. */
+  --chart-1: 42 120 214;
+  --chart-2: 235 104 52;
+  --chart-3: 27 175 122;
+  --chart-4: 237 161 0;
+
   color-scheme: light;
 }
 
@@ -146,10 +153,34 @@
   --ring: 170 190 110;
   --shadow: 0 0 0;
 
+  --chart-1: 57 135 229;
+  --chart-2: 217 89 38;
+  --chart-3: 25 158 112;
+  --chart-4: 201 133 0;
+
   color-scheme: dark;
 }
 
 @layer base {
+  /* Tailwind 4 changed three preflight defaults; keep the ones this design was built on. */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: rgb(var(--border));
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: rgb(var(--foreground-subtle));
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;

@@ -23,16 +23,16 @@ export const useRealtimeStatus = create<{ status: RealtimeStatus }>(() => ({
 
 /** Which cached queries each event makes stale. Events are hints; the REST API is the truth. */
 const INVALIDATES: Record<(typeof REALTIME_EVENTS)[number], string[]> = {
-  'table.updated': ['floor'],
+  'table.updated': ['floor', 'dashboard'],
   'menu.item_availability': ['menu'],
-  'order.items_sent': ['order', 'orders', 'kds'],
-  'order_item.status_changed': ['order', 'orders', 'kds'],
+  'order.items_sent': ['order', 'orders', 'kds', 'dashboard'],
+  'order_item.status_changed': ['order', 'orders', 'kds', 'dashboard'],
   'kds.ticket_bumped': ['kds'],
   'service_request.created': ['floor'],
   'guest_order.pending': ['floor', 'order', 'orders'],
-  'bill.updated': ['bill', 'order', 'orders'],
+  'bill.updated': ['bill', 'order', 'orders', 'dashboard'],
   'cash_drawer.updated': ['cash'],
-  'stock.low': ['inventory'],
+  'stock.low': ['inventory', 'dashboard'],
   'reservation.updated': ['reservations', 'floor'],
   'time_entry.updated': ['time', 'pin-users'],
 };

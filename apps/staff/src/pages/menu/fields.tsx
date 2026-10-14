@@ -94,7 +94,7 @@ export function TranslationFields({
       {langs.map((lang) => (
         <fieldset key={lang} className="flex flex-col gap-2">
           <legend className="mb-1.5 flex items-center gap-2 text-sm font-semibold">
-            <span className="rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-[11px] text-foreground-muted">
+            <span className="rounded-sm bg-surface-sunken px-1.5 py-0.5 font-mono text-[11px] text-foreground-muted">
               {LANG_FLAGS[lang]}
             </span>
             {tc(`language.${lang}`)}
@@ -110,7 +110,7 @@ export function TranslationFields({
               aria-label={t('translations.description', { lang: tc(`language.${lang}`) })}
               placeholder={placeholders?.description}
               rows={2}
-              className="w-full rounded-control border border-border-strong bg-surface px-3 py-2.5 text-sm placeholder:text-foreground-subtle focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+              className="w-full rounded-control border border-border-strong bg-surface px-3 py-2.5 text-sm placeholder:text-foreground-subtle focus-visible:border-ring focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/40"
               value={value[lang]?.description ?? ''}
               onChange={(e) => set(lang, 'description', e.target.value)}
             />

@@ -462,6 +462,23 @@ before) and the status `reserved`.
 
 `GET /auth/pin-users` now also returns `clockedIn` per person.
 
+## Reports
+
+`report.view`. Every report takes `?from=YYYY-MM-DD&to=YYYY-MM-DD` (business days, at most 366
+days) and optionally `&locations=1,2` (only locations where the user may see reports; default the
+current one). Money in minor units.
+
+| Method & path                  | Returns                                                                                             |
+| ------------------------------ | --------------------------------------------------------------------------------------------------- |
+| `GET /reports/dashboard`       | `DashboardData` — today, live (no range)                                                            |
+| `GET /reports/sales`           | `SalesReport`: totals, daily, weekday × hour heatmap, by category, by order type                    |
+| `GET /reports/items`           | `ItemsReport`: product mix with qty, sales, net, cost (today's recipes), margin and share           |
+| `GET /reports/staff`           | `StaffReport`: per waiter orders, covers, sales, average ticket, tips, voids                        |
+| `GET /reports/payments`        | `PaymentsReport`: per method count, amount, tips; refunds                                           |
+| `GET /reports/discounts-voids` | `DiscountsVoidsReport`: discounts, voids and refunds with who did and who approved                  |
+| `GET /reports/inventory`       | `InventoryReport`: per ingredient stock and value today; purchased, consumed, waste, count variance |
+| `GET /reports/hours`           | `HoursReport`: worked vs scheduled minutes per person                                               |
+
 ## Real-time (Socket.IO)
 
 Same origin, path `/socket.io`. Handshake `auth: { token: <accessToken>, locationId }`; errors

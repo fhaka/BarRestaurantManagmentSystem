@@ -377,7 +377,7 @@ export function FloorEditorPage() {
                       onFocus={() => setSelectedId(table.id)}
                       onKeyDown={(e) => onKeyDown(e, table)}
                       className={cn(
-                        'absolute touch-none select-none outline-none',
+                        'absolute touch-none select-none outline-hidden',
                         draggingId === table.id ? 'z-20 cursor-grabbing' : 'cursor-grab',
                         !table.active && 'opacity-50',
                       )}
@@ -415,7 +415,7 @@ export function FloorEditorPage() {
                           onPointerDown={(e) => onPointerDown(e, table, 'resize', cell)}
                           onPointerMove={onPointerMove}
                           onPointerUp={onPointerUp}
-                          className="absolute -bottom-1.5 -right-1.5 size-4 cursor-nwse-resize rounded-sm border-2 border-surface bg-primary"
+                          className="absolute -bottom-1.5 -right-1.5 size-4 cursor-nwse-resize rounded-xs border-2 border-surface bg-primary"
                         />
                       ) : null}
                     </div>
@@ -477,7 +477,7 @@ export function FloorEditorPage() {
 
       <div
         className={cn(
-          'fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface/95 backdrop-blur transition-transform lg:left-[272px]',
+          'fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface/95 backdrop-blur-sm transition-transform lg:left-[272px]',
           dirtyInArea.length ? 'translate-y-0' : 'translate-y-full',
         )}
         aria-hidden={!dirtyInArea.length}

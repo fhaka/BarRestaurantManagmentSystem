@@ -17,3 +17,4 @@ export * from './billing.js';
 export * from './inventory.js';
 export * from './reservations.js';
 export * from './staff-time.js';
+export * from './reports.js';

@@ -32,7 +32,7 @@ export function TableHeader({ className, ...props }: HTMLAttributes<HTMLTableSec
   return (
     <thead
       className={cn(
-        'sticky top-0 z-10 bg-surface-sunken/95 backdrop-blur [&_tr]:border-b [&_tr]:border-border',
+        'sticky top-0 z-10 bg-surface-sunken/95 backdrop-blur-sm [&_tr]:border-b [&_tr]:border-border',
         className,
       )}
       {...props}
@@ -91,7 +91,7 @@ export function TableHead({
           type="button"
           onClick={onSort}
           className={cn(
-            'inline-flex items-center gap-1 rounded-sm uppercase hover:text-foreground',
+            'inline-flex items-center gap-1 rounded-xs uppercase hover:text-foreground',
             numeric && 'flex-row-reverse',
           )}
         >

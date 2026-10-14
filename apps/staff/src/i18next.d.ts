@@ -12,6 +12,7 @@ import type kds from './locales/sq/kds.json';
 import type billing from './locales/sq/billing.json';
 import type inventory from './locales/sq/inventory.json';
 import type reservations from './locales/sq/reservations.json';
+import type reports from './locales/sq/reports.json';
 import type showcase from './locales/sq/showcase.json';
 
 // Type-safe translation keys, checked against the Albanian source files.
@@ -32,6 +33,7 @@ declare module 'i18next' {
       billing: typeof billing;
       inventory: typeof inventory;
       reservations: typeof reservations;
+      reports: typeof reports;
       showcase: typeof showcase;
     };
     returnNull: false;

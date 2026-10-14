@@ -698,3 +698,77 @@ schedule time that has already happened, so the difference is meaningful mid-wee
 payroll has one row per clock entry (date, person, role, local clock-in and clock-out, decimal
 hours, note) with headers in the location's main language and a BOM for Excel; open entries have
 no hours so they get fixed first. The full staff-hours report with charts is part of Phase 9.
+
+## D-084 — 30 days of demo history (Phase 9)
+
+Seed `08_demo_history` generates the last 30 business days plus today's service up to ten minutes
+ago (plan §14): orders per hour follow a morning coffee peak, lunch, a quiet afternoon and a
+busier evening, more at the weekend; dine-in (with tables and covers), takeaway and delivery; cash,
+card and voucher payments with tips for the waiter; about 2% voided items (approved by the
+manager), 3–4% discounted bills, two refunds; kitchen timestamps from each dish's prep time. It is
+repeatable (a fixed pseudo-random seed) and fast (rows built in memory, inserted in batches, about
+13 s). Stock: the month's sales are booked into the ledger as one line per ingredient per day, with
+some milk waste and a stock count from a week ago; the opening stock is raised by what left, so
+today's levels stay those of the inventory seed.
+
+## D-085 — What the reports count (Phase 9)
+
+Revenue = paid orders (closed, or dine-in orders whose table has paid but not left yet — dine-in
+orders close with the table), tax-inclusive, after discounts, by business day (04:00–04:00).
+Refunds are shown separately and as "net of refunds". Item, category and product-mix figures are
+line sales before bill discounts (said on screen). The busiest-hours heatmap uses the local time
+the order was placed; covers come from table sessions (takeaway and delivery have none). Staff
+sales are by the waiter who opened the order; tips by the person they were given to; voids by who
+voided them, with who approved.
+
+## D-086 — Margins use today's costs (Phase 9)
+
+Product-mix margins use each item's current recipe cost (`menu_items.cost_minor`) × quantity sold;
+cost is not stored per sale, so a past period is valued at today's ingredient prices. Items without
+a recipe show no margin. Inventory consumption, waste and variance come from the stock ledger in
+the period; stock and its value are today's.
+
+## D-087 — Live dashboard (Phase 9)
+
+For owners and managers (`report.view`), today: paid so far against the same weekday last week up
+to the same time of day, orders, average ticket, covers, open tables and what they still owe, voids,
+revenue by hour (today's line stops at the current hour, last week's runs the whole day), top items,
+average prep time per station (sent → ready) and the low-stock list. It refreshes on sales events
+over the socket and every minute.
+
+## D-088 — CSV export (Phase 9)
+
+Each report downloads as CSV built in the browser from the data on screen, so column names follow
+the user's language; amounts are plain decimal lek, quantities have three decimals, with a BOM for
+Excel. The payroll CSV (one row per clock entry, D-083) stays on the server.
+
+## D-089 — Charts (Phase 9)
+
+Recharts 2.15 (plan §3; 3.x exists but 2.x is the version we know well) for the line charts and the
+donut; ranked bars and the heatmap are plain HTML so they fit narrow cards and stay accessible.
+Magnitudes use the brand olive only (one hue, darker = more); the only categorical chart is the
+payment-method donut (plan §5.13), whose four slots were checked for colour-vision deficiency in
+light and dark mode and always come with a legend showing amounts and shares. No chart has two
+y-axes; comparisons use a dashed grey second line on the same axis.
+
+## D-090 — Location filter (Phase 9)
+
+Reports default to the current location; with several, a user picks among the locations where
+their role has `report.view` (the API checks every requested location). Locations of one account
+share the timezone of the current one for business days.
+
+## D-091 — Tailwind CSS 4 and a clean `npm audit` (Phase 9)
+
+`npm audit` flagged Tailwind 3's build-time dependencies (braces — no fixed release exists —
+micromatch, chokidar, fast-glob, postcss-selector-parser < 7.1.6) and esbuild 0.27 (dev-server
+file read). Both apps now use Tailwind 4.3 through `@tailwindcss/vite` (PostCSS and autoprefixer
+removed): the CSS entry imports `tailwindcss`, keeps the shared JS preset with `@config` and scans
+`packages/ui` with `@source`. Tailwind 4 changed some defaults, so `tokens.css` restores the ones
+the design relies on (default border colour, pointer cursor on buttons, placeholder colour), and
+the renamed utilities were updated (`rounded`→`rounded-sm`, `rounded-sm`→`rounded-xs`,
+`backdrop-blur`→`backdrop-blur-sm`, `outline-none`→`outline-hidden`); `tailwind-merge` moved to 3.x
+to match. Colours with an opacity (`bg-surface/95`) now compile to `color-mix()` with a solid
+fallback. esbuild is pinned to 0.28 with an npm `overrides` entry because Vite 8.3 and tsup 8.5
+still ask for 0.27; all builds and tests pass with it. Remove the override once they catch up.
+Found while checking the screens: at exactly 1024 px (landscape tablet with the sidebar) the order
+screen left the dishes 160 px; between `lg` and `xl` the categories now run as a strip on top.

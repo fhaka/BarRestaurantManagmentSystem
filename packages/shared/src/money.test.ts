@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatMoney, lekToMinor, minorToLek, roundToLek } from './money.js';
+import { formatCount, formatMoney, lekToMinor, minorToLek, roundToLek } from './money.js';
 
 const nb = (s: string) => s.replace(/ /g, '\u00a0');
 
@@ -63,5 +63,14 @@ describe('formatMoney', () => {
 
   it('formats zero', () => {
     expect(formatMoney(0)).toBe(nb('0 L'));
+  });
+});
+
+describe('formatCount', () => {
+  it('groups like money and drops a zero fraction', () => {
+    expect(formatCount(3517)).toBe(nb('3 517'));
+    expect(formatCount(10.66, 1)).toBe('10,7');
+    expect(formatCount(9, 1)).toBe('9');
+    expect(formatCount(-1200)).toBe(nb('−1 200'));
   });
 });

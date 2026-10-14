@@ -134,6 +134,13 @@ TAVOLINA_API_URL=http://<api-host>:4100 TAVOLINA_BRIDGE_KEY=<key> npm run start 
 
 Add a printer of type "Test (no printer)" to see receipts and tickets in the bridge window.
 
+Phase 9 adds the dashboard and reports. Sign in as `menaxher@lasvegas.test`: **Paneli**
+(Dashboard) shows today live against the same day last week, and **Raportet** (Reports) has
+sales with the busiest-hours heatmap, product mix and margins, staff and tips, payments,
+discounts / voids / refunds, inventory and hours, each with a date range and a CSV download. The
+seed generates the last 30 days of service, so the numbers look real; `npm run db:seed` takes
+about 15 seconds.
+
 Phase 8 adds reservations and staff time. **Rezervimet** (Reservations) shows the day by table
 or as a list; two tables on the floor show as reserved because their guests arrive within the hour
 (open the table and choose "Seat the reservation"). The public booking page is

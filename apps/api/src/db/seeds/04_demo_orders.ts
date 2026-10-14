@@ -142,7 +142,16 @@ export async function seed(knex: Knex): Promise<void> {
     const byStation = new Map<number, { id: number; status: OrderItemStatus; held: boolean }[]>();
     for (const [name, qty, status, course, held = false] of round.lines) {
       const menuItem = item(name);
-      const times = Object.fromEntries((TIMESTAMP[status] ?? []).map((c) => [c, at]));
+      // Started a minute after sending, ready after a realistic prep time, never in the future.
+      const offset: Record<string, number> = {
+        sent_at: 0,
+        started_at: 1,
+        ready_at: Math.max(2, Math.min(round.minutesAgo - 2, 9)),
+        served_at: Math.max(3, Math.min(round.minutesAgo - 1, 12)),
+      };
+      const times = Object.fromEntries(
+        (TIMESTAMP[status] ?? []).map((c) => [c, new Date(at.getTime() + offset[c]! * 60_000)]),
+      );
       const [id] = await knex('order_items').insert({
         uuid: randomUUID(),
         order_id: orderId,

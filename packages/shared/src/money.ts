@@ -75,3 +75,12 @@ export function formatMoney(minor: number, options: FormatMoneyOptions = {}): st
 
   return `${negative ? '−' : ''}${body}${NBSP}${currency}`;
 }
+
+/** A count or measure grouped like money ("3 517", "10,7"), so figures on one screen match. */
+export function formatCount(value: number, decimals = 0): string {
+  const fixed = Math.abs(value).toFixed(decimals);
+  const [whole, fraction] = fixed.split('.');
+  const body =
+    groupThousands(Number(whole), NBSP) + (fraction && Number(fraction) ? `,${fraction}` : '');
+  return `${value < 0 ? '−' : ''}${body}`;
+}
