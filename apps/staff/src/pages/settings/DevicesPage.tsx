@@ -337,7 +337,7 @@ function RoutesCard({ printers }: { printers: Printer[] }) {
     });
   };
   const row = (label: string, id: number | null, onChange: (v: number | null) => void) => (
-    <div className="grid items-center gap-2 sm:grid-cols-[1fr_260px]">
+    <div key={label} className="grid items-center gap-2 sm:grid-cols-[1fr_260px]">
       <span className="font-semibold">{label}</span>
       <Select
         aria-label={label}
