@@ -33,7 +33,13 @@
     "switchUser": "Ndërro përdoruesin",
     "signOut": "Dil nga pajisja",
     "theme": "Tema",
-    "language": "Gjuha"
+    "language": "Gjuha",
+    "clockIn": "Regjistro hyrjen në punë",
+    "clockOut": "Regjistro daljen nga puna",
+    "since": "Në punë që nga {{time}}",
+    "shift": "Turni sot: {{from}}–{{to}}",
+    "clockedIn": "Hyrja u regjistrua në {{time}}",
+    "clockedOut": "Dalja u regjistrua · {{hours}} orë"
   },
   "placeholder": {
     "title": "{{screen}} vjen së shpejti",

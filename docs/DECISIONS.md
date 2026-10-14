@@ -634,3 +634,67 @@ recipes for the coffees, bottled drinks, fresh orange juice (per glass size), th
 "whipped cream" options and 13 dishes, and a sent purchase order for sea bass, which is below its
 minimum. Milk alternatives (oat, almond) have no recipe in the demo: as options they would add milk
 on top of the whole milk in the drink's recipe.
+
+## D-077 — Reservations and availability (Phase 8)
+
+A reservation holds one table (or none yet) for a duration (default 90 min, location setting).
+Booking times are slots every 15/30/60 min from opening time until the "last seating" before
+closing, taken from the location's opening hours (a close at or before the open time means after
+midnight). A table holds one active reservation (booked, confirmed, seated) at a time; the check
+locks the table row so two people cannot book it at once (`RESERVATION_CONFLICT`). Staff can book
+any time, leave the table empty for later, and seat a party at a smaller table (they know the room);
+online bookings cannot. The day view runs 04:00 to 04:00 like the business day, so "tonight" after
+midnight stays on the same page. Statuses: booked → confirmed → seated → completed, or no-show /
+cancelled (both can go back on the book if the table is still free); seated and completed are set
+by the floor, not by hand.
+
+## D-078 — Reservations on the floor (Phase 8)
+
+A table shows "reserved" (with time, name and party size) from 60 minutes before the booked time
+until 30 minutes after it (plan: "60 minutes before arrival"; the 30 minutes of grace are ours,
+after which the guests are probably not coming). Seating = opening the table for the reservation
+(`reservationId` on `POST /table-sessions`): the reservation becomes seated and is linked to the
+session; seating at another table moves it there. Closing the session completes the reservation.
+Walk-ins can still be given a reserved table; the waiter decides.
+
+## D-079 — Public booking page (Phase 8)
+
+`/book/<locationId>` in the guest app: party size, day (today up to "max days ahead"), time, name
+and phone. Guests see only whether a time works, never which tables are free; the smallest free
+table that fits is held for them. Rules (location settings): page on/off, slot length, table time,
+largest online party, minimum notice, days ahead, last seating. Protection: rate limit 10 bookings
+per 10 minutes per IP, a client uuid so a double tap books once, a 6-character reference to quote
+on the phone. The page can be embedded as an iframe; in production the guest app must be served
+without `X-Frame-Options: DENY` for `/book/*`. **Deferred:** confirmation and reminder messages by
+SMS/email (no provider configured), and the "reservation reminders" job in plan §2.
+
+## D-080 — Who manages reservations (Phase 8)
+
+Unchanged permission matrix: owners and managers have `reservation.manage` (create, edit, change
+status); waiters and cashiers have `reservation.view` and seat a reservation when they open its
+table (`table.open`). Kitchen screens see nothing.
+
+## D-081 — Shifts (Phase 8)
+
+The weekly schedule is a grid of people × days. A shift belongs to one location; one person cannot
+have overlapping shifts anywhere (`SHIFT_OVERLAP`), and a shift lasts at most 16 hours (an end at or
+before the start means the next day). Only `shift.manage` (owners, managers) sees and edits it;
+everyone else gets their own shifts from `GET /me/shifts`, and today's shift shows in the user menu.
+
+## D-082 — Clock in / out (Phase 8)
+
+Staff clock in and out with their PIN on the shared device's lock screen ("Clock in / out" mode) —
+the plan's "clock in/out with PIN" — without switching who is signed in: `POST /auth/pin-clock`
+needs the device's sign-in cookie, the person must work at the location, and wrong PINs count toward
+the usual lockout. The signed-in person can also clock in/out from the user menu. One open entry per
+person; forgotten clock-outs are flagged in the hours view ("not clocked out") rather than closed
+automatically, and a manager corrects them. Every manager change to an entry is audited with the
+before and after times.
+
+## D-083 — Hours report and payroll export (Phase 8)
+
+Hours count by the clock-in date; open entries count up to now on screen. "Scheduled" counts only
+schedule time that has already happened, so the difference is meaningful mid-week. The CSV for
+payroll has one row per clock entry (date, person, role, local clock-in and clock-out, decimal
+hours, note) with headers in the location's main language and a BOM for Excel; open entries have
+no hours so they get fixed first. The full staff-hours report with charts is part of Phase 9.

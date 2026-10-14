@@ -31,7 +31,8 @@
       "languages": "Lingue",
       "guests": "Ordini degli ospiti (QR)",
       "control": "Controllo e approvazioni",
-      "stock": "Magazzino"
+      "stock": "Magazzino",
+      "booking": "Prenotazioni online"
     },
     "name": "Nome del locale",
     "address": "Indirizzo",
@@ -65,6 +66,20 @@
     "stockDeductOnSend": "All’invio in cucina/bar",
     "stockDeductOnPayment": "Al pagamento del conto",
     "voidedPreparedIsWaste": "Gli annullamenti dopo l’inizio della preparazione sono scarti",
-    "voidedPreparedIsWasteDescription": "Gli ingredienti non tornano in magazzino: sono registrati come scarto."
+    "voidedPreparedIsWasteDescription": "Gli ingredienti non tornano in magazzino: sono registrati come scarto.",
+    "bookingEnabled": "Pagina pubblica di prenotazione",
+    "bookingEnabledDescription": "Gli ospiti prenotano dal link qui sotto e ricevono il tavolo libero più piccolo adatto.",
+    "bookingLink": "Link per il sito web o Instagram",
+    "bookingLinkHint": "Si può anche inserire nel sito come iframe.",
+    "copy": "Copia",
+    "copied": "Link copiato",
+    "openLink": "Apri",
+    "bookingSlotMinutes": "Orari ogni",
+    "minutes": "{{count}} minuti",
+    "bookingDurationMin": "Durata della prenotazione (min)",
+    "bookingMaxPartySize": "Gruppo massimo online",
+    "bookingMinNoticeMin": "Preavviso minimo (min)",
+    "bookingMaxDaysAhead": "Fino a quanti giorni prima",
+    "bookingLastSeatingMin": "Nessuna prenotazione negli ultimi minuti prima della chiusura"
   }
 }

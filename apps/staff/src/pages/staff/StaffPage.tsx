@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
+  CalendarRange,
+  Clock,
   KeyRound,
   Lock,
   Plus,
@@ -26,6 +29,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   cn,
 } from '@tavolina/ui';
 import { PageHeader } from '../../components/AppLayout';
@@ -34,6 +41,8 @@ import { useErrorMessages } from '../../lib/errors';
 import { formatDateTime } from '../../lib/format';
 import { useSession } from '../../lib/session';
 import { CredentialsDialog } from './CredentialsDialog';
+import { HoursTab } from './HoursTab';
+import { ScheduleTab } from './ScheduleTab';
 import { StaffFormSheet } from './StaffFormSheet';
 
 const ROLE_TONE: Record<RoleKey, 'solid' | 'primary' | 'highlight' | 'info' | 'neutral'> = {
@@ -44,13 +53,12 @@ const ROLE_TONE: Record<RoleKey, 'solid' | 'primary' | 'highlight' | 'info' | 'n
   kitchen: 'neutral',
 };
 
-export function StaffPage() {
+function StaffList() {
   const { t } = useTranslation('staff');
   const { t: ta } = useTranslation('app');
   const { t: tc } = useTranslation();
   const { message } = useErrorMessages();
   const locationId = useSession((s) => s.locationId);
-  const locationName = useSession((s) => s.locationName);
   const permissions = useSession((s) => s.permissions);
   const canManage = permissions.has('staff.manage');
 
@@ -87,20 +95,7 @@ export function StaffPage() {
   const manageable = (m: StaffMember) => canManage && canGrantRole(permissions, m.roleKey);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 sm:px-8 sm:py-10">
-      <PageHeader
-        title={t('title')}
-        subtitle={t('subtitle', { location: locationName ?? '' })}
-        actions={
-          canManage ? (
-            <Button onClick={openCreate}>
-              <Plus />
-              {t('add')}
-            </Button>
-          ) : null
-        }
-      />
-
+    <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <Search
@@ -126,6 +121,12 @@ export function StaffPage() {
             ...ROLE_KEYS.map((r) => ({ value: r, label: ta(`roles.${r}`) })),
           ]}
         />
+        {canManage ? (
+          <Button onClick={openCreate}>
+            <Plus />
+            {t('add')}
+          </Button>
+        ) : null}
       </div>
 
       {staff.isPending ? (
@@ -270,6 +271,49 @@ export function StaffPage() {
           if (!open) setCredentialsFor(null);
         }}
       />
+    </div>
+  );
+}
+
+/** People, the weekly schedule and worked hours (plan §5.8). */
+export function StaffPage() {
+  const { t } = useTranslation('staff');
+  const locationName = useSession((s) => s.locationName);
+  const can = useSession((s) => s.can);
+  const [params, setParams] = useSearchParams();
+  const tab = can('shift.manage') ? (params.get('tab') ?? 'people') : 'people';
+  return (
+    <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-8 sm:py-10">
+      <PageHeader title={t('title')} subtitle={t('subtitle', { location: locationName ?? '' })} />
+      {can('shift.manage') ? (
+        <Tabs value={tab} onValueChange={(v) => setParams({ tab: v }, { replace: true })}>
+          <TabsList>
+            <TabsTrigger value="people">
+              <Users aria-hidden />
+              {t('tabs.people')}
+            </TabsTrigger>
+            <TabsTrigger value="schedule">
+              <CalendarRange aria-hidden />
+              {t('tabs.schedule')}
+            </TabsTrigger>
+            <TabsTrigger value="hours">
+              <Clock aria-hidden />
+              {t('tabs.hours')}
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="people" className="pt-4">
+            <StaffList />
+          </TabsContent>
+          <TabsContent value="schedule" className="pt-4">
+            <ScheduleTab />
+          </TabsContent>
+          <TabsContent value="hours" className="pt-4">
+            <HoursTab />
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <StaffList />
+      )}
     </div>
   );
 }

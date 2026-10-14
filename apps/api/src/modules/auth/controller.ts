@@ -1,6 +1,11 @@
 import type { CookieOptions, Request, Response } from 'express';
 import { z } from 'zod';
-import { API_BASE_PATH, loginRequestSchema, pinLoginRequestSchema } from '@tavolina/shared';
+import {
+  API_BASE_PATH,
+  loginRequestSchema,
+  pinClockSchema,
+  pinLoginRequestSchema,
+} from '@tavolina/shared';
 import { isProduction } from '../../config/env.js';
 import { getAuth } from '../../middleware/auth.js';
 import * as service from './service.js';
@@ -67,6 +72,11 @@ export async function pinUsers(req: Request, res: Response) {
 export async function pinLogin(req: Request, res: Response) {
   const input = pinLoginRequestSchema.parse(req.body);
   sendSession(res, await service.pinLogin(readRefreshCookie(req), input, meta(req)));
+}
+
+export async function pinClock(req: Request, res: Response) {
+  const input = pinClockSchema.parse(req.body);
+  res.json(await service.pinClock(readRefreshCookie(req), input, meta(req)));
 }
 
 export async function me(req: Request, res: Response) {

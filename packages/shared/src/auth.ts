@@ -91,6 +91,8 @@ export interface PinUser {
   name: string;
   roleKey: RoleKey;
   locked: boolean;
+  /** Clocked in for work right now (plan §5.8). */
+  clockedIn: boolean;
 }
 
 export const langPreferenceSchema = z.object({ lang: langSchema });

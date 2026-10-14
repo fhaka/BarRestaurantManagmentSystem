@@ -13,14 +13,19 @@ export class GuestApiError extends Error {
 }
 
 /** Calls the guest API. The guest session cookie travels automatically (same origin). */
-export async function guestApi<T>(
-  method: 'GET' | 'POST',
-  path: string,
-  body?: unknown,
-): Promise<T> {
+export function guestApi<T>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<T> {
+  return request<T>(method, `/guest${path}`, body);
+}
+
+/** Public pages that need no table, e.g. online booking (/public/locations/:id/…). */
+export function publicApi<T>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<T> {
+  return request<T>(method, `/public${path}`, body);
+}
+
+async function request<T>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${API_BASE_PATH}/guest${path}`, {
+    res = await fetch(`${API_BASE_PATH}${path}`, {
       method,
       credentials: 'include',
       headers: {

@@ -31,7 +31,8 @@
       "languages": "Gjuhët",
       "guests": "Porositë e mysafirëve (QR)",
       "control": "Kontrolli dhe miratimet",
-      "stock": "Stoku"
+      "stock": "Stoku",
+      "booking": "Rezervimet online"
     },
     "name": "Emri i lokalit",
     "address": "Adresa",
@@ -65,6 +66,20 @@
     "stockDeductOnSend": "Kur dërgohet në kuzhinë/bar",
     "stockDeductOnPayment": "Kur paguhet fatura",
     "voidedPreparedIsWaste": "Anulimet pas fillimit të përgatitjes janë humbje",
-    "voidedPreparedIsWasteDescription": "Përbërësit nuk kthehen në stok, por regjistrohen si humbje."
+    "voidedPreparedIsWasteDescription": "Përbërësit nuk kthehen në stok, por regjistrohen si humbje.",
+    "bookingEnabled": "Faqja publike e rezervimeve",
+    "bookingEnabledDescription": "Klientët rezervojnë vetë nga lidhja më poshtë; u caktohet tavolina më e vogël e lirë.",
+    "bookingLink": "Lidhja për faqen e internetit ose Instagram",
+    "bookingLinkHint": "Mund të futet edhe në faqen tuaj si iframe.",
+    "copy": "Kopjo",
+    "copied": "Lidhja u kopjua",
+    "openLink": "Hap",
+    "bookingSlotMinutes": "Oraret çdo",
+    "minutes": "{{count}} minuta",
+    "bookingDurationMin": "Kohëzgjatja e rezervimit (min)",
+    "bookingMaxPartySize": "Grupi më i madh online",
+    "bookingMinNoticeMin": "Sa minuta më parë",
+    "bookingMaxDaysAhead": "Deri në sa ditë përpara",
+    "bookingLastSeatingMin": "Pa rezervime në minutat e fundit para mbylljes"
   }
 }

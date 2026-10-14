@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Printer } from 'lucide-react';
+import { Copy, ExternalLink, Printer } from 'lucide-react';
 import {
   LANGS,
   formatMoney,
@@ -47,6 +47,13 @@ interface FormState {
   discountThresholdPct: string;
   stockDeductOn: 'send' | 'payment';
   voidedPreparedIsWaste: boolean;
+  bookingEnabled: boolean;
+  bookingSlotMinutes: '15' | '30' | '60';
+  bookingDurationMin: string;
+  bookingMaxPartySize: string;
+  bookingMinNoticeMin: string;
+  bookingMaxDaysAhead: string;
+  bookingLastSeatingMin: string;
 }
 
 const bpToPct = (bp: number) => String(bp / 100);
@@ -72,6 +79,13 @@ function toForm(l: Location): FormState {
     discountThresholdPct: bpToPct(s.discountApprovalThresholdBp),
     stockDeductOn: s.stockDeductOn,
     voidedPreparedIsWaste: s.voidedPreparedIsWaste,
+    bookingEnabled: s.bookingEnabled,
+    bookingSlotMinutes: String(s.bookingSlotMinutes) as FormState['bookingSlotMinutes'],
+    bookingDurationMin: String(s.bookingDurationMin),
+    bookingMaxPartySize: String(s.bookingMaxPartySize),
+    bookingMinNoticeMin: String(s.bookingMinNoticeMin),
+    bookingMaxDaysAhead: String(s.bookingMaxDaysAhead),
+    bookingLastSeatingMin: String(s.bookingLastSeatingMin),
   };
 }
 
@@ -100,6 +114,13 @@ function toPayload(f: FormState) {
       discountApprovalThresholdBp: pctToBp(f.discountThresholdPct),
       stockDeductOn: f.stockDeductOn,
       voidedPreparedIsWaste: f.voidedPreparedIsWaste,
+      bookingEnabled: f.bookingEnabled,
+      bookingSlotMinutes: Number(f.bookingSlotMinutes),
+      bookingDurationMin: Number(f.bookingDurationMin),
+      bookingMaxPartySize: Number(f.bookingMaxPartySize),
+      bookingMinNoticeMin: Number(f.bookingMinNoticeMin),
+      bookingMaxDaysAhead: Number(f.bookingMaxDaysAhead),
+      bookingLastSeatingMin: Number(f.bookingLastSeatingMin),
     },
   };
 }
@@ -373,6 +394,48 @@ function SettingsForm({ location }: { location: Location }) {
         </Field>
       </Section>
 
+      <Section title={t('settings.sections.booking')}>
+        <div className="-my-3 divide-y divide-border">
+          <SwitchField
+            label={t('settings.bookingEnabled')}
+            description={t('settings.bookingEnabledDescription')}
+            checked={form.bookingEnabled}
+            onCheckedChange={(v) => set('bookingEnabled', v)}
+          />
+        </div>
+        <BookingLink />
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Field label={t('settings.bookingSlotMinutes')}>
+            <Select
+              value={form.bookingSlotMinutes}
+              onValueChange={(v) => set('bookingSlotMinutes', v as FormState['bookingSlotMinutes'])}
+              options={['15', '30', '60'].map((v) => ({
+                value: v,
+                label: t('settings.minutes', { count: Number(v) }),
+              }))}
+            />
+          </Field>
+          {(
+            [
+              ['bookingDurationMin', 'settings.bookingDurationMin'],
+              ['bookingMaxPartySize', 'settings.bookingMaxPartySize'],
+              ['bookingMinNoticeMin', 'settings.bookingMinNoticeMin'],
+              ['bookingMaxDaysAhead', 'settings.bookingMaxDaysAhead'],
+              ['bookingLastSeatingMin', 'settings.bookingLastSeatingMin'],
+            ] as const
+          ).map(([key, label]) => (
+            <Field key={key} label={t(label)} error={err(key)}>
+              <Input
+                inputMode="numeric"
+                className="font-mono tabular-nums"
+                value={form[key]}
+                onChange={(e) => set(key, e.target.value.replace(/\D/g, ''))}
+              />
+            </Field>
+          ))}
+        </div>
+      </Section>
+
       <Section title={t('settings.sections.stock')}>
         <Field label={t('settings.stockDeductOn')} hint={t('settings.stockDeductOnHint')}>
           <Select
@@ -423,5 +486,45 @@ function SettingsForm({ location }: { location: Location }) {
         </div>
       </div>
     </form>
+  );
+}
+
+/** The public booking page (plan §5.10), to put on the website or Instagram. */
+function BookingLink() {
+  const { t } = useTranslation('business');
+  const locationId = useSession((s) => s.locationId);
+  const link = useQuery({
+    queryKey: ['booking-link', locationId],
+    queryFn: () => api<{ url: string }>('GET', '/reservations/booking-link'),
+  });
+  if (!link.data) return null;
+  return (
+    <Field label={t('settings.bookingLink')} hint={t('settings.bookingLinkHint')}>
+      <div className="flex gap-2">
+        <Input
+          readOnly
+          value={link.data.url}
+          className="font-mono text-sm"
+          onFocus={(e) => e.target.select()}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            void navigator.clipboard?.writeText(link.data.url);
+            toast.success(t('settings.copied'));
+          }}
+        >
+          <Copy />
+          {t('settings.copy')}
+        </Button>
+        <Button type="button" variant="ghost" asChild>
+          <a href={link.data.url} target="_blank" rel="noreferrer">
+            <ExternalLink />
+            {t('settings.openLink')}
+          </a>
+        </Button>
+      </div>
+    </Field>
   );
 }

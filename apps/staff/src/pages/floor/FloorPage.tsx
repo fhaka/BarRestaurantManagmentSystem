@@ -26,6 +26,7 @@ import {
 } from '@tavolina/ui';
 import { PageHeader } from '../../components/AppLayout';
 import { useErrorMessages } from '../../lib/errors';
+import { formatTime } from '../../lib/format';
 import { useRealtimeStatus } from '../../lib/realtime';
 import { useSession } from '../../lib/session';
 import { FloorCanvas, TableShapeView } from './FloorCanvas';
@@ -279,6 +280,11 @@ function TableLabel({ table, compact, now }: { table: FloorTable; compact: boole
               <Users className="size-3" aria-hidden />
               {s.guestCount} · {s.waiterName?.split(' ')[0] ?? t('table.noWaiter')}
             </span>
+          ) : table.reservation ? (
+            <span className="flex items-center gap-1 text-[11px] opacity-90">
+              {formatTime(table.reservation.startsAt)} · <Users className="size-3" aria-hidden />
+              {table.reservation.partySize}
+            </span>
           ) : null}
         </>
       )}
@@ -382,6 +388,14 @@ function ListView({ tables, onSelect }: { tables: FloorTable[]; onSelect: (id: n
                   {s.totalMinor > 0 ? (
                     <span className="font-mono font-semibold">{formatMoney(s.totalMinor)}</span>
                   ) : null}
+                </span>
+              ) : table.reservation ? (
+                <span className="mt-auto flex flex-col text-xs">
+                  <span className="font-mono font-semibold tabular-nums">
+                    {formatTime(table.reservation.startsAt)} ·{' '}
+                    {t('guests', { count: table.reservation.partySize })}
+                  </span>
+                  <span className="truncate opacity-80">{table.reservation.name}</span>
                 </span>
               ) : (
                 <span className="mt-auto text-xs opacity-80">

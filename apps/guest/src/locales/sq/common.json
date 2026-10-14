@@ -159,5 +159,39 @@
     "commentPlaceholder": "Diçka që doni të na thoni? (opsionale)",
     "send": "Dërgo vlerësimin",
     "thanks": "Faleminderit për vlerësimin!"
+  },
+  "booking": {
+    "title": "Rezervoni një tavolinë",
+    "party": "Sa persona",
+    "fewer": "Më pak persona",
+    "more": "Më shumë persona",
+    "bigGroup": "Për grupe më të mëdha se {{count}} persona, na telefononi.",
+    "day": "Dita",
+    "today": "Sot",
+    "tomorrow": "Nesër",
+    "otherDay": "Një ditë tjetër",
+    "time": "Ora",
+    "noTimes": "Nuk ka orë të lira për këtë ditë. Provoni një ditë tjetër ose më pak persona.",
+    "name": "Emri",
+    "phone": "Telefoni",
+    "phoneHint": "Ju telefonojmë vetëm nëse ka ndonjë ndryshim.",
+    "notes": "Shënime (opsionale)",
+    "notesPlaceholder": "p.sh. ditëlindje, karrige për fëmijë",
+    "submit": "Rezervo",
+    "submitAt": "Rezervo · {{date}}, {{time}}",
+    "checkFields": "Kontrolloni emrin dhe numrin e telefonit.",
+    "done": "Faleminderit, {{name}}!",
+    "doneWhen_one": "Ju presim {{date}} në orën {{time}}, {{count}} person.",
+    "doneWhen_other": "Ju presim {{date}} në orën {{time}}, {{count}} persona.",
+    "reference": "Kodi i rezervimit",
+    "doneHint": "Nëse nuk vini dot, na telefononi që ta japim tavolinën dikujt tjetër.",
+    "another": "Bëj një rezervim tjetër",
+    "notFound": "Ky lokal nuk u gjet.",
+    "disabled": "Rezervimet online nuk ofrohen tani",
+    "disabledDescription": "Ju lutemi na telefononi për të rezervuar.",
+    "errors": {
+      "NO_AVAILABILITY": "Kjo orë sapo u zu. Zgjidhni një orë tjetër.",
+      "BOOKING_DISABLED": "Rezervimet online nuk ofrohen tani. Ju lutemi na telefononi."
+    }
   }
 }

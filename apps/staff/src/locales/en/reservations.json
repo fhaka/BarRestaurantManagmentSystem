@@ -1,0 +1,89 @@
+{
+  "title": "Reservations",
+  "subtitle": "Reservation book · {{location}}",
+  "today": "Today",
+  "prevDay": "Previous day",
+  "nextDay": "Next day",
+  "date": "Date",
+  "new": "New reservation",
+  "views": {
+    "timeline": "By table",
+    "list": "List"
+  },
+  "summary_one": "{{count}} reservation · {{covers}} guests",
+  "summary_other": "{{count}} reservations · {{covers}} guests",
+  "unassigned": "No table",
+  "now": "Now",
+  "empty": "No reservations on this day",
+  "emptyDescription": "Bookings taken by phone or made online appear here.",
+  "guests_one": "{{count}} guest",
+  "guests_other": "{{count}} guests",
+  "seats_one": "{{count}} seat",
+  "seats_other": "{{count}} seats",
+  "status": {
+    "booked": "Booked",
+    "confirmed": "Confirmed",
+    "seated": "Seated",
+    "completed": "Completed",
+    "no_show": "No-show",
+    "cancelled": "Cancelled"
+  },
+  "source": {
+    "staff": "By staff",
+    "widget": "Online"
+  },
+  "form": {
+    "titleNew": "New reservation",
+    "titleEdit": "Edit reservation",
+    "date": "Date",
+    "time": "Time",
+    "duration": "Duration",
+    "minutes": "{{count}} min",
+    "partySize": "Guests",
+    "name": "Name",
+    "phone": "Phone",
+    "notes": "Notes",
+    "notesPlaceholder": "e.g. birthday, high chair",
+    "table": "Table",
+    "noTable": "No table (assign later)",
+    "tableOption": "{{name}} · {{seats}} seats",
+    "tooSmall": "{{name}} · {{seats}} seats (small)",
+    "freeTables_one": "{{count}} table free at this time",
+    "freeTables_other": "{{count}} tables free at this time",
+    "closed": "Closed on this day.",
+    "full": "full",
+    "save": "Save",
+    "created": "Reservation booked",
+    "saved": "Reservation updated"
+  },
+  "detail": {
+    "at": "{{date}}, {{time}}",
+    "table": "Table",
+    "duration": "{{count}} min",
+    "createdBy": "Booked by {{name}}",
+    "online": "Booked online",
+    "call": "Call",
+    "seatNeedsTable": "Assign a table to seat them.",
+    "edit": "Edit",
+    "statusChanged": "Status changed",
+    "seated": "Seated at table {{name}}",
+    "openOrder": "Open the order"
+  },
+  "actions": {
+    "confirm": "Confirm",
+    "seat": "Seat",
+    "no_show": "No-show",
+    "cancel": "Cancel",
+    "rebook": "Back on the book",
+    "complete": "Complete",
+    "cancelConfirm": "Cancel {{name}}'s reservation?",
+    "keep": "Keep it"
+  },
+  "list": {
+    "time": "Time",
+    "guest": "Guest",
+    "party": "Guests",
+    "table": "Table",
+    "status": "Status"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "title": "Rezervimet",
+  "subtitle": "Libri i rezervimeve · {{location}}",
+  "today": "Sot",
+  "prevDay": "Dita e mëparshme",
+  "nextDay": "Dita tjetër",
+  "date": "Data",
+  "new": "Rezervim i ri",
+  "views": {
+    "timeline": "Sipas tavolinave",
+    "list": "Lista"
+  },
+  "summary_one": "{{count}} rezervim · {{covers}} persona",
+  "summary_other": "{{count}} rezervime · {{covers}} persona",
+  "unassigned": "Pa tavolinë",
+  "now": "Tani",
+  "empty": "Asnjë rezervim për këtë ditë",
+  "emptyDescription": "Rezervimet nga telefoni ose nga faqja online shfaqen këtu.",
+  "guests_one": "{{count}} person",
+  "guests_other": "{{count}} persona",
+  "seats_one": "{{count}} vend",
+  "seats_other": "{{count}} vende",
+  "status": {
+    "booked": "Rezervuar",
+    "confirmed": "Konfirmuar",
+    "seated": "Në tavolinë",
+    "completed": "Përfunduar",
+    "no_show": "Nuk erdhi",
+    "cancelled": "Anuluar"
+  },
+  "source": {
+    "staff": "Nga stafi",
+    "widget": "Online"
+  },
+  "form": {
+    "titleNew": "Rezervim i ri",
+    "titleEdit": "Ndrysho rezervimin",
+    "date": "Data",
+    "time": "Ora",
+    "duration": "Kohëzgjatja",
+    "minutes": "{{count}} min",
+    "partySize": "Persona",
+    "name": "Emri",
+    "phone": "Telefoni",
+    "notes": "Shënime",
+    "notesPlaceholder": "p.sh. ditëlindje, karrige për fëmijë",
+    "table": "Tavolina",
+    "noTable": "Pa tavolinë (caktohet më vonë)",
+    "tableOption": "{{name}} · {{seats}} vende",
+    "tooSmall": "{{name}} · {{seats}} vende (e vogël)",
+    "freeTables_one": "{{count}} tavolinë e lirë në këtë orë",
+    "freeTables_other": "{{count}} tavolina të lira në këtë orë",
+    "closed": "Lokali është i mbyllur këtë ditë.",
+    "full": "e zënë",
+    "save": "Ruaj",
+    "created": "Rezervimi u regjistrua",
+    "saved": "Rezervimi u ndryshua"
+  },
+  "detail": {
+    "at": "{{date}}, ora {{time}}",
+    "table": "Tavolina",
+    "duration": "{{count}} min",
+    "createdBy": "Regjistruar nga {{name}}",
+    "online": "Rezervuar online",
+    "call": "Telefono",
+    "seatNeedsTable": "Caktoni një tavolinë për ta ulur.",
+    "edit": "Ndrysho",
+    "statusChanged": "Statusi u ndryshua",
+    "seated": "U ul në tavolinën {{name}}",
+    "openOrder": "Hap porosinë"
+  },
+  "actions": {
+    "confirm": "Konfirmo",
+    "seat": "Ul në tavolinë",
+    "no_show": "Nuk erdhi",
+    "cancel": "Anulo",
+    "rebook": "Rikthe në libër",
+    "complete": "Përfundo",
+    "cancelConfirm": "Të anulohet rezervimi i {{name}}?",
+    "keep": "Mos e anulo"
+  },
+  "list": {
+    "time": "Ora",
+    "guest": "Klienti",
+    "party": "Persona",
+    "table": "Tavolina",
+    "status": "Statusi"
+  }
+}

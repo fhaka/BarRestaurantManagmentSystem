@@ -213,10 +213,20 @@ export async function listPinUsers(locationId: number, db: Knex = defaultDb): Pr
       'u.pin_locked_until',
     );
   const now = Date.now();
+  // Who is clocked in here right now (plan §5.8), for the clock-in screen.
+  const clockedIn = new Set(
+    (
+      await db('time_entries')
+        .where({ location_id: locationId })
+        .whereNull('clock_out')
+        .select('user_id')
+    ).map((r) => Number(r.user_id)),
+  );
   return rows.map((r) => ({
     id: r.id,
     name: r.name,
     roleKey: r.role_key,
     locked: r.pin_locked_until !== null && r.pin_locked_until.getTime() > now,
+    clockedIn: clockedIn.has(Number(r.id)),
   }));
 }

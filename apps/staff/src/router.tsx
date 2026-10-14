@@ -25,6 +25,7 @@ import { BillPage, SessionBill } from './pages/billing/BillPage';
 import { CashierPage } from './pages/cashier/CashierPage';
 import { DevicesPage } from './pages/settings/DevicesPage';
 import { InventoryPage } from './pages/inventory/InventoryPage';
+import { ReservationsPage } from './pages/reservations/ReservationsPage';
 import { OrdersPage } from './pages/orders/OrdersPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -42,6 +43,7 @@ const BUILT: ReadonlySet<string> = new Set([
   'kds',
   'cashier',
   'inventory',
+  'reservations',
 ]);
 const placeholderRoutes: RouteObject[] = NAV_ITEMS.filter((item) => !BUILT.has(item.key)).map(
   (item) => ({
@@ -189,6 +191,14 @@ export const router = createBrowserRouter([
                 element: (
                   <RequirePermission permission="menu.edit">
                     <MenuPage />
+                  </RequirePermission>
+                ),
+              },
+              {
+                path: 'reservations',
+                element: (
+                  <RequirePermission permission="reservation.view">
+                    <ReservationsPage />
                   </RequirePermission>
                 ),
               },

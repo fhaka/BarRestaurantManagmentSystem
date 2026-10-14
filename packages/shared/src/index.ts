@@ -15,3 +15,5 @@ export * from './orders.js';
 export * from './guest.js';
 export * from './billing.js';
 export * from './inventory.js';
+export * from './reservations.js';
+export * from './staff-time.js';

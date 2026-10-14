@@ -159,5 +159,39 @@
     "commentPlaceholder": "Anything you would like to tell us? (optional)",
     "send": "Send review",
     "thanks": "Thank you for your review!"
+  },
+  "booking": {
+    "title": "Book a table",
+    "party": "Guests",
+    "fewer": "Fewer guests",
+    "more": "More guests",
+    "bigGroup": "For groups larger than {{count}}, please call us.",
+    "day": "Day",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "otherDay": "Another day",
+    "time": "Time",
+    "noTimes": "No free times on this day. Try another day or fewer guests.",
+    "name": "Name",
+    "phone": "Phone",
+    "phoneHint": "We only call if something changes.",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "e.g. birthday, high chair",
+    "submit": "Book",
+    "submitAt": "Book · {{date}}, {{time}}",
+    "checkFields": "Check your name and phone number.",
+    "done": "Thank you, {{name}}!",
+    "doneWhen_one": "See you on {{date}} at {{time}}, {{count}} guest.",
+    "doneWhen_other": "See you on {{date}} at {{time}}, {{count}} guests.",
+    "reference": "Booking code",
+    "doneHint": "If you can't make it, please call us so we can give the table to someone else.",
+    "another": "Make another booking",
+    "notFound": "This restaurant was not found.",
+    "disabled": "Online booking is not available right now",
+    "disabledDescription": "Please call us to book.",
+    "errors": {
+      "NO_AVAILABILITY": "That time was just taken. Please choose another.",
+      "BOOKING_DISABLED": "Online booking is not available right now. Please call us."
+    }
   }
 }

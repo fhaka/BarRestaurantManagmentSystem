@@ -63,5 +63,59 @@
     "newPin": "PIN i ri",
     "save": "Ruaj",
     "saved": "Hyrja për {{name}} u përditësua"
+  },
+  "tabs": {
+    "people": "Stafi",
+    "schedule": "Orari i turneve",
+    "hours": "Orët e punës"
+  },
+  "schedule": {
+    "person": "Punonjësi",
+    "prevWeek": "Java e kaluar",
+    "nextWeek": "Java tjetër",
+    "thisWeek": "Kjo javë",
+    "add": "Shto turn",
+    "edit": "Ndrysho turnin",
+    "addFor": "Shto turn për {{name}}, {{day}}",
+    "total": "{{hours}} orë këtë javë",
+    "date": "Data",
+    "from": "Nga",
+    "to": "Deri",
+    "note": "Shënim",
+    "delete": "Fshi",
+    "saved": "Turni u ruajt",
+    "times": "Shkruani orën e fillimit dhe të mbarimit."
+  },
+  "hours": {
+    "presets": {
+      "thisWeek": "Kjo javë",
+      "lastWeek": "Java e kaluar",
+      "thisMonth": "Ky muaj",
+      "lastMonth": "Muaji i kaluar"
+    },
+    "from": "Nga",
+    "to": "Deri",
+    "export": "Shkarko CSV për pagat",
+    "addEntry": "Shto regjistrim",
+    "worked": "Punuar",
+    "scheduled": "Planifikuar",
+    "difference": "Diferenca",
+    "entries": "Regjistrime",
+    "open_one": "{{count}} pa dalje",
+    "open_other": "{{count}} pa dalje",
+    "empty": "Asnjë orë pune në këto data",
+    "emptyDescription": "Stafi regjistron hyrjen dhe daljen me PIN në ekranin e kyçur.",
+    "editedBy": "Ndryshuar nga {{name}}",
+    "source": {
+      "pin": "Me PIN",
+      "app": "Nga aplikacioni",
+      "manager": "Nga menaxheri"
+    },
+    "fix": "Korrigjo",
+    "fixTitle": "Korrigjo orët e {{name}}",
+    "clockIn": "Hyrja",
+    "clockOut": "Dalja",
+    "noteHint": "Arsyeja e korrigjimit ruhet në regjistër.",
+    "saved": "U ruajt"
   }
 }

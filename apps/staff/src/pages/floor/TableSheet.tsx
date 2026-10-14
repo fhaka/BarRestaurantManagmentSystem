@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowRightLeft,
   BellRing,
+  CalendarClock,
   Check,
   Brush,
   ClipboardList,
@@ -17,6 +18,7 @@ import {
   RotateCcw,
   Smartphone,
   Split,
+  UserCheck,
   UserRoundCog,
   Wallet,
 } from 'lucide-react';
@@ -35,6 +37,7 @@ import {
 } from '@tavolina/ui';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { api } from '../../lib/api';
+import { formatTime } from '../../lib/format';
 import { useSession } from '../../lib/session';
 import { STATUS_STYLE, useElapsed, useFloorMutation, useNow } from './floor-utils';
 
@@ -85,9 +88,14 @@ function TableActions({
   const name = (id: number) => floor.tables.find((x) => x.id === id)?.name ?? '';
 
   const openTable = useFloorMutation(
-    () =>
+    (reservation?: { id: number; partySize: number }) =>
       api<FloorState>('POST', '/table-sessions', {
-        body: { uuid: crypto.randomUUID(), tableId: table.id, guestCount: guests },
+        body: {
+          uuid: crypto.randomUUID(),
+          tableId: table.id,
+          guestCount: reservation?.partySize ?? guests,
+          reservationId: reservation?.id,
+        },
       }),
     { success: () => t('table.opened', { name: table.name }) },
   );
@@ -236,6 +244,26 @@ function TableActions({
               {t('table.markClean')}
             </Button>
           ) : null}
+          {table.reservation ? (
+            <section className="flex flex-col gap-3 rounded-card border-2 border-reserved bg-reserved-soft p-4 text-reserved-soft-fg">
+              <span className="flex items-center gap-2 font-semibold">
+                <CalendarClock className="size-4" aria-hidden />
+                {t('reservation.heldFor', { time: formatTime(table.reservation.startsAt) })}
+              </span>
+              <span className="text-lg font-bold">{table.reservation.name}</span>
+              <span className="text-sm">{t('guests', { count: table.reservation.partySize })}</span>
+              {can('table.open') ? (
+                <Button
+                  size="lg"
+                  loading={openTable.isPending && openTable.variables !== undefined}
+                  onClick={() => openTable.mutate(table.reservation!)}
+                >
+                  <UserCheck />
+                  {t('reservation.seat')}
+                </Button>
+              ) : null}
+            </section>
+          ) : null}
           {can('table.open') ? (
             <section className="flex flex-col items-center gap-4 rounded-card border border-border p-5">
               <h3 className="text-sm font-semibold text-foreground-muted">
@@ -245,10 +273,11 @@ function TableActions({
               <Button
                 size="xl"
                 block
-                loading={openTable.isPending}
+                variant={table.reservation ? 'outline' : 'primary'}
+                loading={openTable.isPending && openTable.variables === undefined}
                 onClick={() => openTable.mutate(undefined)}
               >
-                {t('table.open')}
+                {table.reservation ? t('reservation.walkIn') : t('table.open')}
               </Button>
             </section>
           ) : null}

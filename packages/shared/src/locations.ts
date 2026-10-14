@@ -48,6 +48,19 @@ export const locationSettingsSchema = z.object({
   stockDeductOn: z.enum(['send', 'payment']).default('send'),
   /** Business rule 3: a void after the kitchen started counts the dish as waste. */
   voidedPreparedIsWaste: z.boolean().default(true),
+  /** Plan §5.10: the public booking page; the manager can turn it off. */
+  bookingEnabled: z.boolean().default(true),
+  /** Booking slots start every N minutes from opening time. */
+  bookingSlotMinutes: z.union([z.literal(15), z.literal(30), z.literal(60)]).default(30),
+  /** How long a table is held for one reservation. */
+  bookingDurationMin: z.number().int().min(30).max(480).default(90),
+  /** Largest party that can book online; bigger groups call. */
+  bookingMaxPartySize: z.number().int().min(1).max(50).default(8),
+  /** Online bookings must be at least this far ahead. */
+  bookingMinNoticeMin: z.number().int().min(0).max(2880).default(60),
+  bookingMaxDaysAhead: z.number().int().min(1).max(365).default(60),
+  /** No new bookings this close to closing time. */
+  bookingLastSeatingMin: z.number().int().min(0).max(480).default(60),
   /** Printers by role (stations have their own); null = screens only. */
   receiptPrinterId: z.number().int().positive().nullable().default(null),
   reportPrinterId: z.number().int().positive().nullable().default(null),

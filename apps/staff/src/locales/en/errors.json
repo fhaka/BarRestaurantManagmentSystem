@@ -64,7 +64,9 @@
     "devicePathRequired": "Enter the device.",
     "quantity": "Enter a quantity, e.g. 0.018 or 1.5.",
     "quantityPositive": "The quantity must be more than zero.",
-    "ingredientOrDish": "Choose an ingredient with a quantity, or a dish with a number of portions."
+    "ingredientOrDish": "Choose an ingredient with a quantity, or a dish with a number of portions.",
+    "shiftTooLong": "A shift can last at most 16 hours.",
+    "future": "The time cannot be in the future."
   },
   "ORDER_ITEM_ALREADY_SENT": "This item was already sent to the kitchen. Void it instead.",
   "ORDER_ITEM_STATE": "This item cannot change like that any more. The screen has been refreshed.",
@@ -88,5 +90,12 @@
   "DAY_HAS_OPEN_TABLES": "Close every table and order first.",
   "PO_STATE": "This purchase order cannot be changed in its current state.",
   "COUNT_STATE": "This count cannot be changed. Another count may be open, or this one is finished.",
-  "RECEIVE_TOO_MUCH": "That is more than is still open on the order."
+  "RECEIVE_TOO_MUCH": "That is more than is still open on the order.",
+  "RESERVATION_CONFLICT": "This table is already reserved at that time. Choose another table or time.",
+  "RESERVATION_STATE": "This reservation cannot be changed in its current state.",
+  "NO_AVAILABILITY": "That time is no longer available. Choose another time.",
+  "BOOKING_DISABLED": "Online booking is turned off.",
+  "SHIFT_OVERLAP": "This person already has a shift or clock entry at that time.",
+  "ALREADY_CLOCKED_IN": "You are already clocked in.",
+  "NOT_CLOCKED_IN": "You are not clocked in here."
 }

@@ -17,6 +17,7 @@ import { transactionWithRetry } from '../../lib/transaction.js';
 import { emitTableUpdated } from '../../realtime/server.js';
 import { paidOnOrder } from '../billing/totals.js';
 import * as orderRepo from '../orders/repo.js';
+import { completeForSession, reservationsChanged, seatInSession } from '../reservations/service.js';
 import * as repo from './repo.js';
 import { canActOnAllTables, getFloor, type FloorActor } from './service.js';
 
@@ -125,12 +126,16 @@ export async function openSession(actor: FloorActor, raw: unknown): Promise<Floo
       // The unique key on table_id makes two waiters opening one table at once impossible.
       await trx('table_session_tables').insert({ session_id: id, table_id: input.tableId });
       await trx('tables').where({ id: input.tableId }).update({ needs_cleaning: false });
+      if (input.reservationId) {
+        await seatInSession(trx, actor.locationId, input.reservationId, input.tableId, Number(id));
+      }
     });
   } catch (err) {
     if (isDuplicate(err)) throw occupied();
     throw err;
   }
   emitTableUpdated(actor.locationId, [input.tableId]);
+  if (input.reservationId) reservationsChanged(actor.locationId, [input.reservationId], []);
   return getFloor(actor);
 }
 
@@ -347,7 +352,7 @@ export async function closeSession(actor: FloorActor, id: number): Promise<Floor
       balanceMinor,
     });
   }
-  await db.transaction(async (trx) => {
+  const completed = await db.transaction(async (trx) => {
     await trx('table_sessions')
       .where({ id })
       .update({
@@ -372,8 +377,11 @@ export async function closeSession(actor: FloorActor, id: number): Promise<Floor
       },
       trx,
     );
+    // The guests have left: a reservation seated here is completed.
+    return completeForSession(trx, id);
   });
   emitTableUpdated(actor.locationId, session.tableIds);
+  if (completed.length) reservationsChanged(actor.locationId, completed, []);
   return getFloor(actor);
 }
 

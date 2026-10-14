@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import {
   REFRESH_TOKEN_TTL_DAYS,
   type AuthResponse,
+  type ClockResult,
   type LoginRequest,
   type MeResponse,
   type PinLoginRequest,
@@ -17,6 +18,7 @@ import { writeAudit } from '../../lib/audit.js';
 import * as accessRepo from './access-repo.js';
 import * as repo from './repo.js';
 import { verifyUserPin } from './pin.js';
+import { clockWithPin } from '../time/service.js';
 import type { UserRow } from './repo.js';
 
 export interface RequestMeta {
@@ -209,6 +211,44 @@ export async function pinLogin(
       requestId: meta.requestId,
     },
     { action: 'auth.pin_switch', entityType: 'user', entityId: target.id },
+  );
+  return result;
+}
+
+/**
+ * Clock in or out from the shared device's lock screen (plan §5.8): the device must be signed in
+ * to this account and the person must work here; their PIN is checked with the usual lockout.
+ */
+export async function pinClock(
+  rawToken: string | undefined,
+  input: { userId: number; pin: string; locationId: number },
+  meta: RequestMeta,
+): Promise<ClockResult> {
+  const session = await requireDeviceSession(rawToken);
+  await requireLocationInAccount(input.locationId, session.accountId);
+  const target = await repo.findUserById(input.userId);
+  const access = target ? await accessRepo.findLocationAccess(target.id, input.locationId) : null;
+  if (!isUsable(target) || target.account_id !== session.accountId || !access) {
+    throw new AppError(403, 'LOCATION_FORBIDDEN', 'This person does not work at this location.');
+  }
+  if (!(await accessRepo.getRolePermissions(access.roleId)).has('time.clock'))
+    throw AppError.forbidden();
+  await verifyUserPin(target, input.pin);
+  const result = await clockWithPin(input.locationId, target.id);
+  await writeAudit(
+    {
+      userId: target.id,
+      accountId: target.account_id,
+      locationId: input.locationId,
+      deviceId: session.token.device_id,
+      ip: meta.ip,
+      requestId: meta.requestId,
+    },
+    {
+      action: `time_entry.clock_${result.action}`,
+      entityType: 'time_entry',
+      entityId: result.entry.id,
+    },
   );
   return result;
 }

@@ -1,0 +1,89 @@
+{
+  "title": "Prenotazioni",
+  "subtitle": "Libro prenotazioni · {{location}}",
+  "today": "Oggi",
+  "prevDay": "Giorno precedente",
+  "nextDay": "Giorno successivo",
+  "date": "Data",
+  "new": "Nuova prenotazione",
+  "views": {
+    "timeline": "Per tavolo",
+    "list": "Elenco"
+  },
+  "summary_one": "{{count}} prenotazione · {{covers}} coperti",
+  "summary_other": "{{count}} prenotazioni · {{covers}} coperti",
+  "unassigned": "Senza tavolo",
+  "now": "Ora",
+  "empty": "Nessuna prenotazione in questo giorno",
+  "emptyDescription": "Le prenotazioni telefoniche e online compaiono qui.",
+  "guests_one": "{{count}} persona",
+  "guests_other": "{{count}} persone",
+  "seats_one": "{{count}} posto",
+  "seats_other": "{{count}} posti",
+  "status": {
+    "booked": "Prenotato",
+    "confirmed": "Confermato",
+    "seated": "Al tavolo",
+    "completed": "Concluso",
+    "no_show": "Non presentato",
+    "cancelled": "Annullato"
+  },
+  "source": {
+    "staff": "Dal personale",
+    "widget": "Online"
+  },
+  "form": {
+    "titleNew": "Nuova prenotazione",
+    "titleEdit": "Modifica prenotazione",
+    "date": "Data",
+    "time": "Ora",
+    "duration": "Durata",
+    "minutes": "{{count}} min",
+    "partySize": "Persone",
+    "name": "Nome",
+    "phone": "Telefono",
+    "notes": "Note",
+    "notesPlaceholder": "es. compleanno, seggiolone",
+    "table": "Tavolo",
+    "noTable": "Senza tavolo (da assegnare)",
+    "tableOption": "{{name}} · {{seats}} posti",
+    "tooSmall": "{{name}} · {{seats}} posti (piccolo)",
+    "freeTables_one": "{{count}} tavolo libero a quest'ora",
+    "freeTables_other": "{{count}} tavoli liberi a quest'ora",
+    "closed": "Chiuso in questo giorno.",
+    "full": "pieno",
+    "save": "Salva",
+    "created": "Prenotazione registrata",
+    "saved": "Prenotazione modificata"
+  },
+  "detail": {
+    "at": "{{date}}, ore {{time}}",
+    "table": "Tavolo",
+    "duration": "{{count}} min",
+    "createdBy": "Registrata da {{name}}",
+    "online": "Prenotata online",
+    "call": "Chiama",
+    "seatNeedsTable": "Assegna un tavolo per farli accomodare.",
+    "edit": "Modifica",
+    "statusChanged": "Stato modificato",
+    "seated": "Al tavolo {{name}}",
+    "openOrder": "Apri l'ordine"
+  },
+  "actions": {
+    "confirm": "Conferma",
+    "seat": "Fai accomodare",
+    "no_show": "Non presentato",
+    "cancel": "Annulla",
+    "rebook": "Rimetti in agenda",
+    "complete": "Concludi",
+    "cancelConfirm": "Annullare la prenotazione di {{name}}?",
+    "keep": "Non annullare"
+  },
+  "list": {
+    "time": "Ora",
+    "guest": "Cliente",
+    "party": "Persone",
+    "table": "Tavolo",
+    "status": "Stato"
+  }
+}

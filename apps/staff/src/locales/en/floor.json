@@ -138,5 +138,10 @@
     "pending_one": "{{count}} QR order to confirm",
     "pending_other": "{{count}} QR orders to confirm",
     "review": "Review"
+  },
+  "reservation": {
+    "heldFor": "Reserved for {{time}}",
+    "seat": "Seat the reservation",
+    "walkIn": "Open for walk-ins instead"
   }
 }

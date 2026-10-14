@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ChevronsUpDown, LogOut, UserRoundCog } from 'lucide-react';
+import { ChevronsUpDown, Clock, LogOut, UserRoundCog } from 'lucide-react';
+import { formatDuration, type ClockResult, type ClockStatus } from '@tavolina/shared';
 import {
   Avatar,
   DropdownMenu,
@@ -11,8 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   cn,
+  toast,
 } from '@tavolina/ui';
-import { logout } from '../lib/api';
+import { api, logout } from '../lib/api';
+import { useErrorMessages } from '../lib/errors';
+import { formatTime } from '../lib/format';
 import { useSession } from '../lib/session';
 
 export function UserMenu({ compact = false }: { compact?: boolean }) {
@@ -22,7 +26,30 @@ export function UserMenu({ compact = false }: { compact?: boolean }) {
   const lock = useSession((s) => s.lock);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const can = useSession((s) => s.can);
+  const locationId = useSession((s) => s.locationId);
+  const { message } = useErrorMessages();
+  const clockable = Boolean(user && locationId && can('time.clock'));
+  // Clock in/out for whoever is signed in (plan §5.8).
+  const clock = useQuery({
+    queryKey: ['time', 'me', locationId, user?.id],
+    queryFn: () => api<ClockStatus>('GET', '/me/clock'),
+    enabled: clockable,
+  });
+  const toggle = useMutation({
+    mutationFn: (action: 'in' | 'out') => api<ClockResult>('POST', `/time-entries/clock-${action}`),
+    onSuccess: (r) => {
+      void queryClient.invalidateQueries({ queryKey: ['time'] });
+      toast.success(
+        r.action === 'in'
+          ? t('userMenu.clockedIn', { time: formatTime(r.entry.clockIn) })
+          : t('userMenu.clockedOut', { hours: formatDuration(r.entry.minutes) }),
+      );
+    },
+    onError: (err) => toast.error(message(err)),
+  });
   if (!user) return null;
+  const clockedIn = clock.data?.clockedIn ?? false;
 
   return (
     <DropdownMenu>
@@ -52,6 +79,29 @@ export function UserMenu({ compact = false }: { compact?: boolean }) {
           {user.email ? <span className="block font-normal">{user.email}</span> : null}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {clockable && clock.data ? (
+          <>
+            <DropdownMenuItem onSelect={() => toggle.mutate(clockedIn ? 'out' : 'in')}>
+              <Clock />
+              <span className="flex flex-col">
+                {clockedIn ? t('userMenu.clockOut') : t('userMenu.clockIn')}
+                {clockedIn && clock.data.entry ? (
+                  <span className="text-xs font-normal text-foreground-muted">
+                    {t('userMenu.since', { time: formatTime(clock.data.entry.clockIn) })}
+                  </span>
+                ) : clock.data.shift ? (
+                  <span className="text-xs font-normal text-foreground-muted">
+                    {t('userMenu.shift', {
+                      from: formatTime(clock.data.shift.startsAt),
+                      to: formatTime(clock.data.shift.endsAt),
+                    })}
+                  </span>
+                ) : null}
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        ) : null}
         <DropdownMenuItem
           onSelect={() => {
             queryClient.removeQueries();

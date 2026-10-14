@@ -64,7 +64,9 @@
     "devicePathRequired": "Inserisci il dispositivo.",
     "quantity": "Inserisci una quantità, es. 0,018 o 1,5.",
     "quantityPositive": "La quantità deve essere maggiore di zero.",
-    "ingredientOrDish": "Scegli un ingrediente con una quantità o un piatto con il numero di porzioni."
+    "ingredientOrDish": "Scegli un ingrediente con una quantità o un piatto con il numero di porzioni.",
+    "shiftTooLong": "Un turno può durare al massimo 16 ore.",
+    "future": "L'orario non può essere nel futuro."
   },
   "ORDER_ITEM_ALREADY_SENT": "Questo articolo è già stato inviato in cucina. Annullalo invece.",
   "ORDER_ITEM_STATE": "L'articolo non può più cambiare così. Lo schermo è stato aggiornato.",
@@ -88,5 +90,12 @@
   "DAY_HAS_OPEN_TABLES": "Chiudi prima tutti i tavoli e gli ordini.",
   "PO_STATE": "Questo ordine d'acquisto non può essere modificato nello stato attuale.",
   "COUNT_STATE": "Questo inventario non può essere modificato. Forse ce n'è un altro aperto o è già chiuso.",
-  "RECEIVE_TOO_MUCH": "La quantità supera quella ancora aperta nell'ordine."
+  "RECEIVE_TOO_MUCH": "La quantità supera quella ancora aperta nell'ordine.",
+  "RESERVATION_CONFLICT": "Questo tavolo è già prenotato a quell'ora. Scegli un altro tavolo o orario.",
+  "RESERVATION_STATE": "Questa prenotazione non può essere modificata nello stato attuale.",
+  "NO_AVAILABILITY": "Questo orario non è più disponibile. Scegline un altro.",
+  "BOOKING_DISABLED": "Le prenotazioni online sono disattivate.",
+  "SHIFT_OVERLAP": "Questa persona ha già un turno o una timbratura a quell'ora.",
+  "ALREADY_CLOCKED_IN": "Hai già timbrato l’entrata.",
+  "NOT_CLOCKED_IN": "Non hai timbrato l’entrata qui."
 }

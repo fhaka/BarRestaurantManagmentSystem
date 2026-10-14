@@ -92,3 +92,47 @@ export function nextLocalTime(from: Date, hhmm: string, timeZone: string): Date 
   }
   return base;
 }
+
+// ---- Local dates ---------------------------------------------------------------------------------
+
+/** "2026-10-14" + n days (calendar arithmetic, no timezone involved). */
+export function addDays(date: string, days: number): string {
+  const d = new Date(`${date}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+/** 0 = Monday … 6 = Sunday for a YYYY-MM-DD date. */
+export function weekdayOf(date: string): number {
+  return (new Date(`${date}T00:00:00Z`).getUTCDay() + 6) % 7;
+}
+
+/** The Monday of the week that contains `date`. */
+export function weekStart(date: string): string {
+  return addDays(date, -weekdayOf(date));
+}
+
+/** Minutes the local clock in `timeZone` is ahead of UTC at `at`. */
+function utcOffsetMinutes(at: Date, timeZone: string): number {
+  const p = localParts(at, timeZone);
+  const localAsUtc = Date.parse(`${p.date}T00:00:00Z`) + p.minutes * 60_000;
+  return Math.round((localAsUtc - Math.floor(at.getTime() / 60_000) * 60_000) / 60_000);
+}
+
+/**
+ * The moment the local clock in `timeZone` reads `minutes` after midnight on `date` (minutes may
+ * pass 1440 for "02:00 the next night"). Correct across daylight-saving changes.
+ */
+export function zonedDateTime(date: string, minutes: number, timeZone: string): Date {
+  const naive = Date.parse(`${date}T00:00:00Z`) + minutes * 60_000;
+  let at = new Date(naive - utcOffsetMinutes(new Date(naive), timeZone) * 60_000);
+  const second = new Date(naive - utcOffsetMinutes(at, timeZone) * 60_000);
+  if (second.getTime() !== at.getTime()) at = second;
+  return at;
+}
+
+/** "19:30" in the location's timezone. */
+export function localTime(at: Date, timeZone: string): string {
+  const m = localParts(at, timeZone).minutes;
+  return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+}

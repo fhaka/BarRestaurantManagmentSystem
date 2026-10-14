@@ -15,6 +15,8 @@ export const REALTIME_EVENTS = [
   'bill.updated',
   'cash_drawer.updated',
   'stock.low',
+  'reservation.updated',
+  'time_entry.updated',
 ] as const;
 export type RealtimeEventType = (typeof REALTIME_EVENTS)[number];
 

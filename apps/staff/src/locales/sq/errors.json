@@ -64,7 +64,9 @@
     "devicePathRequired": "Shkruani pajisjen.",
     "quantity": "Shkruani një sasi, p.sh. 0.018 ose 1,5.",
     "quantityPositive": "Sasia duhet të jetë më e madhe se zero.",
-    "ingredientOrDish": "Zgjidhni një përbërës me sasi ose një pjatë me numër porcionesh."
+    "ingredientOrDish": "Zgjidhni një përbërës me sasi ose një pjatë me numër porcionesh.",
+    "shiftTooLong": "Një turn mund të zgjasë deri në 16 orë.",
+    "future": "Ora nuk mund të jetë në të ardhmen."
   },
   "ORDER_ITEM_ALREADY_SENT": "Ky artikull është dërguar në kuzhinë. Anulojeni në vend të kësaj.",
   "ORDER_ITEM_STATE": "Ky artikull nuk mund të ndryshojë më kështu. Ekrani u rifreskua.",
@@ -88,5 +90,12 @@
   "DAY_HAS_OPEN_TABLES": "Mbyllni më parë të gjitha tavolinat dhe porositë.",
   "PO_STATE": "Kjo porosi furnizimi nuk mund të ndryshohet në këtë gjendje.",
   "COUNT_STATE": "Ky numërim nuk mund të ndryshohet. Ndoshta ka një numërim tjetër të hapur ose ai është mbyllur.",
-  "RECEIVE_TOO_MUCH": "Sasia e pranuar është më shumë se sa mbetet nga porosia."
+  "RECEIVE_TOO_MUCH": "Sasia e pranuar është më shumë se sa mbetet nga porosia.",
+  "RESERVATION_CONFLICT": "Kjo tavolinë është e rezervuar në atë orë. Zgjidhni një tavolinë ose orë tjetër.",
+  "RESERVATION_STATE": "Ky rezervim nuk mund të ndryshohet në këtë gjendje.",
+  "NO_AVAILABILITY": "Kjo orë nuk është më e lirë. Zgjidhni një orë tjetër.",
+  "BOOKING_DISABLED": "Rezervimet online janë çaktivizuar.",
+  "SHIFT_OVERLAP": "Ky person ka tashmë një turn ose regjistrim në atë orë.",
+  "ALREADY_CLOCKED_IN": "Keni regjistruar tashmë hyrjen.",
+  "NOT_CLOCKED_IN": "Nuk keni regjistruar hyrjen këtu."
 }

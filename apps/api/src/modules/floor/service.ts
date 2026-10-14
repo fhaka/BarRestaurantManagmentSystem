@@ -22,6 +22,7 @@ import { writeAudit, type ActorContext } from '../../lib/audit.js';
 import { emitTableUpdated } from '../../realtime/server.js';
 import * as locationRepo from '../locations/repo.js';
 import * as orderRepo from '../orders/repo.js';
+import { floorReservations } from '../reservations/service.js';
 import * as repo from './repo.js';
 
 export interface FloorActor extends ActorContext {
@@ -65,6 +66,7 @@ export async function getFloor(actor: FloorActor): Promise<FloorState> {
   ]);
   const stats = await orderRepo.sessionOrderStats(db, actor.locationId);
   const requests = await listOpenRequestsByTable(actor.locationId);
+  const reservations = await floorReservations(actor.locationId);
   const sessionByTable = new Map<number, (typeof sessions)[number]>();
   for (const s of sessions) for (const tableId of s.tableIds) sessionByTable.set(tableId, s);
 
@@ -102,9 +104,11 @@ export async function getFloor(actor: FloorActor): Promise<FloorState> {
       status: deriveTableStatus({
         needsCleaning: t.needsCleaning,
         session: session && { status: session.status, ...stats.get(session.id) },
+        reservedSoon: reservations.has(t.id),
       }),
       session,
       requests: requests.get(t.id) ?? [],
+      reservation: reservations.get(t.id) ?? null,
     };
   });
 

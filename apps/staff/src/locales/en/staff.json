@@ -63,5 +63,59 @@
     "newPin": "New PIN",
     "save": "Save",
     "saved": "Sign-in for {{name}} updated"
+  },
+  "tabs": {
+    "people": "People",
+    "schedule": "Schedule",
+    "hours": "Hours"
+  },
+  "schedule": {
+    "person": "Person",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
+    "thisWeek": "This week",
+    "add": "Add shift",
+    "edit": "Edit shift",
+    "addFor": "Add a shift for {{name}}, {{day}}",
+    "total": "{{hours}} h this week",
+    "date": "Date",
+    "from": "From",
+    "to": "To",
+    "note": "Note",
+    "delete": "Delete",
+    "saved": "Shift saved",
+    "times": "Enter a start and an end time."
+  },
+  "hours": {
+    "presets": {
+      "thisWeek": "This week",
+      "lastWeek": "Last week",
+      "thisMonth": "This month",
+      "lastMonth": "Last month"
+    },
+    "from": "From",
+    "to": "To",
+    "export": "Download CSV for payroll",
+    "addEntry": "Add entry",
+    "worked": "Worked",
+    "scheduled": "Scheduled",
+    "difference": "Difference",
+    "entries": "Entries",
+    "open_one": "{{count}} not clocked out",
+    "open_other": "{{count}} not clocked out",
+    "empty": "No working hours on these dates",
+    "emptyDescription": "Staff clock in and out with their PIN on the lock screen.",
+    "editedBy": "Changed by {{name}}",
+    "source": {
+      "pin": "With PIN",
+      "app": "From the app",
+      "manager": "By a manager"
+    },
+    "fix": "Correct",
+    "fixTitle": "Correct {{name}}'s hours",
+    "clockIn": "Clock in",
+    "clockOut": "Clock out",
+    "noteHint": "The reason for the correction is kept in the log.",
+    "saved": "Saved"
   }
 }

@@ -417,6 +417,51 @@ returned as integer thousandths (`stockMilli`, `qtyMilli`, …). Money in minor 
 Errors: `409 PO_STATE`, `409 RECEIVE_TOO_MUCH`, `409 COUNT_STATE`, `400 INVALID_REFERENCE`.
 Stock is deducted automatically when items are sent or paid (location setting `stockDeductOn`).
 
+## Reservations
+
+Location-scoped. View: `reservation.view`; changes: `reservation.manage`. Times are ISO instants;
+dates are local (Europe/Tirane) `YYYY-MM-DD`.
+
+| Method & path                    | Notes                                                                                                    |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `GET /reservations?date=`        | `Reservation[]` of the day (04:00–04:00)                                                                 |
+| `GET /reservations/availability` | `?date&partySize&durationMin?&excludeId?` → `[{ time, startsAt, freeTableIds, available }]`              |
+| `GET /reservations/booking-link` | `{ url }` of the public booking page                                                                     |
+| `GET /reservations/:id`          | `Reservation`                                                                                            |
+| `POST /reservations`             | `{ uuid, startsAt, durationMin, partySize, name, phone, notes?, tableId \| null }`; idempotent on `uuid` |
+| `PATCH /reservations/:id`        | Same without `uuid`; booked/confirmed only                                                               |
+| `POST /reservations/:id/status`  | `{ status: 'confirmed' \| 'booked' \| 'completed' \| 'no_show' \| 'cancelled' }`                         |
+| `POST /table-sessions`           | Seating: add `reservationId` when opening the table                                                      |
+
+Public (no account, rate-limited): `GET /public/locations/:id/booking` (`PublicBookingInfo`),
+`GET /public/locations/:id/availability?date&partySize` (`{ date, slots: [{ time, available }] }`),
+`POST /public/locations/:id/reservations` (`{ uuid, date, time, partySize, name, phone, notes? }` →
+`{ reference, startsAt, date, time, partySize, name, locationName }`).
+
+Errors: `409 RESERVATION_CONFLICT` (details: the other booking), `409 RESERVATION_STATE`,
+`409 NO_AVAILABILITY`, `403 BOOKING_DISABLED`. Floor tables carry `reservation` (from 60 minutes
+before) and the status `reserved`.
+
+## Staff time
+
+| Method & path                       | Permission     | Notes                                                                    |
+| ----------------------------------- | -------------- | ------------------------------------------------------------------------ |
+| `GET /me/clock`                     | `time.clock`   | `{ clockedIn, entry, shift }` (today's shift)                            |
+| `GET /me/shifts?from&to`            | `time.clock`   | Own shifts                                                               |
+| `POST /time-entries/clock-in`       | `time.clock`   | → `ClockResult`; `409 ALREADY_CLOCKED_IN`                                |
+| `POST /time-entries/clock-out`      | `time.clock`   | → `ClockResult`; `409 NOT_CLOCKED_IN`                                    |
+| `POST /auth/pin-clock`              | device cookie  | `{ userId, pin, locationId }` toggles in/out on a shared device          |
+| `GET /shifts?from&to&userId?`       | `shift.manage` | `Shift[]`                                                                |
+| `POST /shifts`, `PATCH /shifts/:id` | `shift.manage` | `{ userId, startsAt, endsAt, note? }`; `409 SHIFT_OVERLAP`; at most 16 h |
+| `DELETE /shifts/:id`                | `shift.manage` |                                                                          |
+| `GET /time-entries?from&to&userId?` | `shift.manage` | `TimeEntry[]`                                                            |
+| `POST /time-entries`, `PATCH /:id`  | `shift.manage` | `{ userId, clockIn, clockOut \| null, note? }` (audited)                 |
+| `DELETE /time-entries/:id`          | `shift.manage` | Audited                                                                  |
+| `GET /time-entries/hours?from&to`   | `shift.manage` | `HoursRow[]`: worked and scheduled minutes per person                    |
+| `GET /time-entries/hours.csv`       | `shift.manage` | Payroll CSV: one row per entry, decimal hours                            |
+
+`GET /auth/pin-users` now also returns `clockedIn` per person.
+
 ## Real-time (Socket.IO)
 
 Same origin, path `/socket.io`. Handshake `auth: { token: <accessToken>, locationId }`; errors
@@ -434,6 +479,8 @@ Same origin, path `/socket.io`. Handshake `auth: { token: <accessToken>, locatio
 | `bill.updated`              | location           | `{ orderId }`                                                                      |
 | `cash_drawer.updated`       | location           | `{}`                                                                               |
 | `stock.low`                 | location           | `{ ingredientId, name, stockMilli, minMilli, unit }`                               |
+| `reservation.updated`       | location           | `{ reservationIds }`                                                               |
+| `time_entry.updated`        | location           | `{ userId }`                                                                       |
 
 A kitchen screen joins a station room with `socket.emit('station:join', { stationId }, ack)`
 (`ack(true)` when the station belongs to the location); joining another station leaves the old one.

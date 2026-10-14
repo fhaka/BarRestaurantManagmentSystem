@@ -159,5 +159,39 @@
     "commentPlaceholder": "Qualcosa da dirci? (facoltativo)",
     "send": "Invia la recensione",
     "thanks": "Grazie per la recensione!"
+  },
+  "booking": {
+    "title": "Prenota un tavolo",
+    "party": "Persone",
+    "fewer": "Meno persone",
+    "more": "Più persone",
+    "bigGroup": "Per gruppi di più di {{count}} persone, chiamaci.",
+    "day": "Giorno",
+    "today": "Oggi",
+    "tomorrow": "Domani",
+    "otherDay": "Un altro giorno",
+    "time": "Ora",
+    "noTimes": "Nessun orario libero in questo giorno. Prova un altro giorno o meno persone.",
+    "name": "Nome",
+    "phone": "Telefono",
+    "phoneHint": "Ti chiamiamo solo in caso di cambiamenti.",
+    "notes": "Note (facoltative)",
+    "notesPlaceholder": "es. compleanno, seggiolone",
+    "submit": "Prenota",
+    "submitAt": "Prenota · {{date}}, {{time}}",
+    "checkFields": "Controlla nome e numero di telefono.",
+    "done": "Grazie, {{name}}!",
+    "doneWhen_one": "Ti aspettiamo {{date}} alle {{time}}, {{count}} persona.",
+    "doneWhen_other": "Vi aspettiamo {{date}} alle {{time}}, {{count}} persone.",
+    "reference": "Codice prenotazione",
+    "doneHint": "Se non potete venire, chiamateci per liberare il tavolo.",
+    "another": "Fai un'altra prenotazione",
+    "notFound": "Locale non trovato.",
+    "disabled": "Le prenotazioni online non sono disponibili ora",
+    "disabledDescription": "Chiamaci per prenotare.",
+    "errors": {
+      "NO_AVAILABILITY": "Questo orario è appena stato preso. Scegline un altro.",
+      "BOOKING_DISABLED": "Le prenotazioni online non sono disponibili ora. Chiamaci."
+    }
   }
 }

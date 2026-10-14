@@ -2,13 +2,19 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Lock, LogOut, Users } from 'lucide-react';
-import type { AuthResponse, PinUser } from '@tavolina/shared';
-import { Avatar, Button, EmptyState, Skeleton, Toaster, cn } from '@tavolina/ui';
+import { ArrowLeft, Clock, Lock, LogIn, LogOut, Users } from 'lucide-react';
+import {
+  formatDuration,
+  type AuthResponse,
+  type ClockResult,
+  type PinUser,
+} from '@tavolina/shared';
+import { Avatar, Button, EmptyState, Skeleton, Toaster, cn, toast } from '@tavolina/ui';
 import { Logo } from '../components/Logo';
 import { PinPad } from '../components/PinPad';
 import { ApiRequestError, enterSession, logout, publicGet, publicPost } from '../lib/api';
 import { useErrorMessages } from '../lib/errors';
+import { formatTime } from '../lib/format';
 import { useSession } from '../lib/session';
 import { homePath } from '../nav';
 
@@ -25,6 +31,8 @@ export function LockPage() {
   const { message } = useErrorMessages();
   const locationId = useSession((s) => s.locationId);
   const [selected, setSelected] = useState<PinUser | null>(null);
+  // "signIn" switches who uses the device; "clock" records arriving and leaving work (plan §5.8).
+  const [mode, setMode] = useState<'signIn' | 'clock'>('signIn');
   const [error, setError] = useState<string | null>(null);
 
   const users = useQuery({
@@ -44,6 +52,7 @@ export function LockPage() {
 
   async function onPin(pin: string) {
     if (!selected || !locationId) return;
+    if (mode === 'clock') return onClock(pin);
     try {
       const auth = await publicPost<AuthResponse>('/auth/pin', {
         userId: selected.id,
@@ -58,6 +67,34 @@ export function LockPage() {
       if (err instanceof ApiRequestError && err.code === 'PIN_LOCKED') {
         void users.refetch();
       }
+      throw err;
+    }
+  }
+
+  async function onClock(pin: string) {
+    if (!selected || !locationId) return;
+    try {
+      const result = await publicPost<ClockResult>('/auth/pin-clock', {
+        userId: selected.id,
+        pin,
+        locationId,
+      });
+      const first = result.userName.split(' ')[0];
+      toast.success(
+        result.action === 'in'
+          ? t('lock.clockedIn', { name: first, time: formatTime(result.entry.clockIn) })
+          : t('lock.clockedOut', {
+              name: first,
+              time: formatTime(result.entry.clockOut!),
+              hours: formatDuration(result.entry.minutes),
+            }),
+      );
+      setSelected(null);
+      setError(null);
+      void users.refetch();
+    } catch (err) {
+      setError(message(err));
+      if (err instanceof ApiRequestError && err.code === 'PIN_LOCKED') void users.refetch();
       throw err;
     }
   }
@@ -86,7 +123,11 @@ export function LockPage() {
             <div className="flex flex-col items-center gap-3 text-center">
               <Avatar name={selected.name} size="lg" />
               <h1 className="text-2xl font-extrabold tracking-tight">
-                {t('lock.enterPin', { name: selected.name.split(' ')[0] })}
+                {mode === 'clock'
+                  ? t(selected.clockedIn ? 'lock.clockOutPin' : 'lock.clockInPin', {
+                      name: selected.name.split(' ')[0],
+                    })
+                  : t('lock.enterPin', { name: selected.name.split(' ')[0] })}
               </h1>
               <p className="text-sm text-foreground-muted">{ta(`roles.${selected.roleKey}`)}</p>
             </div>
@@ -104,9 +145,41 @@ export function LockPage() {
           </>
         ) : (
           <>
-            <div className="flex flex-col items-center gap-2 text-center">
-              <h1 className="text-3xl font-extrabold tracking-tight">{t('lock.title')}</h1>
-              <p className="text-foreground-muted">{t('lock.subtitle')}</p>
+            <div className="flex flex-col items-center gap-4 text-center">
+              <div
+                role="radiogroup"
+                aria-label={t('lock.mode')}
+                className="flex rounded-full border border-border bg-surface p-1 shadow-raised"
+              >
+                {(['signIn', 'clock'] as const).map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    role="radio"
+                    aria-checked={mode === m}
+                    onClick={() => setMode(m)}
+                    className={cn(
+                      'flex min-h-10 items-center gap-2 rounded-full px-4 text-sm font-semibold transition-colors',
+                      mode === m
+                        ? 'bg-primary text-primary-fg'
+                        : 'text-foreground-muted hover:text-foreground',
+                    )}
+                  >
+                    {m === 'signIn' ? (
+                      <LogIn className="size-4" aria-hidden />
+                    ) : (
+                      <Clock className="size-4" aria-hidden />
+                    )}
+                    {t(`lock.modes.${m}`)}
+                  </button>
+                ))}
+              </div>
+              <h1 className="text-3xl font-extrabold tracking-tight">
+                {mode === 'clock' ? t('lock.clockTitle') : t('lock.title')}
+              </h1>
+              <p className="text-foreground-muted">
+                {mode === 'clock' ? t('lock.clockSubtitle') : t('lock.subtitle')}
+              </p>
             </div>
             {users.isPending ? (
               <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
@@ -137,6 +210,11 @@ export function LockPage() {
                             <>
                               <Lock className="size-3" aria-hidden />
                               {t('lock.locked')}
+                            </>
+                          ) : mode === 'clock' && user.clockedIn ? (
+                            <>
+                              <span className="size-2 rounded-full bg-success" aria-hidden />
+                              {t('lock.atWork')}
                             </>
                           ) : (
                             ta(`roles.${user.roleKey}`)

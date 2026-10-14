@@ -138,5 +138,10 @@
     "pending_one": "{{count}} ordine QR da confermare",
     "pending_other": "{{count}} ordini QR da confermare",
     "review": "Vedi"
+  },
+  "reservation": {
+    "heldFor": "Prenotato per le {{time}}",
+    "seat": "Fai accomodare la prenotazione",
+    "walkIn": "Apri per clienti senza prenotazione"
   }
 }

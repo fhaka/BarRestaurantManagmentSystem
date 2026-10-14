@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { FloorReservation } from './reservations.js';
 
 /** The floor is a grid; positions and sizes are whole grid cells. */
 export const FLOOR_GRID = { cols: 48, rows: 32 } as const;
@@ -160,6 +161,8 @@ export const openSessionSchema = z.object({
   uuid: z.uuid(),
   tableId: z.number().int().positive(),
   guestCount: z.number().int().min(1).max(99).default(2),
+  /** Seating a reservation (plan §5.10): it becomes "seated" and is linked to the session. */
+  reservationId: z.number().int().positive().optional(),
 });
 export type OpenSessionInput = z.input<typeof openSessionSchema>;
 
@@ -231,6 +234,8 @@ export interface FloorTable {
   status: TableStatus;
   session: FloorSession | null;
   requests: FloorRequest[];
+  /** The reservation this table is held for, from 60 minutes before arrival (plan §5.10). */
+  reservation: FloorReservation | null;
 }
 
 export interface FloorState {

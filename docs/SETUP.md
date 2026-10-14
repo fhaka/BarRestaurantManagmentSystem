@@ -134,6 +134,13 @@ TAVOLINA_API_URL=http://<api-host>:4100 TAVOLINA_BRIDGE_KEY=<key> npm run start 
 
 Add a printer of type "Test (no printer)" to see receipts and tickets in the bridge window.
 
+Phase 8 adds reservations and staff time. **Rezervimet** (Reservations) shows the day by table
+or as a list; two tables on the floor show as reserved because their guests arrive within the hour
+(open the table and choose "Seat the reservation"). The public booking page is
+`http://localhost:5181/book/1` (Settings → Online booking has the link and the rules). Under
+**Stafi** a manager finds the weekly schedule and the worked hours with a CSV for payroll. On the
+lock screen, "Clock in / out" lets staff record arriving and leaving with their PIN.
+
 Phase 7 adds stock. Sign in as `menaxher@lasvegas.test` and open **Magazina** (Inventory): 32
 ingredients with suppliers, recipes and margins for the coffees, drinks and main dishes, a purchase
 order for sea bass waiting to be received (sea bass is below its minimum), and the stock ledger.

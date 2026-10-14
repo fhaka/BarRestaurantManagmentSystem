@@ -33,7 +33,13 @@
     "switchUser": "Cambia utente",
     "signOut": "Esci da questo dispositivo",
     "theme": "Tema",
-    "language": "Lingua"
+    "language": "Lingua",
+    "clockIn": "Timbra entrata",
+    "clockOut": "Timbra uscita",
+    "since": "Al lavoro dalle {{time}}",
+    "shift": "Turno oggi: {{from}}–{{to}}",
+    "clockedIn": "Entrata alle {{time}}",
+    "clockedOut": "Uscita · {{hours}} h"
   },
   "placeholder": {
     "title": "{{screen}} arriva presto",

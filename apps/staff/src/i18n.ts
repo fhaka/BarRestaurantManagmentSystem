@@ -29,6 +29,7 @@ export const NAMESPACES = [
   'kds',
   'billing',
   'inventory',
+  'reservations',
   'showcase',
 ];
 

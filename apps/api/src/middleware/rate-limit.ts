@@ -32,3 +32,6 @@ export const authLimiter = limiter(20, 60_000);
 
 /** Public guest endpoints (QR menu): per IP, generous enough for a full table of phones. */
 export const guestLimiter = limiter(120, 60_000);
+
+/** Public online booking: a handful of bookings per IP, so nobody can fill the book. */
+export const bookingLimiter = limiter(10, 10 * 60_000);

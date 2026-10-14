@@ -33,7 +33,13 @@
     "switchUser": "Switch user",
     "signOut": "Sign out of this device",
     "theme": "Theme",
-    "language": "Language"
+    "language": "Language",
+    "clockIn": "Clock in",
+    "clockOut": "Clock out",
+    "since": "At work since {{time}}",
+    "shift": "Shift today: {{from}}–{{to}}",
+    "clockedIn": "Clocked in at {{time}}",
+    "clockedOut": "Clocked out · {{hours}} h"
   },
   "placeholder": {
     "title": "{{screen}} is coming soon",

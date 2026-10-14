@@ -138,5 +138,10 @@
     "pending_one": "{{count}} porosi QR për konfirmim",
     "pending_other": "{{count}} porosi QR për konfirmim",
     "review": "Shiko"
+  },
+  "reservation": {
+    "heldFor": "Rezervuar për {{time}}",
+    "seat": "Ul rezervimin",
+    "walkIn": "Hap për klientë pa rezervim"
   }
 }

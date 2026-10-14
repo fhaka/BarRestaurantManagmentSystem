@@ -63,5 +63,59 @@
     "newPin": "Nuovo PIN",
     "save": "Salva",
     "saved": "Accesso per {{name}} aggiornato"
+  },
+  "tabs": {
+    "people": "Personale",
+    "schedule": "Turni",
+    "hours": "Ore lavorate"
+  },
+  "schedule": {
+    "person": "Dipendente",
+    "prevWeek": "Settimana precedente",
+    "nextWeek": "Settimana successiva",
+    "thisWeek": "Questa settimana",
+    "add": "Aggiungi turno",
+    "edit": "Modifica turno",
+    "addFor": "Aggiungi un turno per {{name}}, {{day}}",
+    "total": "{{hours}} h questa settimana",
+    "date": "Data",
+    "from": "Dalle",
+    "to": "Alle",
+    "note": "Nota",
+    "delete": "Elimina",
+    "saved": "Turno salvato",
+    "times": "Inserisci l'ora di inizio e di fine."
+  },
+  "hours": {
+    "presets": {
+      "thisWeek": "Questa settimana",
+      "lastWeek": "Settimana scorsa",
+      "thisMonth": "Questo mese",
+      "lastMonth": "Mese scorso"
+    },
+    "from": "Dal",
+    "to": "Al",
+    "export": "Scarica CSV per le paghe",
+    "addEntry": "Aggiungi timbratura",
+    "worked": "Lavorate",
+    "scheduled": "Pianificate",
+    "difference": "Differenza",
+    "entries": "Timbrature",
+    "open_one": "{{count}} senza uscita",
+    "open_other": "{{count}} senza uscita",
+    "empty": "Nessuna ora lavorata in queste date",
+    "emptyDescription": "Il personale timbra entrata e uscita con il PIN dalla schermata di blocco.",
+    "editedBy": "Modificata da {{name}}",
+    "source": {
+      "pin": "Con PIN",
+      "app": "Dall'app",
+      "manager": "Dal manager"
+    },
+    "fix": "Correggi",
+    "fixTitle": "Correggi le ore di {{name}}",
+    "clockIn": "Entrata",
+    "clockOut": "Uscita",
+    "noteHint": "Il motivo della correzione resta nel registro.",
+    "saved": "Salvato"
   }
 }

@@ -31,7 +31,8 @@
       "languages": "Languages",
       "guests": "Guest orders (QR)",
       "control": "Control and approvals",
-      "stock": "Stock"
+      "stock": "Stock",
+      "booking": "Online booking"
     },
     "name": "Location name",
     "address": "Address",
@@ -65,6 +66,20 @@
     "stockDeductOnSend": "When sent to kitchen/bar",
     "stockDeductOnPayment": "When the bill is paid",
     "voidedPreparedIsWaste": "Voids after preparation started are waste",
-    "voidedPreparedIsWasteDescription": "The ingredients do not go back into stock; they are booked as waste."
+    "voidedPreparedIsWasteDescription": "The ingredients do not go back into stock; they are booked as waste.",
+    "bookingEnabled": "Public booking page",
+    "bookingEnabledDescription": "Guests book through the link below and get the smallest free table that fits.",
+    "bookingLink": "Link for your website or Instagram",
+    "bookingLinkHint": "It can also be embedded on your website as an iframe.",
+    "copy": "Copy",
+    "copied": "Link copied",
+    "openLink": "Open",
+    "bookingSlotMinutes": "Times every",
+    "minutes": "{{count}} minutes",
+    "bookingDurationMin": "Table held for (min)",
+    "bookingMaxPartySize": "Largest party online",
+    "bookingMinNoticeMin": "Minimum notice (min)",
+    "bookingMaxDaysAhead": "Up to how many days ahead",
+    "bookingLastSeatingMin": "No bookings in the last minutes before closing"
   }
 }
